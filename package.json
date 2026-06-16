@@ -1,0 +1,33 @@
+{
+  "name": "el-carino",
+  "version": "1.0.0",
+  "description": "Tunnel inscription club de boxe",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "test": "jest --runInBand",
+    "test:unit": "jest --runInBand tests/unit",
+    "test:integration": "jest --runInBand tests/integration",
+    "test:e2e": "playwright test",
+    "build": "node scripts/build.mjs",
+    "start": "node dist/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "nodemailer": "^9.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "esbuild": "^0.28.1",
+    "eslint": "^10.5.0",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
+  },
+  "private": true
+}
