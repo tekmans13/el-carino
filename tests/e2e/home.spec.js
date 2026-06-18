@@ -1,6 +1,6 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 test('homepage loads', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('body')).toContainText('Club boxe app bootstrap OK');
+  await expect(page.locator('body')).toContainText('El Carino');
 });

@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - refactor/vite-react
   pull_request:
 
 jobs:
@@ -27,12 +28,15 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
-      - name: Run Jest
-        run: npm test
+      - name: Run unit tests
+        run: npm run test:unit -- --passWithNoTests
 
       - name: Run Playwright
         run: npm run test:e2e
 
       - name: Build app
         run: npm run build
+
+      - name: Verify build output
+        run: test -f dist/index.html
 
