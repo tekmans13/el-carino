@@ -1,9 +1,7 @@
 export default function RegistrationProgress({ currentStep }) {
   return (
     <nav aria-label="Progression de l’inscription">
-      <p>
-        Étape {currentStep} sur 4
-      </p>
+      <p>Étape {currentStep} sur 4</p>
 
       <ol>
         <li aria-current={currentStep === 1 ? 'step' : undefined}>

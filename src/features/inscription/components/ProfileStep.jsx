@@ -17,69 +17,106 @@ export default function ProfileStep({
 
   return (
     <form onSubmit={handleSubmit}>
-      <fieldset>
-        <legend>Qui souhaitez-vous inscrire ?</legend>
+      <section>
+        <h2>Qui souhaitez-vous inscrire ?</h2>
 
-        <label>
-          <input
-            type="radio"
-            name="ageCategory"
-            value="adulte"
-            checked={formData.ageCategory === 'adulte'}
-            onChange={(event) => {
-              updateField('ageCategory', event.target.value);
-            }}
-          />
-          Adulte
-        </label>
+        <div className="choice-grid">
+          <label
+            className={
+              formData.ageCategory === 'adulte'
+                ? 'choice-card selected'
+                : 'choice-card'
+            }
+          >
+            <input
+              type="radio"
+              name="ageCategory"
+              value="adulte"
+              checked={formData.ageCategory === 'adulte'}
+              onChange={(event) => {
+                updateField('ageCategory', event.target.value);
+              }}
+            />
 
-        <label>
-          <input
-            type="radio"
-            name="ageCategory"
-            value="enfant"
-            checked={formData.ageCategory === 'enfant'}
-            onChange={(event) => {
-              updateField('ageCategory', event.target.value);
-            }}
-          />
-          Enfant
-        </label>
-      </fieldset>
+            <span>Adulte</span>
+          </label>
 
-      <fieldset>
-        <legend>Type de pratique</legend>
+          <label
+            className={
+              formData.ageCategory === 'enfant'
+                ? 'choice-card selected'
+                : 'choice-card'
+            }
+          >
+            <input
+              type="radio"
+              name="ageCategory"
+              value="enfant"
+              checked={formData.ageCategory === 'enfant'}
+              onChange={(event) => {
+                updateField('ageCategory', event.target.value);
+              }}
+            />
 
-        <label>
-          <input
-            type="radio"
-            name="practiceType"
-            value="loisir"
-            checked={formData.practiceType === 'loisir'}
-            onChange={(event) => {
-              updateField('practiceType', event.target.value);
-            }}
-          />
-          Loisir
-        </label>
+            <span>Enfant</span>
+          </label>
+        </div>
+      </section>
 
-        <label>
-          <input
-            type="radio"
-            name="practiceType"
-            value="competition"
-            checked={formData.practiceType === 'competition'}
-            onChange={(event) => {
-              updateField('practiceType', event.target.value);
-            }}
-          />
-          Compétition
-        </label>
-      </fieldset>
+      <section>
+        <h2>Quelle pratique ?</h2>
 
-      <button type="submit" disabled={!canContinue}>
-        Continuer
-      </button>
+        <div className="choice-grid">
+          <label
+            className={
+              formData.practiceType === 'loisir'
+                ? 'choice-card selected'
+                : 'choice-card'
+            }
+          >
+            <input
+              type="radio"
+              name="practiceType"
+              value="loisir"
+              checked={formData.practiceType === 'loisir'}
+              onChange={(event) => {
+                updateField('practiceType', event.target.value);
+              }}
+            />
+
+            <span>Loisir</span>
+          </label>
+
+          <label
+            className={
+              formData.practiceType === 'competition'
+                ? 'choice-card selected'
+                : 'choice-card'
+            }
+          >
+            <input
+              type="radio"
+              name="practiceType"
+              value="competition"
+              checked={formData.practiceType === 'competition'}
+              onChange={(event) => {
+                updateField('practiceType', event.target.value);
+              }}
+            />
+
+            <span>Compétition</span>
+          </label>
+        </div>
+      </section>
+
+      <div className="form-actions">
+        <button
+          type="submit"
+          disabled={!canContinue}
+        >
+          Continuer
+        </button>
+      </div>
     </form>
   );
 }

@@ -13,14 +13,8 @@ function validateForm(formData) {
     ['addressLine1', 'L’adresse est obligatoire.'],
     ['postalCode', 'Le code postal est obligatoire.'],
     ['city', 'La ville est obligatoire.'],
-    [
-      'emergencyContactName',
-      'Le contact d’urgence est obligatoire.',
-    ],
-    [
-      'emergencyContactPhone',
-      'Le téléphone du contact d’urgence est obligatoire.',
-    ],
+    ['emergencyContactName', 'Le contact d’urgence est obligatoire.'],
+    ['emergencyContactPhone', 'Le téléphone du contact d’urgence est obligatoire.'],
   ];
 
   requiredFields.forEach(([field, message]) => {
@@ -30,15 +24,15 @@ function validateForm(formData) {
   });
 
   if (
-    formData.email
-    && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    formData.email &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
   ) {
-    errors.email = 'L’adresse e-mail est invalide.';
+    errors.email = 'Adresse e-mail invalide.';
   }
 
   if (
-    formData.birthDate
-    && new Date(formData.birthDate) > new Date()
+    formData.birthDate &&
+    new Date(formData.birthDate) > new Date()
   ) {
     errors.birthDate =
       'La date de naissance ne peut pas être dans le futur.';
@@ -69,7 +63,14 @@ function FieldError({ message }) {
     return null;
   }
 
-  return <p role="alert">{message}</p>;
+  return (
+    <p
+      role="alert"
+      style={{ color: 'red', marginTop: 4 }}
+    >
+      {message}
+    </p>
+  );
 }
 
 export default function ContactStep({
@@ -85,8 +86,8 @@ export default function ContactStep({
 
     updateField(name, value);
 
-    setErrors((currentErrors) => ({
-      ...currentErrors,
+    setErrors((current) => ({
+      ...current,
       [name]: undefined,
     }));
   }
@@ -108,45 +109,39 @@ export default function ContactStep({
       <fieldset>
         <legend>Identité</legend>
 
-        <label htmlFor="lastName">Nom</label>
+        <label>Nom</label>
         <input
-          id="lastName"
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
-          autoComplete="family-name"
         />
         <FieldError message={errors.lastName} />
 
-        <label htmlFor="firstName">Prénom</label>
+        <label>Prénom</label>
         <input
-          id="firstName"
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
-          autoComplete="given-name"
         />
         <FieldError message={errors.firstName} />
 
-        <label htmlFor="gender">Sexe</label>
+        <label>Sexe</label>
         <select
-          id="gender"
           name="gender"
           value={formData.gender}
           onChange={handleChange}
         >
           <option value="">Sélectionner</option>
-          <option value="femme">Femme</option>
           <option value="homme">Homme</option>
+          <option value="femme">Femme</option>
           <option value="autre">Autre</option>
         </select>
         <FieldError message={errors.gender} />
 
-        <label htmlFor="birthDate">Date de naissance</label>
+        <label>Date de naissance</label>
         <input
-          id="birthDate"
-          name="birthDate"
           type="date"
+          name="birthDate"
           value={formData.birthDate}
           onChange={handleChange}
         />
@@ -156,92 +151,70 @@ export default function ContactStep({
       <fieldset>
         <legend>Coordonnées</legend>
 
-        <label htmlFor="email">Adresse e-mail</label>
+        <label>Email</label>
         <input
-          id="email"
-          name="email"
           type="email"
+          name="email"
           value={formData.email}
           onChange={handleChange}
-          autoComplete="email"
         />
         <FieldError message={errors.email} />
 
-        <label htmlFor="phone">Téléphone</label>
+        <label>Téléphone</label>
         <input
-          id="phone"
-          name="phone"
           type="tel"
+          name="phone"
           value={formData.phone}
           onChange={handleChange}
-          autoComplete="tel"
         />
         <FieldError message={errors.phone} />
 
-        <label htmlFor="addressLine1">Adresse</label>
+        <label>Adresse</label>
         <input
-          id="addressLine1"
           name="addressLine1"
           value={formData.addressLine1}
           onChange={handleChange}
-          autoComplete="address-line1"
         />
         <FieldError message={errors.addressLine1} />
 
-        <label htmlFor="addressLine2">
-          Complément d’adresse
-        </label>
+        <label>Complément</label>
         <input
-          id="addressLine2"
           name="addressLine2"
           value={formData.addressLine2}
           onChange={handleChange}
-          autoComplete="address-line2"
         />
 
-        <label htmlFor="postalCode">Code postal</label>
+        <label>Code postal</label>
         <input
-          id="postalCode"
           name="postalCode"
           value={formData.postalCode}
           onChange={handleChange}
-          inputMode="numeric"
-          autoComplete="postal-code"
         />
         <FieldError message={errors.postalCode} />
 
-        <label htmlFor="city">Ville</label>
+        <label>Ville</label>
         <input
-          id="city"
           name="city"
           value={formData.city}
           onChange={handleChange}
-          autoComplete="address-level2"
         />
         <FieldError message={errors.city} />
       </fieldset>
 
       <fieldset>
-        <legend>Contact d’urgence</legend>
+        <legend>Contact d'urgence</legend>
 
-        <label htmlFor="emergencyContactName">
-          Nom et prénom
-        </label>
+        <label>Nom</label>
         <input
-          id="emergencyContactName"
           name="emergencyContactName"
           value={formData.emergencyContactName}
           onChange={handleChange}
         />
         <FieldError message={errors.emergencyContactName} />
 
-        <label htmlFor="emergencyContactPhone">
-          Téléphone
-        </label>
+        <label>Téléphone</label>
         <input
-          id="emergencyContactPhone"
           name="emergencyContactPhone"
-          type="tel"
           value={formData.emergencyContactPhone}
           onChange={handleChange}
         />
@@ -252,11 +225,8 @@ export default function ContactStep({
         <fieldset>
           <legend>Représentant légal</legend>
 
-          <label htmlFor="legalRepresentativeName">
-            Nom et prénom
-          </label>
+          <label>Nom</label>
           <input
-            id="legalRepresentativeName"
             name="legalRepresentativeName"
             value={formData.legalRepresentativeName}
             onChange={handleChange}
@@ -265,13 +235,10 @@ export default function ContactStep({
             message={errors.legalRepresentativeName}
           />
 
-          <label htmlFor="legalRepresentativeEmail">
-            Adresse e-mail
-          </label>
+          <label>Email</label>
           <input
-            id="legalRepresentativeEmail"
-            name="legalRepresentativeEmail"
             type="email"
+            name="legalRepresentativeEmail"
             value={formData.legalRepresentativeEmail}
             onChange={handleChange}
           />
@@ -279,13 +246,10 @@ export default function ContactStep({
             message={errors.legalRepresentativeEmail}
           />
 
-          <label htmlFor="legalRepresentativePhone">
-            Téléphone
-          </label>
+          <label>Téléphone</label>
           <input
-            id="legalRepresentativePhone"
-            name="legalRepresentativePhone"
             type="tel"
+            name="legalRepresentativePhone"
             value={formData.legalRepresentativePhone}
             onChange={handleChange}
           />
@@ -295,13 +259,16 @@ export default function ContactStep({
         </fieldset>
       )}
 
-      <div>
-        <button type="button" onClick={onPrevious}>
+      <div className="form-actions">
+        <button
+          type="button"
+          onClick={onPrevious}
+        >
           Retour
         </button>
 
         <button type="submit">
-          Continuer vers la santé
+          Continuer
         </button>
       </div>
     </form>
