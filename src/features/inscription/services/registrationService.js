@@ -57,7 +57,7 @@ function buildRegistrationPayload(
         ? Boolean(formData.parentalAuthorization)
         : null,
 
-    status: 'brouillon',
+    status: 'soumis',
   };
 }
 
@@ -81,6 +81,6 @@ export async function createRegistration(formData) {
 
   return {
     id: registrationId,
-    status: 'brouillon',
+    status: 'soumis',
   };
 }
