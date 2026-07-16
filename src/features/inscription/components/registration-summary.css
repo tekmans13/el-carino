@@ -1,0 +1,20 @@
+.registration-summary-item.is-completed {
+  opacity: 1;
+}
+
+.registration-summary-item.is-completed
+  .registration-summary-number {
+  border-color: #17834d;
+  background: #17834d;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(23, 131, 77, 0.18);
+}
+
+.registration-summary-item.is-completed strong {
+  color: #17834d;
+}
+
+.registration-summary-item.is-completed
+  span:not(.registration-summary-number) {
+  color: #667085;
+}

@@ -1,3 +1,5 @@
+import './registration-progress.css';
+
 const STEPS = [
   {
     number: 1,
@@ -23,59 +25,65 @@ const STEPS = [
 
 export default function RegistrationProgress({
   currentStep,
+  maxStepReached,
+  onStepChange,
 }) {
+  const progressPercent =
+    ((maxStepReached - 1) / (STEPS.length - 1)) * 100;
+
+  function handleStepClick(stepNumber) {
+    if (stepNumber <= maxStepReached) {
+      onStepChange(stepNumber);
+    }
+  }
+
   return (
     <nav
-      className="registration-progress"
+      className="registration-stepper"
       aria-label="Progression de l’inscription"
+      style={{
+        '--stepper-progress': `${progressPercent}%`,
+      }}
     >
-      <ol className="registration-progress-list">
-        {STEPS.map((step, index) => {
-          const isCurrent = currentStep === step.number;
-          const isCompleted = currentStep > step.number;
+      <ol className="registration-stepper-list">
+        {STEPS.map((step) => {
+          const isCurrent = step.number === currentStep;
+          const isCompleted = step.number < maxStepReached;
+          const isAccessible = step.number <= maxStepReached;
 
           return (
             <li
               key={step.number}
               className={[
-                'registration-progress-item',
+                'registration-stepper-item',
                 isCurrent ? 'is-current' : '',
                 isCompleted ? 'is-completed' : '',
               ]
                 .filter(Boolean)
                 .join(' ')}
-              aria-current={isCurrent ? 'step' : undefined}
             >
-              <div className="registration-progress-marker-row">
-                {index > 0 && (
-                  <span
-                    className="registration-progress-line registration-progress-line-before"
-                    aria-hidden="true"
-                  />
-                )}
-
+              <button
+                type="button"
+                className="registration-stepper-button"
+                disabled={!isAccessible}
+                aria-current={isCurrent ? 'step' : undefined}
+                onClick={() => handleStepClick(step.number)}
+              >
                 <span
-                  className="registration-progress-marker"
+                  className="registration-stepper-marker"
                   aria-hidden="true"
                 >
                   {isCompleted ? '✓' : step.number}
                 </span>
 
-                {index < STEPS.length - 1 && (
-                  <span
-                    className="registration-progress-line registration-progress-line-after"
-                    aria-hidden="true"
-                  />
-                )}
-              </div>
+                <span className="registration-stepper-label">
+                  {step.label}
+                </span>
 
-              <span className="registration-progress-label">
-                {step.label}
-              </span>
-
-              <span className="registration-progress-description">
-                {step.description}
-              </span>
+                <span className="registration-stepper-description">
+                  {step.description}
+                </span>
+              </button>
             </li>
           );
         })}
