@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import './health-step.css';
+
 const HEALTH_QUESTIONS = [
   {
     id: 'hospital',
