@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import ContactStep from '../features/inscription/components/ContactStep';
 import HealthStep from '../features/inscription/components/HealthStep';
+import PaymentStep from '../features/inscription/components/PaymentStep';
 import ProfileStep from '../features/inscription/components/ProfileStep';
 import RegistrationProgress from '../features/inscription/components/RegistrationProgress';
 import { useRegistrationForm } from '../features/inscription/hooks/useRegistrationForm';
@@ -316,26 +317,10 @@ export default function InscriptionPage() {
             )}
 
             {currentStep === 4 && (
-              <section className="payment-placeholder">
-                <div className="payment-placeholder-icon">
-                  €
-                </div>
-
-                <h2>Paiement à venir</h2>
-
-                <p>
-                  Le paiement sera intégré dans le prochain lot.
-                </p>
-
-                <div className="form-actions">
-                  <button
-                    type="button"
-                    onClick={() => goToStep(3)}
-                  >
-                    Retour
-                  </button>
-                </div>
-              </section>
+              <PaymentStep
+                formData={formData}
+                onPrevious={() => goToStep(3)}
+              />
             )}
           </section>
         </div>
