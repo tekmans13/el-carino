@@ -1,0 +1,269 @@
+.profile-step {
+  display: grid;
+  gap: 34px;
+}
+
+.profile-choice-section,
+.practice-choice-section {
+  margin: 0 !important;
+}
+
+.profile-choice-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px !important;
+  font-size: 1.08rem !important;
+}
+
+.profile-choice-title > span {
+  color: var(--registration-red);
+}
+
+.profile-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.profile-choice-card {
+  position: relative;
+  display: flex;
+  min-height: 320px;
+  box-sizing: border-box;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px 24px 22px;
+  border: 2px solid var(--registration-border);
+  border-radius: 18px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.04);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+
+.profile-choice-card:hover {
+  border-color: #b8c3d1;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+.profile-choice-card.is-selected {
+  border-color: var(--registration-red);
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fffafa 100%
+    );
+  box-shadow: 0 14px 32px rgba(201, 31, 38, 0.1);
+}
+
+.profile-choice-card > input,
+.practice-choice-card > input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.profile-choice-illustration {
+  width: 132px;
+  height: 132px;
+  margin-bottom: 10px;
+}
+
+.profile-choice-card > strong {
+  color: var(--registration-text);
+  font-size: 1.45rem;
+}
+
+.profile-choice-card.is-selected > strong {
+  color: var(--registration-red);
+}
+
+.profile-choice-subtitle {
+  margin-top: 5px;
+  color: #344054;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.profile-choice-card > p {
+  max-width: 230px;
+  margin: 14px auto 12px;
+  color: var(--registration-text-soft);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.profile-selection-indicator {
+  display: inline-flex;
+  width: 27px;
+  height: 27px;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.profile-selection-indicator.is-selected {
+  border-color: var(--registration-red);
+  background: var(--registration-red);
+}
+
+.practice-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.practice-choice-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  min-height: 88px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 15px 18px;
+  border: 2px solid var(--registration-border);
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.03);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+
+.practice-choice-card:hover {
+  border-color: #b8c3d1;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+.practice-choice-card.is-selected {
+  border-color: var(--registration-red);
+  background: #fffafa;
+}
+
+.practice-choice-icon {
+  width: 54px;
+  height: 54px;
+}
+
+.practice-choice-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.practice-choice-content strong {
+  color: var(--registration-text);
+  font-size: 1rem;
+}
+
+.practice-choice-content small {
+  color: var(--registration-text-soft);
+  font-size: 0.8rem;
+}
+
+.practice-choice-card
+  .profile-selection-indicator {
+  margin: 0;
+}
+
+.profile-step-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.profile-step-actions button {
+  display: inline-flex;
+  width: min(100%, 360px);
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-size: 1rem;
+}
+
+@media (max-width: 720px) {
+  .profile-step {
+    gap: 28px;
+  }
+
+  .profile-choice-grid,
+  .practice-choice-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .profile-choice-card {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr) 30px;
+    grid-template-rows: auto auto auto;
+    min-height: 136px;
+    align-items: center;
+    padding: 15px;
+    text-align: left;
+  }
+
+  .profile-choice-illustration {
+    width: 76px;
+    height: 76px;
+    grid-row: 1 / 4;
+    margin: 0;
+  }
+
+  .profile-choice-card > strong,
+  .profile-choice-subtitle,
+  .profile-choice-card > p {
+    grid-column: 2;
+  }
+
+  .profile-choice-card > strong {
+    align-self: end;
+    font-size: 1.14rem;
+  }
+
+  .profile-choice-subtitle {
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .profile-choice-card > p {
+    max-width: none;
+    margin: 3px 0 0;
+    font-size: 0.73rem;
+  }
+
+  .profile-choice-card
+    > .profile-selection-indicator {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    margin: 0;
+  }
+
+  .practice-choice-card {
+    min-height: 82px;
+  }
+
+  .profile-step-actions button {
+    width: 100%;
+  }
+}
