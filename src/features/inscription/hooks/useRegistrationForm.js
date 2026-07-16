@@ -25,11 +25,16 @@ const initialFormData = {
   legalRepresentativeName: '',
   legalRepresentativeEmail: '',
   legalRepresentativePhone: '',
+
+  healthAnswers: {},
+  healthQuestionnaireCompleted: false,
+  healthQuestionnaireHasPositiveAnswer: false,
+  healthAttestationAccepted: false,
+
+  parentalAuthorization: false,
+  imageConsent: '',
 };
 
-/**
- * Charge les données précédemment sauvegardées.
- */
 function loadStoredData() {
   try {
     const storedValue = sessionStorage.getItem(STORAGE_KEY);
@@ -69,6 +74,29 @@ export function useRegistrationForm() {
     }));
   }
 
+  function updateHealthAnswer(questionId, value) {
+    setFormData((currentData) => {
+      const healthAnswers = {
+        ...currentData.healthAnswers,
+        [questionId]: value,
+      };
+
+      const answers = Object.values(healthAnswers);
+
+      return {
+        ...currentData,
+        healthAnswers,
+        healthQuestionnaireCompleted:
+          answers.length > 0
+          && answers.every(
+            (answer) => answer === 'oui' || answer === 'non',
+          ),
+        healthQuestionnaireHasPositiveAnswer:
+          answers.includes('oui'),
+      };
+    });
+  }
+
   function resetForm() {
     sessionStorage.removeItem(STORAGE_KEY);
     setFormData(initialFormData);
@@ -77,6 +105,7 @@ export function useRegistrationForm() {
   return {
     formData,
     updateField,
+    updateHealthAnswer,
     resetForm,
   };
 }
