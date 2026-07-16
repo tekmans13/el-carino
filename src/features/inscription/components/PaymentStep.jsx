@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import { createRegistration } from '../services/registrationService';
+
 import './payment-step.css';
 
 function formatValue(value, labels = {}) {
@@ -21,6 +25,10 @@ export default function PaymentStep({
   formData,
   onPrevious,
 }) {
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [registration, setRegistration] = useState(null);
+
   const fullName = [
     formData.firstName,
     formData.lastName,
@@ -50,9 +58,35 @@ export default function PaymentStep({
   };
 
   const certificateRequired =
-    formData.ageCategory === 'adulte'
+    (
+      formData.ageCategory === 'adulte'
       && formData.practiceType === 'competition'
+    )
     || formData.healthQuestionnaireHasPositiveAnswer;
+
+  async function handleSaveRegistration() {
+    if (saving || registration) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setSaveError('');
+
+      const createdRegistration =
+        await createRegistration(formData);
+
+      setRegistration(createdRegistration);
+    } catch (error) {
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : 'Une erreur est survenue pendant l’enregistrement.',
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <section className="payment-step">
@@ -68,8 +102,8 @@ export default function PaymentStep({
           <h2>Vérifiez votre dossier</h2>
 
           <p>
-            Contrôlez les informations avant de procéder
-            au paiement de l’inscription.
+            Contrôlez les informations avant d’enregistrer
+            le dossier et de procéder au paiement.
           </p>
         </div>
       </header>
@@ -144,14 +178,17 @@ export default function PaymentStep({
 
           <SummaryRow
             label="Adresse"
-            value={[
-              formData.addressLine1,
-              formData.addressLine2,
-              formData.postalCode,
-              formData.city,
-            ]
-              .filter(Boolean)
-              .join(', ') || 'Non renseignée'}
+            value={
+              [
+                formData.addressLine1,
+                formData.addressLine2,
+                formData.postalCode,
+                formData.city,
+              ]
+                .filter(Boolean)
+                .join(', ')
+              || 'Non renseignée'
+            }
           />
         </div>
       </section>
@@ -221,32 +258,77 @@ export default function PaymentStep({
         <strong>À définir</strong>
       </section>
 
-      <div className="payment-information">
-        <span aria-hidden="true">i</span>
+      {registration && (
+        <section
+          className="payment-save-success"
+          aria-live="polite"
+        >
+          <span aria-hidden="true">✓</span>
 
-        <p>
-          Le paiement en ligne sera activé lorsque les
-          tarifs et la configuration Stripe seront ajoutés.
-        </p>
-      </div>
+          <div>
+            <strong>Dossier enregistré</strong>
+
+            <p>
+              Référence :
+              {' '}
+              <code>{registration.id}</code>
+            </p>
+          </div>
+        </section>
+      )}
+
+      {saveError && (
+        <section
+          className="payment-save-error"
+          role="alert"
+        >
+          <strong>Échec de l’enregistrement</strong>
+          <p>{saveError}</p>
+        </section>
+      )}
+
+      {!registration && (
+        <div className="payment-information">
+          <span aria-hidden="true">i</span>
+
+          <p>
+            Enregistrez d’abord le dossier. Le paiement en
+            ligne sera activé dans l’étape suivante.
+          </p>
+        </div>
+      )}
 
       <div className="payment-step-actions">
         <button
           type="button"
           className="payment-back-button"
           onClick={onPrevious}
+          disabled={saving}
         >
           <span aria-hidden="true">←</span>
           Retour
         </button>
 
-        <button
-          type="button"
-          className="payment-submit-button"
-          disabled
-        >
-          Payer l’inscription
-        </button>
+        {!registration ? (
+          <button
+            type="button"
+            className="payment-submit-button"
+            onClick={handleSaveRegistration}
+            disabled={saving}
+          >
+            {saving
+              ? 'Enregistrement en cours…'
+              : 'Enregistrer le dossier'}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="payment-submit-button"
+            disabled
+          >
+            Continuer vers le paiement
+          </button>
+        )}
       </div>
     </section>
   );

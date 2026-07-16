@@ -249,3 +249,27 @@
     min-width: 0;
   }
 }
+.payment-success {
+  padding: 18px;
+  border: 1px solid #abd9bf;
+  border-radius: 12px;
+  background: #eefaf3;
+  color: #14683d;
+  font-weight: 700;
+}
+
+.payment-success strong {
+  display: block;
+  margin-top: 8px;
+  font-family: monospace;
+  font-size: .9rem;
+}
+
+.payment-error {
+  padding: 18px;
+  border: 1px solid #efb6ba;
+  border-radius: 12px;
+  background: #fff4f4;
+  color: #b42318;
+  font-weight: 700;
+}
