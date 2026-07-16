@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import './contact-step.css';
+
 const DEFAULT_MINIMUM_AGE = 5;
 const DEFAULT_ADULT_AGE_THRESHOLD = 15;
 const DEFAULT_MAXIMUM_AGE = 80;
@@ -286,7 +288,64 @@ function FieldError({ message }) {
     return null;
   }
 
-  return <p role="alert">{message}</p>;
+  return (
+    <p className="contact-field-error" role="alert">
+      {message}
+    </p>
+  );
+}
+
+function SectionHeader({
+  icon,
+  title,
+  description,
+}) {
+  return (
+    <header className="contact-section-header">
+      <span
+        className="contact-section-icon"
+        aria-hidden="true"
+      >
+        {icon}
+      </span>
+
+      <div>
+        <h2>{title}</h2>
+
+        {description && (
+          <p>{description}</p>
+        )}
+      </div>
+    </header>
+  );
+}
+
+function FormField({
+  className = '',
+  label,
+  htmlFor,
+  error,
+  children,
+}) {
+  return (
+    <div
+      className={[
+        'contact-field',
+        error ? 'has-error' : '',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <label htmlFor={htmlFor}>
+        {label}
+      </label>
+
+      {children}
+
+      <FieldError message={error} />
+    </div>
+  );
 }
 
 export default function ContactStep({
@@ -354,246 +413,320 @@ export default function ContactStep({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <fieldset>
-        <legend>Identité</legend>
-
-        <label htmlFor="lastName">Nom</label>
-        <input
-          id="lastName"
-          name="lastName"
-          type="text"
-          value={formData.lastName}
-          onChange={handleChange}
-          autoComplete="family-name"
-        />
-        <FieldError message={errors.lastName} />
-
-        <label htmlFor="firstName">Prénom</label>
-        <input
-          id="firstName"
-          name="firstName"
-          type="text"
-          value={formData.firstName}
-          onChange={handleChange}
-          autoComplete="given-name"
-        />
-        <FieldError message={errors.firstName} />
-
-        <label htmlFor="gender">Sexe</label>
-        <select
-          id="gender"
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-        >
-          <option value="">Sélectionner</option>
-          <option value="femme">Femme</option>
-          <option value="homme">Homme</option>
-          <option value="autre">Autre</option>
-        </select>
-        <FieldError message={errors.gender} />
-
-        <label htmlFor="birthDate">
-          Date de naissance
-        </label>
-        <input
-          id="birthDate"
-          name="birthDate"
-          type="date"
-          value={formData.birthDate}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        <FieldError message={errors.birthDate} />
-      </fieldset>
-
-      <fieldset>
-        <legend>Coordonnées</legend>
-
-        <label htmlFor="email">
-          Adresse e-mail
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          autoComplete="email"
-          inputMode="email"
-          placeholder="nom@exemple.fr"
-        />
-        <FieldError message={errors.email} />
-
-        <label htmlFor="phone">Téléphone</label>
-        <input
-          id="phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          autoComplete="tel"
-          inputMode="tel"
-          placeholder="06 12 34 56 78"
-        />
-        <FieldError message={errors.phone} />
-
-        <label htmlFor="addressLine1">
-          Adresse
-        </label>
-        <input
-          id="addressLine1"
-          name="addressLine1"
-          type="text"
-          value={formData.addressLine1}
-          onChange={handleChange}
-          autoComplete="address-line1"
-        />
-        <FieldError message={errors.addressLine1} />
-
-        <label htmlFor="addressLine2">
-          Complément d’adresse
-        </label>
-        <input
-          id="addressLine2"
-          name="addressLine2"
-          type="text"
-          value={formData.addressLine2}
-          onChange={handleChange}
-          autoComplete="address-line2"
+    <form
+      className="contact-step"
+      onSubmit={handleSubmit}
+      noValidate
+    >
+      <section className="contact-form-section">
+        <SectionHeader
+          icon="1"
+          title="Identité"
+          description="Informations concernant la personne inscrite."
         />
 
-        <label htmlFor="postalCode">
-          Code postal
-        </label>
-        <input
-          id="postalCode"
-          name="postalCode"
-          type="text"
-          value={formData.postalCode}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          inputMode="numeric"
-          autoComplete="postal-code"
-          maxLength={5}
-          placeholder="13016"
-        />
-        <FieldError message={errors.postalCode} />
+        <div className="contact-fields-grid">
+          <FormField
+            label="Nom"
+            htmlFor="lastName"
+            error={errors.lastName}
+          >
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              value={formData.lastName}
+              onChange={handleChange}
+              autoComplete="family-name"
+              placeholder="Nom"
+            />
+          </FormField>
 
-        <label htmlFor="city">Ville</label>
-        <input
-          id="city"
-          name="city"
-          type="text"
-          value={formData.city}
-          onChange={handleChange}
-          autoComplete="address-level2"
-        />
-        <FieldError message={errors.city} />
-      </fieldset>
+          <FormField
+            label="Prénom"
+            htmlFor="firstName"
+            error={errors.firstName}
+          >
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              value={formData.firstName}
+              onChange={handleChange}
+              autoComplete="given-name"
+              placeholder="Prénom"
+            />
+          </FormField>
 
-      <fieldset>
-        <legend>Contact d’urgence</legend>
+          <FormField
+            label="Sexe"
+            htmlFor="gender"
+            error={errors.gender}
+          >
+            <select
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
+              <option value="">Sélectionner</option>
+              <option value="femme">Femme</option>
+              <option value="homme">Homme</option>
+              <option value="autre">Autre</option>
+            </select>
+          </FormField>
 
-        <label htmlFor="emergencyContactName">
-          Nom et prénom
-        </label>
-        <input
-          id="emergencyContactName"
-          name="emergencyContactName"
-          type="text"
-          value={formData.emergencyContactName}
-          onChange={handleChange}
-        />
-        <FieldError
-          message={errors.emergencyContactName}
+          <FormField
+            label="Date de naissance"
+            htmlFor="birthDate"
+            error={errors.birthDate}
+          >
+            <input
+              id="birthDate"
+              name="birthDate"
+              type="date"
+              value={formData.birthDate}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+          </FormField>
+        </div>
+      </section>
+
+      <section className="contact-form-section">
+        <SectionHeader
+          icon="2"
+          title="Coordonnées"
+          description="Ces informations serviront aux communications du club."
         />
 
-        <label htmlFor="emergencyContactPhone">
-          Téléphone
-        </label>
-        <input
-          id="emergencyContactPhone"
-          name="emergencyContactPhone"
-          type="tel"
-          value={formData.emergencyContactPhone}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          inputMode="tel"
-          placeholder="06 12 34 56 78"
+        <div className="contact-fields-grid">
+          <FormField
+            label="Adresse e-mail"
+            htmlFor="email"
+            error={errors.email}
+          >
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoComplete="email"
+              inputMode="email"
+              placeholder="nom@exemple.fr"
+            />
+          </FormField>
+
+          <FormField
+            label="Téléphone"
+            htmlFor="phone"
+            error={errors.phone}
+          >
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoComplete="tel"
+              inputMode="tel"
+              placeholder="06 12 34 56 78"
+            />
+          </FormField>
+
+          <FormField
+            className="contact-field-wide"
+            label="Adresse"
+            htmlFor="addressLine1"
+            error={errors.addressLine1}
+          >
+            <input
+              id="addressLine1"
+              name="addressLine1"
+              type="text"
+              value={formData.addressLine1}
+              onChange={handleChange}
+              autoComplete="address-line1"
+              placeholder="Numéro et nom de voie"
+            />
+          </FormField>
+
+          <FormField
+            className="contact-field-wide"
+            label="Complément d’adresse"
+            htmlFor="addressLine2"
+          >
+            <input
+              id="addressLine2"
+              name="addressLine2"
+              type="text"
+              value={formData.addressLine2}
+              onChange={handleChange}
+              autoComplete="address-line2"
+              placeholder="Bâtiment, étage, résidence…"
+            />
+          </FormField>
+
+          <FormField
+            label="Code postal"
+            htmlFor="postalCode"
+            error={errors.postalCode}
+          >
+            <input
+              id="postalCode"
+              name="postalCode"
+              type="text"
+              value={formData.postalCode}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              inputMode="numeric"
+              autoComplete="postal-code"
+              maxLength={5}
+              placeholder="13016"
+            />
+          </FormField>
+
+          <FormField
+            label="Ville"
+            htmlFor="city"
+            error={errors.city}
+          >
+            <input
+              id="city"
+              name="city"
+              type="text"
+              value={formData.city}
+              onChange={handleChange}
+              autoComplete="address-level2"
+              placeholder="Marseille"
+            />
+          </FormField>
+        </div>
+      </section>
+
+      <section className="contact-form-section">
+        <SectionHeader
+          icon="3"
+          title="Contact d’urgence"
+          description="Personne à prévenir en cas de nécessité."
         />
-        <FieldError
-          message={errors.emergencyContactPhone}
-        />
-      </fieldset>
+
+        <div className="contact-fields-grid">
+          <FormField
+            label="Nom et prénom"
+            htmlFor="emergencyContactName"
+            error={errors.emergencyContactName}
+          >
+            <input
+              id="emergencyContactName"
+              name="emergencyContactName"
+              type="text"
+              value={formData.emergencyContactName}
+              onChange={handleChange}
+              placeholder="Nom du contact"
+            />
+          </FormField>
+
+          <FormField
+            label="Téléphone"
+            htmlFor="emergencyContactPhone"
+            error={errors.emergencyContactPhone}
+          >
+            <input
+              id="emergencyContactPhone"
+              name="emergencyContactPhone"
+              type="tel"
+              value={formData.emergencyContactPhone}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              inputMode="tel"
+              placeholder="06 12 34 56 78"
+            />
+          </FormField>
+        </div>
+      </section>
 
       {formData.ageCategory === 'enfant' && (
-        <fieldset>
-          <legend>Représentant légal</legend>
-
-          <label htmlFor="legalRepresentativeName">
-            Nom et prénom
-          </label>
-          <input
-            id="legalRepresentativeName"
-            name="legalRepresentativeName"
-            type="text"
-            value={formData.legalRepresentativeName}
-            onChange={handleChange}
-          />
-          <FieldError
-            message={errors.legalRepresentativeName}
+        <section className="contact-form-section contact-parent-section">
+          <SectionHeader
+            icon="4"
+            title="Représentant légal"
+            description="Ces informations sont obligatoires pour une inscription enfant."
           />
 
-          <label htmlFor="legalRepresentativeEmail">
-            Adresse e-mail
-          </label>
-          <input
-            id="legalRepresentativeEmail"
-            name="legalRepresentativeEmail"
-            type="email"
-            value={formData.legalRepresentativeEmail}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            inputMode="email"
-            placeholder="nom@exemple.fr"
-          />
-          <FieldError
-            message={errors.legalRepresentativeEmail}
-          />
+          <div className="contact-fields-grid">
+            <FormField
+              className="contact-field-wide"
+              label="Nom et prénom"
+              htmlFor="legalRepresentativeName"
+              error={errors.legalRepresentativeName}
+            >
+              <input
+                id="legalRepresentativeName"
+                name="legalRepresentativeName"
+                type="text"
+                value={formData.legalRepresentativeName}
+                onChange={handleChange}
+                placeholder="Nom du représentant légal"
+              />
+            </FormField>
 
-          <label htmlFor="legalRepresentativePhone">
-            Téléphone
-          </label>
-          <input
-            id="legalRepresentativePhone"
-            name="legalRepresentativePhone"
-            type="tel"
-            value={formData.legalRepresentativePhone}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            inputMode="tel"
-            placeholder="06 12 34 56 78"
-          />
-          <FieldError
-            message={errors.legalRepresentativePhone}
-          />
-        </fieldset>
+            <FormField
+              label="Adresse e-mail"
+              htmlFor="legalRepresentativeEmail"
+              error={errors.legalRepresentativeEmail}
+            >
+              <input
+                id="legalRepresentativeEmail"
+                name="legalRepresentativeEmail"
+                type="email"
+                value={formData.legalRepresentativeEmail}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                inputMode="email"
+                placeholder="nom@exemple.fr"
+              />
+            </FormField>
+
+            <FormField
+              label="Téléphone"
+              htmlFor="legalRepresentativePhone"
+              error={errors.legalRepresentativePhone}
+            >
+              <input
+                id="legalRepresentativePhone"
+                name="legalRepresentativePhone"
+                type="tel"
+                value={formData.legalRepresentativePhone}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                inputMode="tel"
+                placeholder="06 12 34 56 78"
+              />
+            </FormField>
+          </div>
+        </section>
       )}
 
-      <div className="form-actions">
+      <div className="contact-step-actions">
         <button
           type="button"
+          className="contact-back-button"
           onClick={onPrevious}
         >
+          <span aria-hidden="true">←</span>
           Retour
         </button>
 
-        <button type="submit">
+        <button
+          type="submit"
+          className="contact-next-button"
+        >
           Continuer vers la santé
+          <span aria-hidden="true">→</span>
         </button>
       </div>
     </form>
