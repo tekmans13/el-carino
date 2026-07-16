@@ -8,6 +8,7 @@ import RegistrationProgress from '../features/inscription/components/Registratio
 import { useRegistrationForm } from '../features/inscription/hooks/useRegistrationForm';
 
 import '../features/inscription/registration.css';
+import '../features/inscription/components/registration-summary.css';
 
 const STEP_TITLES = {
   1: 'Bienvenue !',
@@ -29,6 +30,7 @@ function formatProfileValue(value) {
 
 function RegistrationSummary({
   currentStep,
+  maxStepReached,
   formData,
 }) {
   const fullName = [
@@ -37,6 +39,13 @@ function RegistrationSummary({
   ]
     .filter(Boolean)
     .join(' ');
+
+  const profileCompleted =
+    Boolean(formData.ageCategory)
+    && Boolean(formData.practiceType);
+
+  const contactCompleted = maxStepReached >= 3;
+  const healthCompleted = maxStepReached >= 4;
 
   return (
     <aside className="registration-summary">
@@ -50,14 +59,16 @@ function RegistrationSummary({
 
       <ol className="registration-summary-list">
         <li
-          className={
-            currentStep >= 1
-              ? 'registration-summary-item is-active'
-              : 'registration-summary-item'
-          }
+          className={[
+            'registration-summary-item',
+            currentStep >= 1 ? 'is-active' : '',
+            profileCompleted ? 'is-completed' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <span className="registration-summary-number">
-            {currentStep > 1 ? '✓' : '1'}
+            {profileCompleted ? '✓' : '1'}
           </span>
 
           <div>
@@ -74,14 +85,16 @@ function RegistrationSummary({
         </li>
 
         <li
-          className={
-            currentStep >= 2
-              ? 'registration-summary-item is-active'
-              : 'registration-summary-item'
-          }
+          className={[
+            'registration-summary-item',
+            currentStep >= 2 ? 'is-active' : '',
+            contactCompleted ? 'is-completed' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <span className="registration-summary-number">
-            {currentStep > 2 ? '✓' : '2'}
+            {contactCompleted ? '✓' : '2'}
           </span>
 
           <div>
@@ -98,22 +111,24 @@ function RegistrationSummary({
         </li>
 
         <li
-          className={
-            currentStep >= 3
-              ? 'registration-summary-item is-active'
-              : 'registration-summary-item'
-          }
+          className={[
+            'registration-summary-item',
+            currentStep >= 3 ? 'is-active' : '',
+            healthCompleted ? 'is-completed' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <span className="registration-summary-number">
-            {currentStep > 3 ? '✓' : '3'}
+            {healthCompleted ? '✓' : '3'}
           </span>
 
           <div>
             <strong>Santé</strong>
 
             <span>
-              {formData.healthQuestionnaireCompleted
-                ? 'Questionnaire complété'
+              {healthCompleted
+                ? 'Étape complétée'
                 : 'À compléter'}
             </span>
           </div>
@@ -136,31 +151,15 @@ function RegistrationSummary({
           </div>
         </li>
       </ol>
-
-      <div className="registration-security-card">
-        <span
-          className="registration-security-icon"
-          aria-hidden="true"
-        >
-          ✓
-        </span>
-
-        <div>
-          <strong>Vos données sont protégées</strong>
-
-          <p>
-            Les informations collectées sont utilisées
-            uniquement pour gérer votre inscription.
-          </p>
-        </div>
-      </div>
     </aside>
   );
 }
 
 export default function InscriptionPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const contentRef = useRef(null);
+  const [maxStepReached, setMaxStepReached] = useState(1);
+
+  const pageRef = useRef(null);
 
   const {
     formData,
@@ -176,25 +175,41 @@ export default function InscriptionPage() {
 
   useEffect(() => {
     requestAnimationFrame(() => {
-      contentRef.current?.scrollIntoView({
+      pageRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       });
     });
   }, [currentStep]);
 
-  function goToStep(step) {
-    setCurrentStep(step);
+  function goToStep(stepNumber) {
+    if (stepNumber > maxStepReached) {
+      return;
+    }
+
+    setCurrentStep(stepNumber);
+  }
+
+  function completeStep(nextStep) {
+    setMaxStepReached((currentMaximum) =>
+      Math.max(currentMaximum, nextStep),
+    );
+
+    setCurrentStep(nextStep);
   }
 
   function handleReset() {
     resetForm();
     setCurrentStep(1);
+    setMaxStepReached(1);
   }
 
   return (
     <main className="registration-page">
-      <section className="registration-shell">
+      <section
+        ref={pageRef}
+        className="registration-shell"
+      >
         <header className="registration-topbar">
           <Link
             className="registration-brand"
@@ -223,18 +238,20 @@ export default function InscriptionPage() {
           </div>
         </header>
 
-        <RegistrationProgress currentStep={currentStep} />
+        <RegistrationProgress
+          currentStep={currentStep}
+          maxStepReached={maxStepReached}
+          onStepChange={goToStep}
+        />
 
         <div className="registration-layout">
           <RegistrationSummary
             currentStep={currentStep}
+            maxStepReached={maxStepReached}
             formData={formData}
           />
 
-          <section
-            ref={contentRef}
-            className="registration-content"
-          >
+          <section className="registration-content">
             <header className="registration-content-header">
               <p className="registration-step-kicker">
                 Étape {currentStep} sur 4
@@ -275,7 +292,7 @@ export default function InscriptionPage() {
               <ProfileStep
                 formData={formData}
                 updateField={updateField}
-                onNext={() => goToStep(2)}
+                onNext={() => completeStep(2)}
               />
             )}
 
@@ -284,7 +301,7 @@ export default function InscriptionPage() {
                 formData={formData}
                 updateField={updateField}
                 onPrevious={() => goToStep(1)}
-                onNext={() => goToStep(3)}
+                onNext={() => completeStep(3)}
               />
             )}
 
@@ -294,7 +311,7 @@ export default function InscriptionPage() {
                 updateField={updateField}
                 updateHealthAnswer={updateHealthAnswer}
                 onPrevious={() => goToStep(2)}
-                onNext={() => goToStep(4)}
+                onNext={() => completeStep(4)}
               />
             )}
 
@@ -307,8 +324,7 @@ export default function InscriptionPage() {
                 <h2>Paiement à venir</h2>
 
                 <p>
-                  Le paiement HelloAsso sera intégré dans
-                  le prochain lot.
+                  Le paiement sera intégré dans le prochain lot.
                 </p>
 
                 <div className="form-actions">

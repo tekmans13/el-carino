@@ -1,0 +1,153 @@
+.registration-stepper {
+  padding: 26px 34px 30px;
+  border-bottom: 1px solid #dce3ec;
+  background: #fbfcfe;
+}
+
+.registration-stepper-list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.registration-stepper-list::before,
+.registration-stepper-list::after {
+  position: absolute;
+  z-index: 0;
+  top: 19px;
+  left: 12.5%;
+  height: 2px;
+  content: '';
+  pointer-events: none;
+}
+
+.registration-stepper-list::before {
+  right: 12.5%;
+  background: #d8e0ea;
+}
+
+.registration-stepper-list::after {
+  width: calc(
+    (100% - 25%) * var(--stepper-progress) / 100
+  );
+  max-width: 75%;
+  background: #17834d;
+  transition: width 180ms ease;
+}
+
+.registration-stepper-item {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.registration-stepper-button {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  align-items: center;
+  flex-direction: column;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: none;
+  appearance: none;
+}
+
+.registration-stepper-button:hover,
+.registration-stepper-button:focus,
+.registration-stepper-button:active {
+  border: 0;
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.registration-stepper-button:focus-visible {
+  outline: 3px solid rgba(201, 31, 38, 0.18);
+  outline-offset: 6px;
+}
+
+.registration-stepper-button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.registration-stepper-marker {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.registration-stepper-item.is-current
+  .registration-stepper-marker {
+  border-color: #c91f26;
+  background: #c91f26;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(201, 31, 38, 0.22);
+}
+
+.registration-stepper-item.is-completed
+  .registration-stepper-marker {
+  border-color: #17834d;
+  background: #17834d;
+  color: #ffffff;
+}
+
+.registration-stepper-label {
+  display: block;
+  margin-top: 10px;
+  color: #475467;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.registration-stepper-description {
+  display: block;
+  margin-top: 3px;
+  color: #98a2b3;
+  font-size: 0.75rem;
+}
+
+.registration-stepper-item.is-current
+  .registration-stepper-label {
+  color: #a9141a;
+}
+
+.registration-stepper-item.is-completed
+  .registration-stepper-label {
+  color: #17834d;
+}
+
+@media (max-width: 720px) {
+  .registration-stepper {
+    overflow-x: auto;
+    padding: 18px 12px 20px;
+  }
+
+  .registration-stepper-list {
+    min-width: 540px;
+  }
+
+  .registration-stepper-description {
+    display: none;
+  }
+}
