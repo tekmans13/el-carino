@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+const DEFAULT_MINIMUM_AGE = 5;
+const DEFAULT_ADULT_AGE_THRESHOLD = 15;
+const DEFAULT_MAXIMUM_AGE = 80;
+
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
 }
@@ -14,26 +18,224 @@ function isValidFrenchPhone(value) {
   );
 }
 
-function validateForm(formData) {
+function calculateAge(birthDate) {
+  if (!birthDate) {
+    return null;
+  }
+
+  const birth = new Date(`${birthDate}T00:00:00`);
+  const today = new Date();
+
+  if (Number.isNaN(birth.getTime())) {
+    return null;
+  }
+
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const birthdayNotReached =
+    today.getMonth() < birth.getMonth()
+    || (
+      today.getMonth() === birth.getMonth()
+      && today.getDate() < birth.getDate()
+    );
+
+  if (birthdayNotReached) {
+    age -= 1;
+  }
+
+  return age;
+}
+
+function getBirthDateError(
+  birthDate,
+  ageCategory,
+  minimumAge,
+  adultAgeThreshold,
+  maximumAge,
+) {
+  if (!birthDate) {
+    return 'La date de naissance est obligatoire.';
+  }
+
+  const selectedDate = new Date(`${birthDate}T00:00:00`);
+
+  if (
+    Number.isNaN(selectedDate.getTime())
+    || selectedDate > new Date()
+  ) {
+    return 'La date de naissance est invalide.';
+  }
+
+  const age = calculateAge(birthDate);
+
+  if (age === null || age < 0) {
+    return 'La date de naissance est invalide.';
+  }
+
+  if (age < minimumAge) {
+    return (
+      `Cette personne a ${age} an${age > 1 ? 's' : ''}. `
+      + `Le club accepte les inscriptions à partir de ${minimumAge} ans.`
+    );
+  }
+
+  if (age > maximumAge) {
+    return (
+      `Cette personne a ${age} ans. `
+      + `Le club accepte les inscriptions jusqu’à ${maximumAge} ans. `
+      + 'Merci de contacter le club pour une demande particulière.'
+    );
+  }
+
+  if (
+    ageCategory === 'adulte'
+    && age < adultAgeThreshold
+  ) {
+    return (
+      `Cette personne a ${age} an${age > 1 ? 's' : ''}. `
+      + `Choisissez « Enfant » pour une personne âgée de `
+      + `${minimumAge} à ${adultAgeThreshold - 1} ans.`
+    );
+  }
+
+  if (
+    ageCategory === 'enfant'
+    && age >= adultAgeThreshold
+  ) {
+    return (
+      `Cette personne a ${age} ans. `
+      + `Choisissez « Adulte » à partir de ${adultAgeThreshold} ans.`
+    );
+  }
+
+  return null;
+}
+
+function validateField(
+  name,
+  value,
+  formData,
+  settings,
+) {
+  const {
+    minimumAge,
+    adultAgeThreshold,
+    maximumAge,
+  } = settings;
+
+  switch (name) {
+    case 'birthDate':
+      return getBirthDateError(
+        value,
+        formData.ageCategory,
+        minimumAge,
+        adultAgeThreshold,
+        maximumAge,
+      );
+
+    case 'email':
+      if (!value.trim()) {
+        return 'L’adresse e-mail est obligatoire.';
+      }
+
+      if (!isValidEmail(value)) {
+        return 'Saisissez une adresse e-mail valide.';
+      }
+
+      return null;
+
+    case 'phone':
+      if (!value.trim()) {
+        return 'Le téléphone est obligatoire.';
+      }
+
+      if (!isValidFrenchPhone(value)) {
+        return (
+          'Saisissez un numéro français valide, '
+          + 'par exemple 06 12 34 56 78.'
+        );
+      }
+
+      return null;
+
+    case 'emergencyContactPhone':
+      if (!value.trim()) {
+        return (
+          'Le téléphone du contact d’urgence '
+          + 'est obligatoire.'
+        );
+      }
+
+      if (!isValidFrenchPhone(value)) {
+        return 'Saisissez un numéro français valide.';
+      }
+
+      return null;
+
+    case 'legalRepresentativeEmail':
+      if (formData.ageCategory !== 'enfant') {
+        return null;
+      }
+
+      if (!value.trim()) {
+        return (
+          'L’e-mail du représentant légal '
+          + 'est obligatoire.'
+        );
+      }
+
+      if (!isValidEmail(value)) {
+        return 'Saisissez une adresse e-mail valide.';
+      }
+
+      return null;
+
+    case 'legalRepresentativePhone':
+      if (formData.ageCategory !== 'enfant') {
+        return null;
+      }
+
+      if (!value.trim()) {
+        return (
+          'Le téléphone du représentant légal '
+          + 'est obligatoire.'
+        );
+      }
+
+      if (!isValidFrenchPhone(value)) {
+        return 'Saisissez un numéro français valide.';
+      }
+
+      return null;
+
+    case 'postalCode':
+      if (!value.trim()) {
+        return 'Le code postal est obligatoire.';
+      }
+
+      if (!/^\d{5}$/.test(value.trim())) {
+        return 'Le code postal doit contenir 5 chiffres.';
+      }
+
+      return null;
+
+    default:
+      return null;
+  }
+}
+
+function validateForm(formData, settings) {
   const errors = {};
 
   const requiredFields = [
-    ['firstName', 'Le prénom est obligatoire.'],
     ['lastName', 'Le nom est obligatoire.'],
+    ['firstName', 'Le prénom est obligatoire.'],
     ['gender', 'Le sexe est obligatoire.'],
-    ['birthDate', 'La date de naissance est obligatoire.'],
-    ['email', 'L’adresse e-mail est obligatoire.'],
-    ['phone', 'Le téléphone est obligatoire.'],
     ['addressLine1', 'L’adresse est obligatoire.'],
-    ['postalCode', 'Le code postal est obligatoire.'],
     ['city', 'La ville est obligatoire.'],
     [
       'emergencyContactName',
       'Le contact d’urgence est obligatoire.',
-    ],
-    [
-      'emergencyContactPhone',
-      'Le téléphone du contact d’urgence est obligatoire.',
     ],
   ];
 
@@ -43,78 +245,38 @@ function validateForm(formData) {
     }
   });
 
-  if (
-    formData.email
-    && !isValidEmail(formData.email)
-  ) {
-    errors.email =
-      'Saisissez une adresse e-mail valide.';
-  }
-
-  if (
-    formData.phone
-    && !isValidFrenchPhone(formData.phone)
-  ) {
-    errors.phone =
-      'Saisissez un numéro français valide, par exemple 06 12 34 56 78.';
-  }
-
-  if (
-    formData.emergencyContactPhone
-    && !isValidFrenchPhone(
-      formData.emergencyContactPhone,
-    )
-  ) {
-    errors.emergencyContactPhone =
-      'Saisissez un numéro français valide.';
-  }
-
-  if (
-    formData.birthDate
-    && new Date(formData.birthDate) > new Date()
-  ) {
-    errors.birthDate =
-      'La date de naissance ne peut pas être dans le futur.';
-  }
-
-  if (
-    formData.postalCode
-    && !/^\d{5}$/.test(formData.postalCode.trim())
-  ) {
-    errors.postalCode =
-      'Le code postal doit contenir 5 chiffres.';
-  }
+  const validatedFields = [
+    'birthDate',
+    'email',
+    'phone',
+    'postalCode',
+    'emergencyContactPhone',
+  ];
 
   if (formData.ageCategory === 'enfant') {
+    validatedFields.push(
+      'legalRepresentativeEmail',
+      'legalRepresentativePhone',
+    );
+
     if (!formData.legalRepresentativeName?.trim()) {
       errors.legalRepresentativeName =
         'Le représentant légal est obligatoire.';
     }
-
-    if (!formData.legalRepresentativeEmail?.trim()) {
-      errors.legalRepresentativeEmail =
-        'L’e-mail du représentant légal est obligatoire.';
-    } else if (
-      !isValidEmail(
-        formData.legalRepresentativeEmail,
-      )
-    ) {
-      errors.legalRepresentativeEmail =
-        'Saisissez une adresse e-mail valide.';
-    }
-
-    if (!formData.legalRepresentativePhone?.trim()) {
-      errors.legalRepresentativePhone =
-        'Le téléphone du représentant légal est obligatoire.';
-    } else if (
-      !isValidFrenchPhone(
-        formData.legalRepresentativePhone,
-      )
-    ) {
-      errors.legalRepresentativePhone =
-        'Saisissez un numéro français valide.';
-    }
   }
+
+  validatedFields.forEach((field) => {
+    const error = validateField(
+      field,
+      formData[field] ?? '',
+      formData,
+      settings,
+    );
+
+    if (error) {
+      errors[field] = error;
+    }
+  });
 
   return errors;
 }
@@ -132,24 +294,57 @@ export default function ContactStep({
   updateField,
   onPrevious,
   onNext,
+  minimumAge = DEFAULT_MINIMUM_AGE,
+  adultAgeThreshold = DEFAULT_ADULT_AGE_THRESHOLD,
+  maximumAge = DEFAULT_MAXIMUM_AGE,
 }) {
   const [errors, setErrors] = useState({});
+
+  const settings = {
+    minimumAge,
+    adultAgeThreshold,
+    maximumAge,
+  };
 
   function handleChange(event) {
     const { name, value } = event.target;
 
     updateField(name, value);
 
+    if (errors[name]) {
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        [name]: undefined,
+      }));
+    }
+  }
+
+  function handleBlur(event) {
+    const { name, value } = event.target;
+
+    const error = validateField(
+      name,
+      value,
+      {
+        ...formData,
+        [name]: value,
+      },
+      settings,
+    );
+
     setErrors((currentErrors) => ({
       ...currentErrors,
-      [name]: undefined,
+      [name]: error ?? undefined,
     }));
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    const validationErrors = validateForm(formData);
+    const validationErrors = validateForm(
+      formData,
+      settings,
+    );
 
     setErrors(validationErrors);
 
@@ -208,6 +403,7 @@ export default function ContactStep({
           type="date"
           value={formData.birthDate}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         <FieldError message={errors.birthDate} />
       </fieldset>
@@ -224,6 +420,7 @@ export default function ContactStep({
           type="email"
           value={formData.email}
           onChange={handleChange}
+          onBlur={handleBlur}
           autoComplete="email"
           inputMode="email"
           placeholder="nom@exemple.fr"
@@ -237,6 +434,7 @@ export default function ContactStep({
           type="tel"
           value={formData.phone}
           onChange={handleChange}
+          onBlur={handleBlur}
           autoComplete="tel"
           inputMode="tel"
           placeholder="06 12 34 56 78"
@@ -277,6 +475,7 @@ export default function ContactStep({
           type="text"
           value={formData.postalCode}
           onChange={handleChange}
+          onBlur={handleBlur}
           inputMode="numeric"
           autoComplete="postal-code"
           maxLength={5}
@@ -322,6 +521,7 @@ export default function ContactStep({
           type="tel"
           value={formData.emergencyContactPhone}
           onChange={handleChange}
+          onBlur={handleBlur}
           inputMode="tel"
           placeholder="06 12 34 56 78"
         />
@@ -341,9 +541,7 @@ export default function ContactStep({
             id="legalRepresentativeName"
             name="legalRepresentativeName"
             type="text"
-            value={
-              formData.legalRepresentativeName
-            }
+            value={formData.legalRepresentativeName}
             onChange={handleChange}
           />
           <FieldError
@@ -357,17 +555,14 @@ export default function ContactStep({
             id="legalRepresentativeEmail"
             name="legalRepresentativeEmail"
             type="email"
-            value={
-              formData.legalRepresentativeEmail
-            }
+            value={formData.legalRepresentativeEmail}
             onChange={handleChange}
+            onBlur={handleBlur}
             inputMode="email"
             placeholder="nom@exemple.fr"
           />
           <FieldError
-            message={
-              errors.legalRepresentativeEmail
-            }
+            message={errors.legalRepresentativeEmail}
           />
 
           <label htmlFor="legalRepresentativePhone">
@@ -377,17 +572,14 @@ export default function ContactStep({
             id="legalRepresentativePhone"
             name="legalRepresentativePhone"
             type="tel"
-            value={
-              formData.legalRepresentativePhone
-            }
+            value={formData.legalRepresentativePhone}
             onChange={handleChange}
+            onBlur={handleBlur}
             inputMode="tel"
             placeholder="06 12 34 56 78"
           />
           <FieldError
-            message={
-              errors.legalRepresentativePhone
-            }
+            message={errors.legalRepresentativePhone}
           />
         </fieldset>
       )}

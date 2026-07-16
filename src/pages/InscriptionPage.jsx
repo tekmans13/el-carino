@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import ContactStep from '../features/inscription/components/ContactStep';
+import HealthStep from '../features/inscription/components/HealthStep';
 import ProfileStep from '../features/inscription/components/ProfileStep';
 import RegistrationProgress from '../features/inscription/components/RegistrationProgress';
 import { useRegistrationForm } from '../features/inscription/hooks/useRegistrationForm';
@@ -14,8 +15,21 @@ export default function InscriptionPage() {
   const {
     formData,
     updateField,
+    updateHealthAnswer,
     resetForm,
   } = useRegistrationForm();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    });
+  }, [currentStep]);
+
+  function handleHealthNext() {
+    setCurrentStep(4);
+  }
 
   return (
     <main className="registration-page">
@@ -52,17 +66,28 @@ export default function InscriptionPage() {
         )}
 
         {currentStep === 3 && (
+          <HealthStep
+            formData={formData}
+            updateField={updateField}
+            updateHealthAnswer={updateHealthAnswer}
+            onPrevious={() => setCurrentStep(2)}
+            onNext={handleHealthNext}
+          />
+        )}
+
+        {currentStep === 4 && (
           <section>
-            <h2>Santé et autorisations</h2>
+            <h2>Paiement</h2>
 
             <p>
-              Cette étape sera ajoutée dans le prochain commit.
+              L’intégration du paiement sera réalisée
+              dans le prochain lot.
             </p>
 
             <div className="form-actions">
               <button
                 type="button"
-                onClick={() => setCurrentStep(2)}
+                onClick={() => setCurrentStep(3)}
               >
                 Retour
               </button>
@@ -76,6 +101,12 @@ export default function InscriptionPage() {
             onClick={() => {
               resetForm();
               setCurrentStep(1);
+
+              window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant',
+              });
             }}
           >
             Recommencer
