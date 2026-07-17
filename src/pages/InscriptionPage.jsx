@@ -160,6 +160,11 @@ export default function InscriptionPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [maxStepReached, setMaxStepReached] = useState(1);
 
+  const [
+    medicalCertificate,
+    setMedicalCertificate,
+  ] = useState(null);
+
   const pageRef = useRef(null);
 
   const {
@@ -201,6 +206,7 @@ export default function InscriptionPage() {
 
   function handleReset() {
     resetForm();
+    setMedicalCertificate(null);
     setCurrentStep(1);
     setMaxStepReached(1);
   }
@@ -311,6 +317,10 @@ export default function InscriptionPage() {
                 formData={formData}
                 updateField={updateField}
                 updateHealthAnswer={updateHealthAnswer}
+                medicalCertificate={medicalCertificate}
+                onMedicalCertificateChange={
+                  setMedicalCertificate
+                }
                 onPrevious={() => goToStep(2)}
                 onNext={() => completeStep(4)}
               />
@@ -319,6 +329,7 @@ export default function InscriptionPage() {
             {currentStep === 4 && (
               <PaymentStep
                 formData={formData}
+                medicalCertificate={medicalCertificate}
                 onPrevious={() => goToStep(3)}
               />
             )}
