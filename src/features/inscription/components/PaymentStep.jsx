@@ -23,6 +23,7 @@ function SummaryRow({ label, value }) {
 
 export default function PaymentStep({
   formData,
+  medicalCertificate,
   onPrevious,
 }) {
   const [saving, setSaving] = useState(false);
@@ -74,7 +75,10 @@ export default function PaymentStep({
       setSaveError('');
 
       const createdRegistration =
-        await createRegistration(formData);
+        await createRegistration(
+          formData,
+          medicalCertificate,
+        );
 
       setRegistration(createdRegistration);
     } catch (error) {

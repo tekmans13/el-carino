@@ -267,12 +267,11 @@ export default function HealthStep({
   formData,
   updateField,
   updateHealthAnswer,
+  medicalCertificate,
+  onMedicalCertificateChange,
   onPrevious,
   onNext,
 }) {
-  const [medicalCertificate, setMedicalCertificate] =
-    useState(null);
-
   const [errors, setErrors] = useState({});
 
   const isAdultCompetition =
@@ -337,7 +336,7 @@ export default function HealthStep({
   function handleCertificateChange(event) {
     const file = event.target.files?.[0] ?? null;
 
-    setMedicalCertificate(file);
+    onMedicalCertificateChange(file);
 
     setErrors((currentErrors) => ({
       ...currentErrors,
@@ -401,9 +400,7 @@ export default function HealthStep({
         : false,
     );
 
-    onNext({
-      medicalCertificate,
-    });
+    onNext();
   }
 
   return (
