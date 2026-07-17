@@ -5,15 +5,15 @@ import {
 } from 'react-router-dom';
 
 import ScrollToTop from '../components/ScrollToTop';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 import HomePage from '../pages/HomePage';
 import ClubPage from '../pages/ClubPage';
 import InscriptionPage from '../pages/InscriptionPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
 import AdminPage from '../pages/AdminPage';
+import AdminRegistrationPage from '../pages/AdminRegistrationPage';
 import NotFoundPage from '../pages/NotFoundPage';
-
-import ProtectedRoute from '../components/ProtectedRoute';
 
 export default function AppRouter() {
   return (
@@ -46,6 +46,15 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/inscriptions/:registrationId"
+          element={
+            <ProtectedRoute>
+              <AdminRegistrationPage />
             </ProtectedRoute>
           }
         />

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import {
   PAYMENT_STATUS_LABELS,
   PRACTICE_LABELS,
@@ -85,9 +87,7 @@ export default function RegistrationTable({
                 </td>
 
                 <td>
-                  <a
-                    href={`mailto:${registration.email}`}
-                  >
+                  <a href={`mailto:${registration.email}`}>
                     {registration.email}
                   </a>
 
@@ -110,14 +110,12 @@ export default function RegistrationTable({
                 </td>
 
                 <td>
-                  <button
-                    type="button"
+                  <Link
                     className="admin-row-action"
-                    disabled
-                    title="La fiche détaillée sera ajoutée ensuite"
+                    to={`/admin/inscriptions/${registration.id}`}
                   >
                     Ouvrir
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}

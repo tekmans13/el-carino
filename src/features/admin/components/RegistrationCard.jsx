@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import {
   PAYMENT_STATUS_LABELS,
   PRACTICE_LABELS,
@@ -96,13 +98,12 @@ export default function RegistrationCard({
         </div>
       </dl>
 
-      <button
-        type="button"
+      <Link
         className="admin-card-action"
-        disabled
+        to={`/admin/inscriptions/${registration.id}`}
       >
         Ouvrir le dossier
-      </button>
+      </Link>
     </article>
   );
 }
