@@ -1321,3 +1321,377 @@
   color: #c91f26;
   background: #fff7f7;
 }
+
+/* =========================================================
+   Administration desktop large et tableau compact
+   ========================================================= */
+
+.admin-dashboard-content {
+  min-width: 0;
+}
+
+.admin-page {
+  padding: 24px;
+}
+
+.admin-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.admin-content-card {
+  width: 100%;
+}
+
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+}
+
+.admin-registrations-table {
+  min-width: 1120px;
+  table-layout: auto;
+}
+
+.admin-registrations-table th,
+.admin-registrations-table td {
+  padding: 11px 12px;
+  white-space: nowrap;
+}
+
+.admin-registrations-table th {
+  height: 42px;
+  font-size: 0.7rem;
+  letter-spacing: 0.025em;
+  text-transform: none;
+}
+
+.admin-registrations-table td {
+  height: 54px;
+  font-size: 0.79rem;
+}
+
+.admin-registrations-table tbody tr:nth-child(even) {
+  background: #fbfcfe;
+}
+
+.admin-registrations-table tbody tr:hover {
+  background: #f7f9fc;
+}
+
+.admin-member-column {
+  width: 220px;
+  min-width: 190px;
+}
+
+.admin-member-cell {
+  gap: 10px;
+}
+
+.admin-member-cell > div {
+  min-width: 0;
+}
+
+.admin-member-cell strong,
+.admin-member-cell small {
+  display: block;
+}
+
+.admin-member-cell strong {
+  overflow: hidden;
+  color: #253044;
+  font-size: 0.81rem;
+  text-overflow: ellipsis;
+}
+
+.admin-member-cell small {
+  margin-top: 3px;
+  color: #8a94a6;
+  font-size: 0.68rem;
+}
+
+.admin-registration-avatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  font-size: 0.7rem;
+}
+
+.admin-contact-column {
+  width: 230px;
+  max-width: 260px;
+}
+
+.admin-contact-column a,
+.admin-contact-column span {
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-date-column {
+  width: 100px;
+  color: #667085;
+}
+
+.admin-actions-column {
+  width: 188px;
+  min-width: 188px;
+  text-align: center !important;
+}
+
+.admin-row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #e2e7ee;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.admin-table td .admin-icon-action {
+  display: inline-flex;
+  width: 31px;
+  height: 31px;
+  min-height: 31px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #738095;
+  cursor: pointer;
+  transition:
+    background-color 130ms ease,
+    color 130ms ease,
+    transform 130ms ease;
+}
+
+.admin-icon-action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.admin-table td .admin-icon-action:hover {
+  background: #ffffff;
+  color: #172033;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+.admin-table td .admin-icon-action.is-primary {
+  color: #315f91;
+}
+
+.admin-table td .admin-icon-action.is-primary:hover {
+  background: #edf5fc;
+  color: #174f82;
+}
+
+.admin-table td .admin-icon-action.is-danger {
+  color: #c23b42;
+}
+
+.admin-table td .admin-icon-action.is-danger:hover {
+  background: #fff1f2;
+  color: #b42318;
+}
+
+.admin-table td .admin-icon-action:disabled {
+  color: #b8c0cc;
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.admin-table td .admin-icon-action:disabled:hover {
+  background: transparent;
+  box-shadow: none;
+  color: #b8c0cc;
+  transform: none;
+}
+
+@media (min-width: 1500px) {
+  .admin-page {
+    padding: 24px 30px 30px;
+  }
+
+  .admin-registrations-table th,
+  .admin-registrations-table td {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-page {
+    padding: 16px;
+  }
+}
+
+/* =========================================================
+   Correctif pleine largeur du back-office
+   ========================================================= */
+
+.admin-dashboard {
+  width: 100%;
+  max-width: none;
+}
+
+.admin-dashboard-content {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-page {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+.admin-dashboard .admin-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.admin-dashboard .admin-content-card {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.admin-dashboard .admin-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.admin-dashboard .admin-registrations-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.admin-registrations-table th,
+.admin-registrations-table td {
+  padding: 10px 9px;
+}
+
+.admin-registrations-table th:nth-child(1) {
+  width: 18%;
+}
+
+.admin-registrations-table th:nth-child(2) {
+  width: 9%;
+}
+
+.admin-registrations-table th:nth-child(3) {
+  width: 11%;
+}
+
+.admin-registrations-table th:nth-child(4) {
+  width: 20%;
+}
+
+.admin-registrations-table th:nth-child(5) {
+  width: 10%;
+}
+
+.admin-registrations-table th:nth-child(6) {
+  width: 11%;
+}
+
+.admin-registrations-table th:nth-child(7) {
+  width: 10%;
+}
+
+.admin-registrations-table th:nth-child(8) {
+  width: 154px;
+}
+
+.admin-member-column,
+.admin-contact-column,
+.admin-date-column,
+.admin-actions-column {
+  width: auto;
+  min-width: 0;
+}
+
+.admin-member-cell {
+  min-width: 0;
+}
+
+.admin-member-cell > div {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-member-cell strong,
+.admin-member-cell small,
+.admin-contact-column a,
+.admin-contact-column span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-contact-column {
+  max-width: none;
+}
+
+.admin-contact-column a,
+.admin-contact-column span {
+  max-width: none;
+}
+
+.admin-actions-column {
+  text-align: center !important;
+}
+
+.admin-row-actions {
+  gap: 2px;
+  padding: 2px;
+}
+
+.admin-table td .admin-icon-action {
+  width: 27px;
+  height: 27px;
+  min-height: 27px;
+}
+
+.admin-icon-action svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 1200px) and (min-width: 901px) {
+  .admin-dashboard {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .admin-dashboard.is-sidebar-collapsed {
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-page {
+    padding: 18px;
+  }
+
+  .admin-registrations-table th,
+  .admin-registrations-table td {
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .admin-registration-avatar {
+    display: none;
+  }
+}
