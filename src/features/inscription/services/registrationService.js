@@ -211,6 +211,33 @@ async function removeUploadedMedicalCertificate(
   }
 }
 
+async function sendRegistrationConfirmationEmail(
+  registrationId,
+) {
+  try {
+    const { error } = await supabase.functions.invoke(
+      'send-registration-email',
+      {
+        body: {
+          registrationId,
+        },
+      },
+    );
+
+    if (error) {
+      console.error(
+        'Impossible d’envoyer le mail de confirmation :',
+        error,
+      );
+    }
+  } catch (error) {
+    console.error(
+      'Erreur lors de l’appel de send-registration-email :',
+      error,
+    );
+  }
+}
+
 export async function createRegistration(
   formData,
   medicalCertificate = null,
@@ -250,6 +277,10 @@ export async function createRegistration(
       `Impossible d’enregistrer l’inscription : ${error.message}`,
     );
   }
+
+  await sendRegistrationConfirmationEmail(
+    registrationId,
+  );
 
   return {
     id: registrationId,
