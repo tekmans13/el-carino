@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 
 import AdminSidebar from '../features/admin/components/AdminSidebar';
+import RegistrationAdminNote from '../features/admin/components/RegistrationAdminNote';
 import RegistrationStatusEditor from '../features/admin/components/RegistrationStatusEditor';
 import StatusBadge from '../features/admin/components/StatusBadge';
 
@@ -22,6 +23,7 @@ import {
 import {
   createMedicalCertificateUrl,
   getRegistrationById,
+  updateRegistrationAdminNote,
   updateRegistrationStatus,
 } from '../features/admin/services/registrationAdminService';
 
@@ -141,6 +143,16 @@ export default function AdminRegistrationPage() {
       await updateRegistrationStatus(
         registrationId,
         status,
+      );
+
+    setRegistration(updatedRegistration);
+  }
+
+  async function handleAdminNoteSave(adminNote) {
+    const updatedRegistration =
+      await updateRegistrationAdminNote(
+        registrationId,
+        adminNote,
       );
 
     setRegistration(updatedRegistration);
@@ -278,11 +290,16 @@ export default function AdminRegistrationPage() {
             {!loading && !error && registration && (
               <>
                 <RegistrationStatusEditor
-                currentStatus={registration.status}
-                onSave={handleStatusChange}
-              />
+                  currentStatus={registration.status}
+                  onSave={handleStatusChange}
+                />
 
-              <div className="admin-detail-grid">
+                <RegistrationAdminNote
+                  initialNote={registration.admin_note}
+                  onSave={handleAdminNoteSave}
+                />
+
+                <div className="admin-detail-grid">
                 <section className="admin-detail-card">
                   <header>
                     <span aria-hidden="true">1</span>

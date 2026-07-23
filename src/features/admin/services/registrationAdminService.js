@@ -59,6 +59,8 @@ const REGISTRATION_DETAIL_FIELDS = `
   payment_currency,
   paid_at,
 
+  admin_note,
+
   created_at,
   updated_at
 `;
@@ -178,6 +180,41 @@ export async function updateRegistrationStatus(
   if (error) {
     throw new Error(
       `Impossible de modifier le statut : ${error.message}`,
+    );
+  }
+
+  return data;
+}
+
+
+export async function updateRegistrationAdminNote(
+  registrationId,
+  adminNote,
+) {
+  if (!registrationId) {
+    throw new Error(
+      'La référence du dossier est obligatoire.',
+    );
+  }
+
+  const normalizedNote =
+    typeof adminNote === 'string'
+      ? adminNote.trim()
+      : '';
+
+  const { data, error } = await supabase
+    .from('inscriptions')
+    .update({
+      admin_note: normalizedNote || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', registrationId)
+    .select(REGISTRATION_DETAIL_FIELDS)
+    .single();
+
+  if (error) {
+    throw new Error(
+      `Impossible d’enregistrer la note : ${error.message}`,
     );
   }
 
