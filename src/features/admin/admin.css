@@ -1932,3 +1932,119 @@
     grid-column: auto;
   }
 }
+
+/* =========================================================
+   Modification du statut d’un dossier
+   ========================================================= */
+
+.admin-status-editor {
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid #e1e6ee;
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
+}
+
+.admin-status-editor > header {
+  margin-bottom: 17px;
+}
+
+.admin-status-editor h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.admin-status-editor header p {
+  margin-top: 4px;
+  color: #7a8597;
+  font-size: 0.78rem;
+}
+
+.admin-status-editor form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.admin-status-editor-field {
+  display: flex;
+  width: min(100%, 330px);
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-status-editor-field label {
+  color: #4b5565;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.admin-status-editor-field select {
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 8px 36px 8px 12px;
+  border: 1px solid #d4dbe5;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #243047;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.admin-status-save-button {
+  min-height: 42px;
+  padding: 8px 17px;
+  border: 0;
+  border-radius: 8px;
+  background: #bb1d25;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.admin-status-save-button:hover:not(:disabled) {
+  background: #99171d;
+}
+
+.admin-status-save-button:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.admin-status-editor-message {
+  margin-top: 12px;
+  padding: 9px 11px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.admin-status-editor-message.is-success {
+  background: #e8f7ee;
+  color: #167548;
+}
+
+.admin-status-editor-message.is-error {
+  background: #fdebec;
+  color: #b4232d;
+}
+
+@media (max-width: 600px) {
+  .admin-status-editor form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-status-editor-field {
+    width: 100%;
+  }
+
+  .admin-status-save-button {
+    width: 100%;
+  }
+}
