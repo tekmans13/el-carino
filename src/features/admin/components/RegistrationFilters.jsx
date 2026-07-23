@@ -4,25 +4,47 @@ import {
   STATUS_LABELS,
 } from '../constants';
 
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m15.5 15.5 4 4" />
+    </svg>
+  );
+}
+
+function ResetIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 8V4.5L2 7.5 5 10V8a7 7 0 1 1-1 7" />
+    </svg>
+  );
+}
+
 export default function RegistrationFilters({
   search,
   statusFilter,
   profileFilter,
   practiceFilter,
+  filtersActive,
   onSearchChange,
   onStatusChange,
   onProfileChange,
   onPracticeChange,
+  onReset,
 }) {
   return (
     <div className="admin-filters">
       <div className="admin-search-field">
-        <label htmlFor="admin-search">
+        <label
+          className="sr-only"
+          htmlFor="admin-search"
+        >
           Rechercher
         </label>
 
         <div className="admin-search-control">
-          <span aria-hidden="true">⌕</span>
+          <SearchIcon />
 
           <input
             id="admin-search"
@@ -31,12 +53,12 @@ export default function RegistrationFilters({
             onChange={(event) =>
               onSearchChange(event.target.value)
             }
-            placeholder="Nom, e-mail ou téléphone"
+            placeholder="Rechercher un nom, e-mail ou téléphone..."
           />
         </div>
       </div>
 
-      <div>
+      <div className="admin-filter-field">
         <label htmlFor="admin-status-filter">
           Statut
         </label>
@@ -60,7 +82,7 @@ export default function RegistrationFilters({
         </select>
       </div>
 
-      <div>
+      <div className="admin-filter-field">
         <label htmlFor="admin-profile-filter">
           Profil
         </label>
@@ -84,7 +106,7 @@ export default function RegistrationFilters({
         </select>
       </div>
 
-      <div>
+      <div className="admin-filter-field">
         <label htmlFor="admin-practice-filter">
           Pratique
         </label>
@@ -109,6 +131,16 @@ export default function RegistrationFilters({
           )}
         </select>
       </div>
+
+      <button
+        type="button"
+        className="admin-reset-filters"
+        onClick={onReset}
+        disabled={!filtersActive}
+      >
+        <ResetIcon />
+        <span>Réinitialiser</span>
+      </button>
     </div>
   );
 }

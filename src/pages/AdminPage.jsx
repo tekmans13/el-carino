@@ -195,15 +195,6 @@ export default function AdminPage() {
                   </span>
                 </div>
 
-                {filtersActive && (
-                  <button
-                    type="button"
-                    className="admin-reset-filters"
-                    onClick={resetFilters}
-                  >
-                    Réinitialiser les filtres
-                  </button>
-                )}
               </header>
 
               <RegistrationFilters
@@ -211,10 +202,12 @@ export default function AdminPage() {
                 statusFilter={statusFilter}
                 profileFilter={profileFilter}
                 practiceFilter={practiceFilter}
+                filtersActive={filtersActive}
                 onSearchChange={setSearch}
                 onStatusChange={setStatusFilter}
                 onProfileChange={setProfileFilter}
                 onPracticeChange={setPracticeFilter}
+                onReset={resetFilters}
               />
 
               {loading && (

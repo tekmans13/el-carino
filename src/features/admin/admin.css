@@ -1695,3 +1695,240 @@
     display: none;
   }
 }
+
+/* =========================================================
+   Statistiques et filtres compacts
+   ========================================================= */
+
+.admin-statistics {
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.admin-statistics article {
+  display: flex;
+  min-height: 88px;
+  align-items: center;
+  gap: 15px;
+  box-sizing: border-box;
+  padding: 16px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.admin-statistic-icon {
+  display: inline-flex;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.admin-statistic-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-statistic-icon.is-total {
+  background: #f0ebff;
+  color: #6941c6;
+}
+
+.admin-statistic-icon.is-pending {
+  background: #fff3dc;
+  color: #d78200;
+}
+
+.admin-statistic-icon.is-incomplete {
+  background: #ffe9eb;
+  color: #d92d3b;
+}
+
+.admin-statistic-icon.is-validated {
+  background: #e5f7ed;
+  color: #159455;
+}
+
+.admin-statistic-content {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: 8px;
+}
+
+.admin-statistic-content strong {
+  grid-row: 1 / span 2;
+  margin: 0;
+  color: #172033;
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.admin-statistic-content > span {
+  color: #344054;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.admin-statistic-content small {
+  color: #8a94a6;
+  font-size: 0.68rem;
+}
+
+.admin-content-card-header {
+  padding: 17px 20px;
+}
+
+.admin-filters {
+  display: grid;
+  grid-template-columns:
+    minmax(270px, 1.45fr)
+    repeat(3, minmax(145px, 0.75fr))
+    auto;
+  align-items: end;
+  gap: 12px;
+  padding: 15px 20px;
+}
+
+.admin-filter-field {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-filter-field label {
+  padding-left: 2px;
+  color: #667085;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.admin-filters input,
+.admin-filters select {
+  min-height: 40px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-color: #d5dce5;
+  border-radius: 8px;
+  font-size: 0.78rem;
+}
+
+.admin-search-control {
+  position: relative;
+}
+
+.admin-search-control svg {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  z-index: 1;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #8490a2;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.admin-search-control input {
+  padding-left: 38px;
+}
+
+.admin-reset-filters {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 13px;
+  white-space: nowrap;
+}
+
+.admin-reset-filters svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-reset-filters:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+@media (max-width: 1200px) {
+  .admin-filters {
+    grid-template-columns:
+      minmax(230px, 1fr)
+      repeat(3, minmax(130px, 0.7fr))
+      auto;
+  }
+
+  .admin-reset-filters span {
+    display: none;
+  }
+
+  .admin-reset-filters {
+    width: 40px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 1050px) {
+  .admin-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-search-field {
+    grid-column: 1 / -1;
+  }
+
+  .admin-reset-filters {
+    width: auto;
+  }
+
+  .admin-reset-filters span {
+    display: inline;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-statistics article {
+    min-height: 78px;
+    padding: 13px;
+  }
+
+  .admin-statistic-icon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .admin-statistic-content strong {
+    font-size: 1.35rem;
+  }
+
+  .admin-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-search-field {
+    grid-column: auto;
+  }
+}
