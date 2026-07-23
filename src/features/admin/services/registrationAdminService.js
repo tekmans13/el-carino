@@ -138,3 +138,48 @@ export async function createMedicalCertificateUrl(
 
   return data.signedUrl;
 }
+
+const ADMIN_EDITABLE_STATUSES = [
+  'soumis',
+  'incomplet',
+  'complement_demande',
+  'valide',
+  'en_attente_paiement',
+  'refuse',
+  'annule',
+];
+
+export async function updateRegistrationStatus(
+  registrationId,
+  status,
+) {
+  if (!registrationId) {
+    throw new Error(
+      'La référence du dossier est obligatoire.',
+    );
+  }
+
+  if (!ADMIN_EDITABLE_STATUSES.includes(status)) {
+    throw new Error(
+      'Le statut demandé n’est pas autorisé.',
+    );
+  }
+
+  const { data, error } = await supabase
+    .from('inscriptions')
+    .update({
+      status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', registrationId)
+    .select(REGISTRATION_DETAIL_FIELDS)
+    .single();
+
+  if (error) {
+    throw new Error(
+      `Impossible de modifier le statut : ${error.message}`,
+    );
+  }
+
+  return data;
+}

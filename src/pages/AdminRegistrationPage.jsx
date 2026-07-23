@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 
 import AdminSidebar from '../features/admin/components/AdminSidebar';
+import RegistrationStatusEditor from '../features/admin/components/RegistrationStatusEditor';
 import StatusBadge from '../features/admin/components/StatusBadge';
 
 import {
@@ -21,6 +22,7 @@ import {
 import {
   createMedicalCertificateUrl,
   getRegistrationById,
+  updateRegistrationStatus,
 } from '../features/admin/services/registrationAdminService';
 
 import { formatDate } from '../features/admin/utils/registrationFormatters';
@@ -133,6 +135,16 @@ export default function AdminRegistrationPage() {
       active = false;
     };
   }, [registrationId]);
+
+  async function handleStatusChange(status) {
+    const updatedRegistration =
+      await updateRegistrationStatus(
+        registrationId,
+        status,
+      );
+
+    setRegistration(updatedRegistration);
+  }
 
   async function handleOpenMedicalCertificate() {
     if (
@@ -264,6 +276,12 @@ export default function AdminRegistrationPage() {
             )}
 
             {!loading && !error && registration && (
+              <>
+                <RegistrationStatusEditor
+                currentStatus={registration.status}
+                onSave={handleStatusChange}
+              />
+
               <div className="admin-detail-grid">
                 <section className="admin-detail-card">
                   <header>
@@ -667,6 +685,7 @@ export default function AdminRegistrationPage() {
                   </dl>
                 </section>
               </div>
+              </>
             )}
 
             <footer className="admin-footer">
