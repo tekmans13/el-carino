@@ -10,6 +10,7 @@ import AdminStatistics from '../features/admin/components/AdminStatistics';
 import RegistrationFilters from '../features/admin/components/RegistrationFilters';
 import RegistrationTable from '../features/admin/components/RegistrationTable';
 
+import { exportRegistrationsToExcel } from '../features/admin/services/exportExcel';
 import { listRegistrations } from '../features/admin/services/registrationAdminService';
 
 import { normalizeSearchValue } from '../features/admin/utils/registrationFormatters';
@@ -25,6 +26,7 @@ export default function AdminPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [exportError, setExportError] = useState('');
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] =
@@ -149,6 +151,22 @@ export default function AdminPage() {
     setPracticeFilter('');
   }
 
+  function handleExport() {
+    try {
+      setExportError('');
+
+      exportRegistrationsToExcel(
+        filteredRegistrations,
+      );
+    } catch (exportException) {
+      setExportError(
+        exportException instanceof Error
+          ? exportException.message
+          : 'Impossible de générer le fichier Excel.',
+      );
+    }
+  }
+
   return (
     <div
       className={[
@@ -195,7 +213,27 @@ export default function AdminPage() {
                   </span>
                 </div>
 
+                <button
+                  type="button"
+                  className="admin-export-button"
+                  onClick={handleExport}
+                  disabled={
+                    loading
+                    || filteredRegistrations.length === 0
+                  }
+                >
+                  Exporter Excel
+                </button>
               </header>
+
+              {exportError && (
+                <div
+                  className="admin-export-error"
+                  role="alert"
+                >
+                  {exportError}
+                </div>
+              )}
 
               <RegistrationFilters
                 search={search}
