@@ -71,9 +71,9 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Droit à l’image
 - [x] Affichage compact des réponses Oui / Non
 - [ ] Enregistrement des réponses détaillées dans Supabase
-- [ ] Téléversement du certificat médical
-- [ ] Stockage privé des documents
-- [ ] Consultation du certificat par le bureau
+- [x] Téléversement du certificat médical
+- [x] Stockage privé des documents
+- [x] Consultation du certificat par le bureau
 
 ### Navigation
 
@@ -95,8 +95,8 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Statut initial `soumis`
 - [x] Affichage de la référence du dossier
 - [ ] Empêcher les doubles inscriptions accidentelles
-- [ ] Enregistrer les données de santé nécessaires
-- [ ] Enregistrer les métadonnées des documents
+- [x] Enregistrer les données de santé nécessaires
+- [x] Enregistrer les métadonnées des documents
 - [ ] Générer un numéro de dossier lisible
 - [ ] Afficher une page finale de confirmation
 
@@ -120,10 +120,10 @@ Fonctionnalités :
 
 - [x] Types et statuts créés en base
 - [x] Politiques de lecture pour les rôles Admin et Bureau
-- [ ] Modification du statut depuis le back-office
+- [x] Modification du statut depuis le back-office
 - [ ] Demande de complément
 - [ ] Motif de refus
-- [ ] Commentaires internes
+- [x] Commentaires internes
 - [ ] Historique des changements de statut
 - [ ] Journal des actions administratives
 
@@ -147,26 +147,27 @@ Fonctionnalités :
 
 - [x] Service de lecture des inscriptions
 - [x] Première liste des dossiers
-- [ ] Mise en page complète du back-office
-- [ ] Recherche par nom ou e-mail
-- [ ] Filtre par statut
-- [ ] Filtre Enfant / Adulte
-- [ ] Filtre Loisir / Compétition
+- [x] Mise en page complète du back-office
+- [x] Recherche par nom ou e-mail
+- [x] Filtre par statut
+- [x] Filtre Enfant / Adulte
+- [x] Filtre Loisir / Compétition
 - [ ] Filtre par état du paiement
 - [ ] Tri par date
 - [ ] Pagination
-- [ ] Compteurs et statistiques
+- [x] Compteurs et statistiques
+- [x] Export Excel des inscriptions
 
 ### Fiche d’inscription
 
-- [ ] Page détaillée d’un dossier
-- [ ] Informations de l’adhérent
-- [ ] Informations du représentant légal
-- [ ] Questionnaire de santé
-- [ ] Documents
-- [ ] État du paiement
-- [ ] Modification du statut
-- [ ] Commentaire interne
+- [x] Page détaillée d’un dossier
+- [x] Informations de l’adhérent
+- [x] Informations du représentant légal
+- [x] Questionnaire de santé
+- [x] Documents
+- [x] État du paiement
+- [x] Modification du statut
+- [x] Commentaire interne
 - [ ] Historique
 - [ ] Export PDF
 - [ ] Impression
@@ -219,7 +220,7 @@ Valeurs par défaut actuelles :
 ## 7. E-mails
 
 - [ ] Configuration SMTP
-- [ ] Mail de confirmation de dépôt
+- [x] Mail de confirmation de dépôt
 - [ ] Mail récapitulatif du dossier
 - [ ] Mail de demande de complément
 - [ ] Mail de validation
@@ -270,12 +271,12 @@ Documents pouvant être demandés :
 
 Fonctionnalités :
 
-- [ ] Bucket Supabase Storage privé
-- [ ] Téléversement sécurisé
+- [x] Bucket Supabase Storage privé
+- [x] Téléversement sécurisé
 - [ ] Validation du type MIME
 - [ ] Validation de la taille
-- [ ] Association du document à une inscription
-- [ ] Consultation sécurisée par le bureau
+- [x] Association du document à une inscription
+- [x] Consultation sécurisée par le bureau
 - [ ] Remplacement d'un document
 - [ ] Suppression d'un document
 - [ ] Historique des documents
@@ -308,7 +309,7 @@ Fonctionnalités :
 - [ ] Configuration finale de Supabase Auth
 - [ ] SMTP de production
 - [ ] Variables Stripe de production
-- [ ] Edge Functions
+- [x] Edge Functions
 - [ ] Webhook Stripe
 - [ ] Sauvegarde de la base
 - [ ] Procédure de restauration
@@ -392,7 +393,7 @@ Le site institutionnel sera développé après la finalisation de la V1.
 
 ## V1
 
-**Avancement estimé : 55 %**
+**Avancement estimé : 70 %**
 
 ### Terminé
 
@@ -401,16 +402,22 @@ Le site institutionnel sera développé après la finalisation de la V1.
 - Validation des données
 - Enregistrement dans Supabase
 - Sécurité RLS
-- Début du back-office
+- Back-office
+- Recherche
+- Filtres
+- Fiche détaillée
+- Gestion des statuts
+- Notes internes
+- Export Excel
+- Gestion des certificats médicaux
+- E-mail de confirmation
 
 ### En cours
 
-- Interface d'administration
+- Paiement Stripe
 
 ### À venir
 
-- Documents
-- E-mails
 - Paiement
 - Paramétrage
 - Finalisation
