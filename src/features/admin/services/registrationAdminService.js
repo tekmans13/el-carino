@@ -7,10 +7,37 @@ const REGISTRATION_LIST_FIELDS = `
   id,
   first_name,
   last_name,
+  gender,
+  birth_date,
   email,
   phone,
+
+  address_line1,
+  address_line2,
+  postal_code,
+  city,
+
   age_category,
   practice_type,
+
+  emergency_contact_name,
+  emergency_contact_phone,
+
+  legal_representative_name,
+  legal_representative_email,
+  legal_representative_phone,
+
+  health_questionnaire_completed,
+  health_questionnaire_has_positive_answer,
+
+  medical_certificate_required,
+  medical_certificate_storage_path,
+  medical_certificate_filename,
+  medical_certificate_uploaded_at,
+
+  image_consent,
+  parental_authorization,
+
   status,
   payment_status,
   created_at

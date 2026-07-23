@@ -2189,3 +2189,33 @@
     width: 100%;
   }
 }
+.admin-export-button {
+  min-height: 42px;
+  padding: 9px 16px;
+  border: 1px solid #a8141b;
+  border-radius: 9px;
+  background: #c91f26;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-export-button:hover:not(:disabled) {
+  background: #a8141b;
+}
+
+.admin-export-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.admin-export-error {
+  padding: 12px 24px;
+  border-bottom: 1px solid #efb6ba;
+  background: #fff4f4;
+  color: #b42318;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
