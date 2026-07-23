@@ -61,9 +61,31 @@ const REGISTRATION_DETAIL_FIELDS = `
 
   admin_note,
 
+  complement_message,
+  complement_requested_at,
+  complement_email_sent_at,
+
   created_at,
   updated_at
 `;
+
+const ADMIN_EDITABLE_STATUSES = [
+  'soumis',
+  'incomplet',
+  'complement_demande',
+  'valide',
+  'en_attente_paiement',
+  'refuse',
+  'annule',
+];
+
+function validateRegistrationId(registrationId) {
+  if (!registrationId) {
+    throw new Error(
+      'La référence du dossier est obligatoire.',
+    );
+  }
+}
 
 export async function listRegistrations() {
   const { data, error } = await supabase
@@ -82,12 +104,10 @@ export async function listRegistrations() {
   return data ?? [];
 }
 
-export async function getRegistrationById(registrationId) {
-  if (!registrationId) {
-    throw new Error(
-      'La référence du dossier est obligatoire.',
-    );
-  }
+export async function getRegistrationById(
+  registrationId,
+) {
+  validateRegistrationId(registrationId);
 
   const { data, error } = await supabase
     .from('inscriptions')
@@ -141,25 +161,11 @@ export async function createMedicalCertificateUrl(
   return data.signedUrl;
 }
 
-const ADMIN_EDITABLE_STATUSES = [
-  'soumis',
-  'incomplet',
-  'complement_demande',
-  'valide',
-  'en_attente_paiement',
-  'refuse',
-  'annule',
-];
-
 export async function updateRegistrationStatus(
   registrationId,
   status,
 ) {
-  if (!registrationId) {
-    throw new Error(
-      'La référence du dossier est obligatoire.',
-    );
-  }
+  validateRegistrationId(registrationId);
 
   if (!ADMIN_EDITABLE_STATUSES.includes(status)) {
     throw new Error(
@@ -186,16 +192,11 @@ export async function updateRegistrationStatus(
   return data;
 }
 
-
 export async function updateRegistrationAdminNote(
   registrationId,
   adminNote,
 ) {
-  if (!registrationId) {
-    throw new Error(
-      'La référence du dossier est obligatoire.',
-    );
-  }
+  validateRegistrationId(registrationId);
 
   const normalizedNote =
     typeof adminNote === 'string'
@@ -219,4 +220,78 @@ export async function updateRegistrationAdminNote(
   }
 
   return data;
+}
+
+export async function requestRegistrationComplement(
+  registrationId,
+  message,
+) {
+  validateRegistrationId(registrationId);
+
+  const normalizedMessage =
+    typeof message === 'string'
+      ? message.trim()
+      : '';
+
+  if (!normalizedMessage) {
+    throw new Error(
+      'Le message de demande de complément est obligatoire.',
+    );
+  }
+
+  const requestedAt = new Date().toISOString();
+
+  const {
+    data: updatedRegistration,
+    error: updateError,
+  } = await supabase
+    .from('inscriptions')
+    .update({
+      status: 'complement_demande',
+      complement_message: normalizedMessage,
+      complement_requested_at: requestedAt,
+
+      // Une nouvelle demande doit pouvoir déclencher
+      // un nouvel e-mail.
+      complement_email_sent_at: null,
+
+      updated_at: requestedAt,
+    })
+    .eq('id', registrationId)
+    .select(REGISTRATION_DETAIL_FIELDS)
+    .single();
+
+  if (updateError) {
+    throw new Error(
+      `Impossible d’enregistrer la demande de complément : ${updateError.message}`,
+    );
+  }
+
+  const {
+    data: emailResult,
+    error: emailError,
+  } = await supabase.functions.invoke(
+    'send-registration-email',
+    {
+      body: {
+        registrationId,
+        type: 'complement_request',
+      },
+    },
+  );
+
+  if (emailError) {
+    throw new Error(
+      `La demande a été enregistrée, mais l’e-mail n’a pas pu être envoyé : ${emailError.message}`,
+    );
+  }
+
+  if (!emailResult?.success) {
+    throw new Error(
+      emailResult?.error
+        ?? 'La demande a été enregistrée, mais l’e-mail n’a pas pu être envoyé.',
+    );
+  }
+
+  return getRegistrationById(registrationId);
 }
