@@ -1,5 +1,7 @@
 # El Carino
 
+Version actuelle : **0.8.0**
+
 Application web de gestion des inscriptions du club El Carino.
 
 Cette application permet de gérer l'ensemble du processus d'inscription des adhérents, depuis le formulaire public jusqu'au suivi administratif, en passant par la gestion des documents, des paiements et des communications.
@@ -12,9 +14,9 @@ Cette application permet de gérer l'ensemble du processus d'inscription des adh
 
 - Choix du profil (Enfant / Adulte)
 - Choix de la pratique (Loisir / Compétition)
-- Formulaire en plusieurs étapes
+- Formulaire multi-étapes
 - Coordonnées complètes
-- Adresse
+- Adresse postale
 - Contact d'urgence
 - Représentant légal (mineurs)
 - Questionnaire de santé dynamique
@@ -38,8 +40,23 @@ L'espace d'administration permet de :
 - modifier le statut d'un dossier ;
 - ajouter des notes internes ;
 - consulter le certificat médical ;
-- suivre les paiements ;
+- remplacer un certificat médical ;
+- supprimer automatiquement l'ancien certificat dans Supabase Storage ;
+- suivre l'état des paiements ;
 - exporter les dossiers au format Excel.
+
+---
+
+## Gestion des documents
+
+Les certificats médicaux sont stockés dans un bucket privé Supabase.
+
+Le back-office permet de :
+
+- consulter un certificat médical via une URL signée temporaire ;
+- remplacer un certificat médical existant ;
+- supprimer automatiquement l'ancien document après un remplacement réussi ;
+- conserver les métadonnées du document dans la base de données.
 
 ---
 
@@ -68,22 +85,34 @@ L'export contient notamment :
 - Droit à l'image
 - Paiement
 
-L'export respecte automatiquement les filtres actuellement affichés dans le back-office.
+L'export respecte automatiquement les filtres actuellement appliqués dans le back-office.
 
 ---
 
 # Technologies
 
+## Front-end
+
 - React 19
 - Vite
 - React Router
+
+## Back-end
+
 - Supabase
 - Supabase Auth
 - Supabase Database
 - Supabase Storage
 - Supabase Edge Functions
+
+## Qualité
+
+- ESLint
 - Vitest
 - Playwright
+
+## Outils
+
 - SheetJS (xlsx)
 - GitHub Actions
 
@@ -104,11 +133,7 @@ VITE_SUPABASE_URL=https://xxxxxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
----
-
-# Développement
-
-Lancer le serveur :
+Lancer le serveur de développement :
 
 ```bash
 npm run dev
@@ -116,9 +141,9 @@ npm run dev
 
 ---
 
-# Production
+# Développement
 
-Créer le build :
+Créer le build de production :
 
 ```bash
 npm run build
@@ -133,6 +158,12 @@ dist/
 ---
 
 # Tests
+
+Lancer ESLint :
+
+```bash
+npm run lint
+```
 
 Tests unitaires :
 
@@ -150,21 +181,23 @@ npm run test:e2e
 
 # Structure du projet
 
-```
+```text
 src/
-    components/
-    features/
-    hooks/
-    pages/
-    router/
-    services/
-    styles/
+├── components/
+├── features/
+├── hooks/
+├── pages/
+├── router/
+├── services/
+└── styles/
 
 supabase/
-    migrations/
-    functions/
+├── functions/
+└── migrations/
 
 tests/
+├── e2e/
+└── unit/
 ```
 
 ---
@@ -173,31 +206,34 @@ tests/
 
 Les migrations Supabase sont conservées dans :
 
-```
+```text
 supabase/migrations/
 ```
 
-Toutes les modifications de la base doivent être versionnées.
+Toutes les évolutions de la base de données doivent être versionnées via une migration.
 
 ---
 
 # Déploiement
 
-La CI GitHub Actions réalise automatiquement :
+La pipeline GitHub Actions réalise automatiquement :
 
 1. Installation des dépendances
-2. Tests unitaires
-3. Build Vite
-4. Déploiement FTP
+2. Vérification ESLint
+3. Exécution des tests unitaires
+4. Build Vite
+5. Déploiement FTP
 
 ---
 
 # Sécurité
 
 - Authentification Supabase
-- Row Level Security
+- Row Level Security (RLS)
 - Routes administrateur protégées
 - Documents stockés dans un bucket privé
+- Consultation des certificats via des URL signées temporaires
+- Suppression sécurisée des anciens certificats lors d'un remplacement
 - Lecture réservée aux membres autorisés
 
 Les exports Excel contiennent des données personnelles et médicales. Ils sont destinés exclusivement aux membres habilités du club.
@@ -206,7 +242,7 @@ Les exports Excel contiennent des données personnelles et médicales. Ils sont 
 
 # Documentation
 
-- ROADMAP.md
-- CHANGELOG.md
-- CONTRIBUTING.md
-- LICENSE
+- `ROADMAP.md`
+- `CHANGELOG.md`
+- `CONTRIBUTING.md`
+- `LICENSE`
