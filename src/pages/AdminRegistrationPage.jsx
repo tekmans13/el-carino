@@ -290,11 +290,13 @@ export default function AdminRegistrationPage() {
             {!loading && !error && registration && (
               <>
                 <RegistrationStatusEditor
+          key={registration.id}
                   currentStatus={registration.status}
                   onSave={handleStatusChange}
                 />
 
                 <RegistrationAdminNote
+          key={registration.id}
                   initialNote={registration.admin_note}
                   onSave={handleAdminNoteSave}
                 />

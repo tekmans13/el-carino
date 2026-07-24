@@ -3,6 +3,9 @@ import { supabase } from '../../../services/supabase';
 const MEDICAL_CERTIFICATE_BUCKET =
   'medical-certificates';
 
+const MAX_MEDICAL_CERTIFICATE_SIZE =
+  5 * 1024 * 1024;
+
 const REGISTRATION_LIST_FIELDS = `
   id,
   first_name,
@@ -92,6 +95,16 @@ const REGISTRATION_DETAIL_FIELDS = `
   updated_at
 `;
 
+const ADMIN_EDITABLE_STATUSES = [
+  'soumis',
+  'incomplet',
+  'complement_demande',
+  'valide',
+  'en_attente_paiement',
+  'refuse',
+  'annule',
+];
+
 export async function listRegistrations() {
   const { data, error } = await supabase
     .from('inscriptions')
@@ -109,7 +122,9 @@ export async function listRegistrations() {
   return data ?? [];
 }
 
-export async function getRegistrationById(registrationId) {
+export async function getRegistrationById(
+  registrationId,
+) {
   if (!registrationId) {
     throw new Error(
       'La référence du dossier est obligatoire.',
@@ -168,15 +183,143 @@ export async function createMedicalCertificateUrl(
   return data.signedUrl;
 }
 
-const ADMIN_EDITABLE_STATUSES = [
-  'soumis',
-  'incomplet',
-  'complement_demande',
-  'valide',
-  'en_attente_paiement',
-  'refuse',
-  'annule',
-];
+function validateMedicalCertificate(file) {
+  if (!(file instanceof File)) {
+    throw new Error(
+      'Veuillez sélectionner un certificat médical.',
+    );
+  }
+
+  if (file.type !== 'application/pdf') {
+    throw new Error(
+      'Le certificat médical doit être un fichier PDF.',
+    );
+  }
+
+  if (file.size > MAX_MEDICAL_CERTIFICATE_SIZE) {
+    throw new Error(
+      'Le certificat médical ne doit pas dépasser 5 Mo.',
+    );
+  }
+}
+
+async function uploadMedicalCertificate(
+  storagePath,
+  file,
+) {
+  const { error } = await supabase.storage
+    .from(MEDICAL_CERTIFICATE_BUCKET)
+    .upload(
+      storagePath,
+      file,
+      {
+        upsert: false,
+        contentType: 'application/pdf',
+        cacheControl: '3600',
+      },
+    );
+
+  if (error) {
+    throw new Error(
+      `Impossible de déposer le certificat médical : ${error.message}`,
+    );
+  }
+}
+
+async function deleteMedicalCertificate(
+  storagePath,
+) {
+  if (!storagePath) {
+    return;
+  }
+
+  const { error } = await supabase.storage
+    .from(MEDICAL_CERTIFICATE_BUCKET)
+    .remove([storagePath]);
+
+  if (error) {
+    throw new Error(
+      `Impossible de supprimer le certificat médical : ${error.message}`,
+    );
+  }
+}
+
+export async function replaceMedicalCertificate(
+  registration,
+  file,
+) {
+  validateMedicalCertificate(file);
+
+  if (!registration?.id) {
+    throw new Error(
+      'La référence du dossier est obligatoire.',
+    );
+  }
+
+  const oldStoragePath =
+    registration.medical_certificate_storage_path;
+
+  if (!oldStoragePath) {
+    throw new Error(
+      'Aucun certificat existant à remplacer.',
+    );
+  }
+
+  const newStoragePath =
+    `${registration.id}/certificat-medical-${Date.now()}.pdf`;
+
+  await uploadMedicalCertificate(
+    newStoragePath,
+    file,
+  );
+
+  const uploadedAt = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from('inscriptions')
+    .update({
+      medical_certificate_storage_path:
+        newStoragePath,
+      medical_certificate_filename:
+        file.name,
+      medical_certificate_mime_type:
+        file.type,
+      medical_certificate_uploaded_at:
+        uploadedAt,
+      updated_at:
+        uploadedAt,
+    })
+    .eq('id', registration.id)
+    .select(REGISTRATION_DETAIL_FIELDS)
+    .single();
+
+  if (error) {
+    try {
+      await deleteMedicalCertificate(
+        newStoragePath,
+      );
+    } catch {
+      // Le nettoyage ne doit pas masquer l’erreur SQL.
+    }
+
+    throw new Error(
+      `Impossible de remplacer le certificat médical : ${error.message}`,
+    );
+  }
+
+  try {
+    await deleteMedicalCertificate(
+      oldStoragePath,
+    );
+  } catch (deleteError) {
+    console.error(
+      'Le certificat a été remplacé, mais l’ancien fichier n’a pas pu être supprimé.',
+      deleteError,
+    );
+  }
+
+  return data;
+}
 
 export async function updateRegistrationStatus(
   registrationId,
@@ -212,7 +355,6 @@ export async function updateRegistrationStatus(
 
   return data;
 }
-
 
 export async function updateRegistrationAdminNote(
   registrationId,

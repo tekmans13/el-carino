@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from 'react';
+import { useState } from 'react';
 
 import { STATUS_LABELS } from '../constants';
 
@@ -26,10 +23,6 @@ export default function RegistrationStatusEditor({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  useEffect(() => {
-    setSelectedStatus(currentStatus);
-  }, [currentStatus]);
 
   const statusChanged =
     selectedStatus !== currentStatus;

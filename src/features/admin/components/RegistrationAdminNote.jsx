@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from 'react';
+import { useState } from 'react';
 
 export default function RegistrationAdminNote({
   initialNote = '',
@@ -15,13 +12,6 @@ export default function RegistrationAdminNote({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  useEffect(() => {
-    const normalizedNote = initialNote ?? '';
-
-    setNote(normalizedNote);
-    setSavedNote(normalizedNote);
-  }, [initialNote]);
 
   const noteChanged = note !== savedNote;
 
@@ -44,7 +34,9 @@ export default function RegistrationAdminNote({
       await onSave(note);
 
       setSavedNote(note);
-      setSuccess('La note administrateur a été enregistrée.');
+      setSuccess(
+        'La note administrateur a été enregistrée.',
+      );
     } catch (saveError) {
       setError(
         saveError instanceof Error
