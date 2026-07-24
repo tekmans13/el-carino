@@ -1,3 +1,4 @@
+import MedicalCertificateReplacement from '../features/admin/components/MedicalCertificateReplacement';
 import {
   useEffect,
   useState,
@@ -71,6 +72,7 @@ function DetailRow({
   label,
   value,
 }) {
+
   return (
     <div className="admin-detail-row">
       <dt>{label}</dt>
@@ -605,21 +607,25 @@ export default function AdminRegistrationPage() {
                     />
                   </dl>
 
-                  {registration
-                    .medical_certificate_storage_path && (
-                    <button
-                      type="button"
-                      className="admin-detail-back-button"
-                      onClick={
-                        handleOpenMedicalCertificate
-                      }
-                      disabled={certificateOpening}
-                    >
-                      {certificateOpening
-                        ? 'Ouverture en cours…'
-                        : 'Ouvrir le certificat médical'}
-                    </button>
-                  )}
+                {registration.medical_certificate_storage_path && (
+  <>
+    <button
+      type="button"
+      className="admin-detail-back-button"
+      onClick={handleOpenMedicalCertificate}
+      disabled={certificateOpening}
+    >
+      {certificateOpening
+        ? 'Ouverture en cours…'
+        : 'Ouvrir le certificat médical'}
+    </button>
+
+    <MedicalCertificateReplacement
+      registration={registration}
+      onUpdated={setRegistration}
+    />
+  </>
+)}
 
                   {certificateError && (
                     <p
