@@ -2,13 +2,13 @@
 
 ## Objectif du projet
 
-Créer une application d’inscription complète pour le club El Carino, avec :
+Créer une application d'inscription complète pour le club El Carino, avec :
 
-- un tunnel d’inscription public ;
+- un tunnel d'inscription public ;
 - un questionnaire de santé adapté au profil ;
 - la gestion sécurisée des dossiers ;
 - un back-office pour le bureau ;
-- l’envoi d’e-mails ;
+- l'envoi d'e-mails ;
 - la demande et le suivi des paiements ;
 - des paramètres administrables.
 
@@ -16,7 +16,7 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 
 ---
 
-# V1 — Application d’inscription
+# V1 — Application d'inscription
 
 ## 1. Socle technique
 
@@ -35,7 +35,7 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 
 ---
 
-## 2. Tunnel d’inscription
+## 2. Tunnel d'inscription
 
 ### Profil
 
@@ -46,7 +46,7 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Contrôle de cohérence entre le profil et la date de naissance
 - [x] Âge minimum par défaut à 5 ans
 - [x] Âge maximum par défaut à 80 ans
-- [ ] Récupération des limites d’âge depuis les paramètres administrables
+- [ ] Récupération des limites d'âge depuis les paramètres administrables
 
 ### Informations personnelles
 
@@ -54,7 +54,7 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Date de naissance
 - [x] Coordonnées
 - [x] Adresse
-- [x] Contact d’urgence
+- [x] Contact d'urgence
 - [x] Représentant légal pour les enfants
 - [x] Vérification des adresses e-mail
 - [x] Vérification des numéros de téléphone
@@ -68,7 +68,7 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Certificat médical obligatoire en cas de réponse positive
 - [x] Certificat médical obligatoire pour certains profils
 - [x] Autorisation parentale
-- [x] Droit à l’image
+- [x] Droit à l'image
 - [x] Affichage compact des réponses Oui / Non
 - [ ] Enregistrement des réponses détaillées dans Supabase
 - [x] Téléversement du certificat médical
@@ -80,7 +80,7 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Progression en quatre étapes
 - [x] Étapes précédentes cliquables
 - [x] Blocage des étapes non encore atteintes
-- [x] Retour automatique en haut au changement d’étape
+- [x] Retour automatique en haut au changement d'étape
 - [x] Résumé latéral
 - [x] Coches vertes lorsque les étapes sont complétées
 - [x] Responsive mobile
@@ -89,8 +89,8 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 
 ## 3. Enregistrement du dossier
 
-- [x] Création de l’inscription dans Supabase
-- [x] Génération de l’UUID côté navigateur
+- [x] Création de l'inscription dans Supabase
+- [x] Génération de l'UUID côté navigateur
 - [x] Création sécurisée avec RLS
 - [x] Statut initial `soumis`
 - [x] Affichage de la référence du dossier
@@ -121,11 +121,7 @@ Fonctionnalités :
 - [x] Types et statuts créés en base
 - [x] Politiques de lecture pour les rôles Admin et Bureau
 - [x] Modification du statut depuis le back-office
-- [ ] Demande de complément
-- [ ] Motif de refus
 - [x] Commentaires internes
-- [ ] Historique des changements de statut
-- [ ] Journal des actions administratives
 
 ---
 
@@ -139,7 +135,7 @@ Fonctionnalités :
 - [x] Route protégée `/admin`
 - [x] Politique RLS de lecture des inscriptions
 - [ ] Mot de passe oublié
-- [ ] Page de définition d’un nouveau mot de passe
+- [ ] Page de définition d'un nouveau mot de passe
 - [ ] Déconnexion
 - [ ] Gestion des comptes du bureau
 
@@ -153,24 +149,22 @@ Fonctionnalités :
 - [x] Filtre Enfant / Adulte
 - [x] Filtre Loisir / Compétition
 - [ ] Filtre par état du paiement
-- [ ] Tri par date
-- [ ] Pagination
+- [ ] Relance pour non paiement en lot
 - [x] Compteurs et statistiques
 - [x] Export Excel des inscriptions
 
-### Fiche d’inscription
+### Fiche d'inscription
 
-- [x] Page détaillée d’un dossier
-- [x] Informations de l’adhérent
+- [x] Page détaillée d'un dossier
+- [x] Informations de l'adhérent
 - [x] Informations du représentant légal
 - [x] Questionnaire de santé
 - [x] Documents
 - [x] État du paiement
 - [x] Modification du statut
 - [x] Commentaire interne
-- [ ] Historique
-- [ ] Export PDF
-- [ ] Impression
+- [x] Consultation du certificat médical
+- [x] Remplacement du certificat médical
 
 ---
 
@@ -199,20 +193,11 @@ Valeurs par défaut actuelles :
 
 ### Tarifs
 
-- [ ] Tarif Enfant Loisir
-- [ ] Tarif Enfant Compétition
-- [ ] Tarif Adulte Loisir
-- [ ] Tarif Adulte Compétition
-- [ ] Réductions
-- [ ] Tarif famille
-- [ ] Tarif exceptionnel
-- [ ] Devise
+- [ ] Tarif Enfant 
+- [ ] Tarif Adulte 
 
 ### Documents
 
-- [ ] Types de documents demandés
-- [ ] Taille maximale des fichiers
-- [ ] Formats autorisés
 - [ ] Certificat médical obligatoire selon le profil
 
 ---
@@ -228,7 +213,6 @@ Valeurs par défaut actuelles :
 - [ ] Mail de demande de paiement
 - [ ] Mail de confirmation de paiement
 - [ ] Modèles d'e-mails administrables
-- [ ] Journal des e-mails envoyés
 
 Le mail de paiement contiendra un lien durable :
 
@@ -273,13 +257,11 @@ Fonctionnalités :
 
 - [x] Bucket Supabase Storage privé
 - [x] Téléversement sécurisé
-- [ ] Validation du type MIME
-- [ ] Validation de la taille
 - [x] Association du document à une inscription
 - [x] Consultation sécurisée par le bureau
-- [ ] Remplacement d'un document
-- [ ] Suppression d'un document
-- [ ] Historique des documents
+- [x] Remplacement d'un certificat médical
+- [x] Suppression automatique de l'ancien certificat lors d'un remplacement
+- [ ] Suppression manuelle d'un document
 
 ---
 
@@ -294,10 +276,8 @@ Fonctionnalités :
 - [ ] Tests du paiement
 - [ ] Protection contre les doubles soumissions
 - [ ] Limitation du nombre de requêtes
-- [ ] Journalisation des erreurs
+- [ ] Afficahge des erreurs avec envois automoatique à l'admin
 - [ ] Conformité RGPD
-- [ ] Export des données personnelles
-- [ ] Suppression ou anonymisation des dossiers
 
 ---
 
@@ -311,10 +291,6 @@ Fonctionnalités :
 - [ ] Variables Stripe de production
 - [x] Edge Functions
 - [ ] Webhook Stripe
-- [ ] Sauvegarde de la base
-- [ ] Procédure de restauration
-- [ ] Supervision
-- [ ] Vérification complète sur mobile
 
 ---
 
@@ -325,28 +301,15 @@ Le site institutionnel sera développé après la finalisation de la V1.
 ## Contenu
 
 - [ ] Accueil
-- [ ] Présentation du club
-- [ ] Histoire
-- [ ] Disciplines
-- [ ] Entraîneurs
+- [ ] Présentation du club (présentation et status
 - [ ] Horaires
 - [ ] Tarifs
-- [ ] Actualités
-- [ ] Agenda
-- [ ] Résultats sportifs
-- [ ] Galerie photos
-- [ ] Partenaires
+- [ ] Actualités facebook imbeded
 - [ ] Contact
-- [ ] Mentions légales
-- [ ] Politique de confidentialité
 
 ## Administration
 
-- [ ] Gestion des actualités
-- [ ] Gestion des pages
-- [ ] Gestion des événements
-- [ ] Gestion des partenaires
-- [ ] Gestion des contenus
+- [ ] Gestion des contenus, edition simple texte
 
 ---
 
@@ -354,36 +317,24 @@ Le site institutionnel sera développé après la finalisation de la V1.
 
 ## Priorité 1
 
-- Finaliser le back-office
-- Fiche détaillée d'une inscription
-- Gestion des statuts
+- Finaliser le paiement Stripe
+- Génération sécurisée des liens de paiement
+- Webhook Stripe
 
 ## Priorité 2
 
-- Gestion des documents
-- Téléversement sécurisé
-- Consultation des documents
-
-## Priorité 3
-
-- E-mails automatiques
-- Templates d'e-mails
-
-## Priorité 4
-
-- Paiement Stripe
-- Webhooks
-- Confirmation de paiement
-
-## Priorité 5
-
-- Paramétrage complet du club
+- Paramètres administrables
 - Tarifs
 - Saison
 - Âges
 - Documents
 
-## Priorité 6
+## Priorité 3
+
+- E-mails automatiques
+- Modèles d'e-mails administrables
+
+## Priorité 4
 
 - Site institutionnel (V2)
 
@@ -393,7 +344,7 @@ Le site institutionnel sera développé après la finalisation de la V1.
 
 ## V1
 
-**Avancement estimé : 70 %**
+**Avancement estimé : 75 %**
 
 ### Terminé
 
@@ -403,13 +354,13 @@ Le site institutionnel sera développé après la finalisation de la V1.
 - Enregistrement dans Supabase
 - Sécurité RLS
 - Back-office
-- Recherche
-- Filtres
-- Fiche détaillée
+- Recherche et filtres
+- Fiche détaillée d'une inscription
 - Gestion des statuts
-- Notes internes
-- Export Excel
+- Notes administratives
 - Gestion des certificats médicaux
+- Remplacement des certificats médicaux
+- Export Excel
 - E-mail de confirmation
 
 ### En cours
@@ -418,9 +369,8 @@ Le site institutionnel sera développé après la finalisation de la V1.
 
 ### À venir
 
-- Paiement
-- Paramétrage
-- Finalisation
+- Paramètres administrables
+- Finalisation de la V1
 
 ---
 
