@@ -7,7 +7,6 @@ import {
 import ScrollToTop from '../components/ScrollToTop';
 import ProtectedRoute from '../components/ProtectedRoute';
 
-import HomePage from '../pages/HomePage';
 import ClubPage from '../pages/ClubPage';
 import InscriptionPage from '../pages/InscriptionPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
@@ -23,7 +22,7 @@ export default function AppRouter() {
       <Routes>
         <Route
           path="/"
-          element={<HomePage />}
+          element={<InscriptionPage />}
         />
 
         <Route
