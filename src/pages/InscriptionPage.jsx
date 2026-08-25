@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import ContactStep from '../features/inscription/components/ContactStep';
 import HealthStep from '../features/inscription/components/HealthStep';
@@ -218,30 +217,24 @@ export default function InscriptionPage() {
         className="registration-shell"
       >
         <header className="registration-topbar">
-          <Link
-            className="registration-brand"
-            to="/"
-            aria-label="Retour à l’accueil"
-          >
-            <span
-              className="registration-brand-mark"
-              aria-hidden="true"
-            >
-              EC
-            </span>
+            <div className="registration-brand">
+  <span
+    className="registration-brand-mark"
+    aria-hidden="true"
+  >
+    EC
+  </span>
 
-            <span>
-              <strong>El Carino</strong>
-              <small>Boxe thaï</small>
-            </span>
-          </Link>
+  <span>
+    <strong>El Carino</strong>
+    <small>Boxe thaï</small>
+  </span>
+</div>
 
           <div className="registration-help">
-            <span>Besoin d’aide ?</span>
+            <strong><span>Prêt pour l'inscription ?</span></strong>
+            <span>Le processus est simple, rapide et conçu pour être accessible à tous.</span>
 
-            <a href="tel:+33400000000">
-              04 00 00 00 00
-            </a>
           </div>
         </header>
 
@@ -348,9 +341,6 @@ export default function InscriptionPage() {
           <div className="registration-footer-links">
             <span>Club affilié FFKMDA</span>
 
-            <Link to="/">
-              Retour à l’accueil
-            </Link>
           </div>
         </footer>
       </section>
