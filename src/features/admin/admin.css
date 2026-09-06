@@ -2226,3 +2226,21 @@
   object-fit: cover;
   border-radius: 10px;
 }
+.admin-header h1,
+.admin-content-card-header h2 {
+  color: #172033;
+}
+
+.admin-users-form {
+  grid-template-columns:
+    repeat(5, minmax(140px, 1fr))
+    auto;
+}
+
+.admin-users-form .admin-export-button {
+  width: auto;
+  min-width: 150px;
+  min-height: 40px;
+  padding: 0 18px;
+  white-space: nowrap;
+}

@@ -14,6 +14,7 @@ import AdminPage from '../pages/AdminPage';
 import AdminRegistrationPage from '../pages/AdminRegistrationPage';
 import AdminSettingsPage from '../pages/AdminSettingsPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import AdminUsersPage from '../pages/AdminUsersPage';
 
 export default function AppRouter() {
   return (
@@ -67,6 +68,15 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+      <Route
+  path="/admin/utilisateurs"
+  element={
+    <ProtectedRoute>
+      <AdminUsersPage />
+    </ProtectedRoute>
+  }
+/>
 
         <Route
           path="*"
