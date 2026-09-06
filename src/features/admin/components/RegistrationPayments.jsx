@@ -6,6 +6,7 @@ import {
 
 import {
   createRegistrationPayment,
+  deleteRegistrationPayment,
   listRegistrationPayments,
 } from '../services/paymentAdminService';
 
@@ -38,6 +39,7 @@ function getTodayDate() {
   const now = new Date();
 
   const year = now.getFullYear();
+
   const month = String(
     now.getMonth() + 1,
   ).padStart(2, '0');
@@ -133,11 +135,18 @@ export default function RegistrationPayments({
   const [formError, setFormError] =
     useState('');
 
-  const [successMessage, setSuccessMessage] =
-    useState('');
+  const [
+    successMessage,
+    setSuccessMessage,
+  ] = useState('');
 
   const [saving, setSaving] =
     useState(false);
+
+  const [
+    deletingPaymentId,
+    setDeletingPaymentId,
+  ] = useState(null);
 
   const [formVisible, setFormVisible] =
     useState(false);
@@ -325,6 +334,68 @@ export default function RegistrationPayments({
       );
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleDeletePayment(
+    payment,
+  ) {
+    const method =
+      getPaymentMethodLabel(
+        payment.payment_method,
+      );
+
+    const paymentAmount =
+      formatAmount(
+        payment.amount_cents,
+        currency,
+      );
+
+    const confirmed =
+      window.confirm(
+        `Supprimer ce règlement ?\n\n`
+        + `${paymentAmount} — ${method}\n`
+        + `${formatPaymentDate(payment.received_at)}\n\n`
+        + 'Cette action est irréversible.',
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingPaymentId(
+        payment.id,
+      );
+
+      setError('');
+      setFormError('');
+      setSuccessMessage('');
+
+      await deleteRegistrationPayment(
+        payment.id,
+      );
+
+      setPayments(
+        (currentPayments) =>
+          currentPayments.filter(
+            (currentPayment) =>
+              currentPayment.id
+              !== payment.id,
+          ),
+      );
+
+      setSuccessMessage(
+        'Le règlement a été supprimé.',
+      );
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : 'Impossible de supprimer le règlement.',
+      );
+    } finally {
+      setDeletingPaymentId(null);
     }
   }
 
@@ -634,6 +705,10 @@ export default function RegistrationPayments({
                       <th>
                         Montant
                       </th>
+
+                      <th>
+                        Action
+                      </th>
                     </tr>
                   </thead>
 
@@ -664,6 +739,27 @@ export default function RegistrationPayments({
                                 currency,
                               )}
                             </strong>
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="admin-payment-delete-button"
+                              onClick={() =>
+                                handleDeletePayment(
+                                  payment,
+                                )
+                              }
+                              disabled={
+                                deletingPaymentId
+                                === payment.id
+                              }
+                            >
+                              {deletingPaymentId
+                              === payment.id
+                                ? 'Suppression…'
+                                : 'Supprimer'}
+                            </button>
                           </td>
                         </tr>
                       ),
