@@ -38,6 +38,7 @@ function RegistrationSummary({
   currentStep,
   maxStepReached,
   formData,
+  step4View,
 }) {
   const fullName = [
     formData.firstName,
@@ -52,6 +53,9 @@ function RegistrationSummary({
 
   const contactCompleted = maxStepReached >= 3;
   const healthCompleted = maxStepReached >= 4;
+
+  const paymentCompleted =
+    step4View === 'confirmation';
 
   return (
     <aside className="registration-summary">
@@ -145,19 +149,26 @@ function RegistrationSummary({
         </li>
 
         <li
-          className={
-            currentStep >= 4
-              ? 'registration-summary-item is-active'
-              : 'registration-summary-item'
-          }
+          className={[
+            'registration-summary-item',
+            currentStep >= 4 ? 'is-active' : '',
+            paymentCompleted ? 'is-completed' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <span className="registration-summary-number">
-            4
+            {paymentCompleted ? '✓' : '4'}
           </span>
 
           <div>
             <strong>Paiement</strong>
-            <span>À venir</span>
+
+            <span>
+              {paymentCompleted
+                ? 'Choix enregistré'
+                : 'À venir'}
+            </span>
           </div>
         </li>
       </ol>
@@ -167,6 +178,7 @@ function RegistrationSummary({
 
 export default function InscriptionPage() {
   const [currentStep, setCurrentStep] = useState(1);
+
   const [maxStepReached, setMaxStepReached] =
     useState(1);
 
@@ -312,6 +324,7 @@ export default function InscriptionPage() {
             currentStep={currentStep}
             maxStepReached={maxStepReached}
             formData={formData}
+            step4View={step4View}
           />
 
           <section className="registration-content">
@@ -322,9 +335,11 @@ export default function InscriptionPage() {
 
               <h1>
                 {currentStep === 4
-                  ? step4View === 'payment'
-                    ? 'Règlement'
-                    : 'Récapitulatif'
+                  ? step4View === 'confirmation'
+                    ? 'Inscription enregistrée'
+                    : step4View === 'payment'
+                      ? 'Règlement'
+                      : 'Récapitulatif'
                   : stepTitle}
               </h1>
 
@@ -362,6 +377,14 @@ export default function InscriptionPage() {
                   <p>
                     Indiquez comment vous prévoyez de
                     régler votre cotisation.
+                  </p>
+                )}
+
+              {currentStep === 4
+                && step4View === 'confirmation' && (
+                  <p>
+                    Votre inscription a bien été prise en
+                    compte.
                   </p>
                 )}
             </header>
@@ -438,6 +461,9 @@ export default function InscriptionPage() {
                 view={step4View}
                 onRegistrationSaved={() =>
                   setStep4View('payment')
+                }
+                onPaymentSaved={() =>
+                  setStep4View('confirmation')
                 }
                 onPrevious={() => goToStep(3)}
               />
