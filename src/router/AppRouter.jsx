@@ -12,6 +12,7 @@ import InscriptionPage from '../pages/InscriptionPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
 import AdminPage from '../pages/AdminPage';
 import AdminRegistrationPage from '../pages/AdminRegistrationPage';
+import AdminSettingsPage from '../pages/AdminSettingsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRouter() {
@@ -54,6 +55,15 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <AdminRegistrationPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/parametres"
+          element={
+            <ProtectedRoute>
+              <AdminSettingsPage />
             </ProtectedRoute>
           }
         />

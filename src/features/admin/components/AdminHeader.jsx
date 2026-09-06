@@ -1,4 +1,7 @@
-export default function AdminHeader() {
+export default function AdminHeader({
+  title = 'Inscriptions',
+  description = 'Consultez et traitez les dossiers transmis par les adhérents.',
+}) {
   return (
     <header className="admin-header">
       <div>
@@ -6,12 +9,9 @@ export default function AdminHeader() {
           Back-office El Carino
         </p>
 
-        <h1>Inscriptions</h1>
+        <h1>{title}</h1>
 
-        <p>
-          Consultez et traitez les dossiers transmis par
-          les adhérents.
-        </p>
+        <p>{description}</p>
       </div>
 
       <div className="admin-header-actions">
