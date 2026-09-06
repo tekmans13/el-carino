@@ -67,12 +67,50 @@ const ADDITIONAL_PAYMENT_METHODS = [
   },
 ];
 
+function getSelectedPaymentMethodLabels(
+  mainPaymentMethod,
+  additionalPaymentMethods,
+) {
+  const labels = [];
+
+  const mainMethod = MAIN_PAYMENT_METHODS.find(
+    (method) => method.value === mainPaymentMethod,
+  );
+
+  if (mainMethod) {
+    if (mainMethod.value === 'cash') {
+      labels.push('Espèces');
+    } else {
+      labels.push(
+        `Chèque ${mainMethod.description.toLowerCase()}`,
+      );
+    }
+  }
+
+  for (
+    const paymentAid
+    of additionalPaymentMethods
+  ) {
+    const method =
+      ADDITIONAL_PAYMENT_METHODS.find(
+        (item) => item.value === paymentAid,
+      );
+
+    if (method) {
+      labels.push(method.label);
+    }
+  }
+
+  return labels;
+}
+
 export default function PaymentStep({
   formData,
   medicalCertificate,
   clubSettings,
   view,
   onRegistrationSaved,
+  onPaymentSaved,
   onPrevious,
 }) {
   const [saving, setSaving] = useState(false);
@@ -98,11 +136,6 @@ export default function PaymentStep({
     paymentMethodError,
     setPaymentMethodError,
   ] = useState('');
-
-  const [
-    paymentMethodSaved,
-    setPaymentMethodSaved,
-  ] = useState(false);
 
   const fullName = [
     formData.firstName,
@@ -147,6 +180,12 @@ export default function PaymentStep({
   const hasPaymentMethod =
     Boolean(mainPaymentMethod)
     || additionalPaymentMethods.length > 0;
+
+  const selectedPaymentMethodLabels =
+    getSelectedPaymentMethodLabels(
+      mainPaymentMethod,
+      additionalPaymentMethods,
+    );
 
   function handleAdditionalPaymentMethod(method) {
     setAdditionalPaymentMethods((currentMethods) => {
@@ -203,7 +242,6 @@ export default function PaymentStep({
     try {
       setSavingPaymentMethod(true);
       setPaymentMethodError('');
-      setPaymentMethodSaved(false);
 
       await updatePlannedPaymentMethods(
         registration.id,
@@ -211,7 +249,7 @@ export default function PaymentStep({
         additionalPaymentMethods,
       );
 
-      setPaymentMethodSaved(true);
+      onPaymentSaved();
     } catch (error) {
       setPaymentMethodError(
         error instanceof Error
@@ -221,6 +259,94 @@ export default function PaymentStep({
     } finally {
       setSavingPaymentMethod(false);
     }
+  }
+
+  if (
+    view === 'confirmation'
+    && registration
+  ) {
+    return (
+      <section className="payment-step">
+        <header className="payment-step-header">
+          <span
+            className="payment-step-header-icon"
+            aria-hidden="true"
+          >
+            ✓
+          </span>
+
+          <div>
+            <h2>Inscription enregistrée</h2>
+
+            <p>
+              Votre inscription a bien été prise en
+              compte.
+            </p>
+          </div>
+        </header>
+
+        <section className="payment-price-card">
+          <div>
+            <span>Montant à régler</span>
+
+            <p>
+              Cotisation annuelle El Carino
+            </p>
+          </div>
+
+          <strong>
+            {pricing
+              ? formatEuroFromCents(
+                pricing.totalCents,
+              )
+              : 'À calculer'}
+          </strong>
+        </section>
+
+        <section className="payment-summary-card">
+          <header className="payment-summary-card-header">
+            <span aria-hidden="true">✓</span>
+
+            <div>
+              <h3>
+                Mode(s) de règlement prévu(s)
+              </h3>
+
+              <p>
+                Choix enregistré avec votre
+                inscription.
+              </p>
+            </div>
+          </header>
+
+          <div className="payment-summary-content">
+            {selectedPaymentMethodLabels.map(
+              (method) => (
+                <SummaryRow
+                  key={method}
+                  label="Règlement"
+                  value={method}
+                />
+              ),
+            )}
+          </div>
+        </section>
+
+        <div className="payment-information">
+          <span aria-hidden="true">i</span>
+
+          <p>
+            Un e-mail récapitulatif vous a été envoyé à
+            {' '}
+            <strong>{formData.email}</strong>.
+            {' '}
+            Le bureau du club enregistrera les
+            règlements au fur et à mesure de leur
+            réception.
+          </p>
+        </div>
+      </section>
+    );
   }
 
   if (view === 'payment' && registration) {
@@ -391,12 +517,6 @@ export default function PaymentStep({
           </section>
         )}
 
-        {paymentMethodSaved && (
-          <section className="payment-success">
-            Choix de règlement enregistré.
-          </section>
-        )}
-
         <div className="payment-information">
           <span aria-hidden="true">i</span>
 
@@ -456,6 +576,7 @@ export default function PaymentStep({
 
           <div>
             <h3>Profil</h3>
+
             <p>
               Type d’inscription et pratique choisie.
             </p>
@@ -487,6 +608,7 @@ export default function PaymentStep({
 
           <div>
             <h3>Informations personnelles</h3>
+
             <p>
               Identité et coordonnées de l’adhérent.
             </p>
@@ -545,6 +667,7 @@ export default function PaymentStep({
 
           <div>
             <h3>Santé et autorisations</h3>
+
             <p>
               État du questionnaire et des documents.
             </p>
