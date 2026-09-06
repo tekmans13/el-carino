@@ -20,7 +20,7 @@ const MENU_ITEMS = [
     label: 'Paiements',
     path: '/admin/paiements',
     icon: 'payment',
-    enabled: false,
+    enabled: true,
   },
   {
     id: 'settings',
@@ -70,7 +70,14 @@ function SidebarIcon({ name }) {
   if (name === 'payment') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="3" y="6" width="18" height="13" rx="2" />
+        <rect
+          x="3"
+          y="6"
+          width="18"
+          height="13"
+          rx="2"
+        />
+
         <path d="M3 10h18" />
         <path d="M7 15h3" />
       </svg>
@@ -119,13 +126,16 @@ export default function AdminSidebar({
         .join(' ')}
     >
       <header className="admin-sidebar-brand">
-<img
-  className="admin-sidebar-brand-logo"
-  src="/logo-elcarino.jpg"
-  alt="El Carino Muay Thai"
-/>
+        <img
+          className="admin-sidebar-brand-logo"
+          src="/logo-elcarino.jpg"
+          alt="El Carino Muay Thai"
+        />
+
         <span className="admin-sidebar-brand-text">
-          <strong>El Carino</strong>
+          <strong>
+            El Carino
+          </strong>
         </span>
 
         <button
@@ -161,7 +171,9 @@ export default function AdminSidebar({
                 title={item.label}
               >
                 <span className="admin-sidebar-link-icon">
-                  <SidebarIcon name={item.icon} />
+                  <SidebarIcon
+                    name={item.icon}
+                  />
                 </span>
 
                 <span className="admin-sidebar-link-label">
@@ -182,7 +194,9 @@ export default function AdminSidebar({
                 .join(' ')}
               to={item.path}
               aria-current={
-                isActive ? 'page' : undefined
+                isActive
+                  ? 'page'
+                  : undefined
               }
               title={
                 collapsed
@@ -191,7 +205,9 @@ export default function AdminSidebar({
               }
             >
               <span className="admin-sidebar-link-icon">
-                <SidebarIcon name={item.icon} />
+                <SidebarIcon
+                  name={item.icon}
+                />
               </span>
 
               <span className="admin-sidebar-link-label">
@@ -211,7 +227,9 @@ export default function AdminSidebar({
         </span>
 
         <span className="admin-sidebar-account-text">
-          <strong>Administration</strong>
+          <strong>
+            Administration
+          </strong>
 
           <small>
             {userEmail
