@@ -14,6 +14,10 @@ type Registration = {
   age_category: string;
   practice_type: string;
   status: string;
+  payment_amount_cents: number;
+  payment_currency: string;
+  planned_payment_main_method: string | null;
+  planned_payment_aids: string[];
   summary_email_sent_at: string | null;
 };
 
@@ -42,6 +46,71 @@ function getPracticeTypeLabel(practiceType: string): string {
     : 'Loisir';
 }
 
+function getMainPaymentMethodLabel(
+  paymentMethod: string | null,
+): string | null {
+  const labels: Record<string, string> = {
+    cash: 'Espèces',
+    check_1: 'Chèque en 1 fois',
+    check_2: 'Chèque en 2 fois',
+    check_3: 'Chèque en 3 fois',
+  };
+
+  if (!paymentMethod) {
+    return null;
+  }
+
+  return labels[paymentMethod] ?? paymentMethod;
+}
+
+function getPaymentAidLabel(
+  paymentAid: string,
+): string {
+  const labels: Record<string, string> = {
+    caf: 'Coupons CAF',
+    cjeune: 'C-Jeune',
+    pass_sport: 'Pass’Sport',
+  };
+
+  return labels[paymentAid] ?? paymentAid;
+}
+
+function getPaymentMethodLabels(
+  registration: Registration,
+): string[] {
+  const labels: string[] = [];
+
+  const mainPaymentMethod =
+    getMainPaymentMethodLabel(
+      registration.planned_payment_main_method,
+    );
+
+  if (mainPaymentMethod) {
+    labels.push(mainPaymentMethod);
+  }
+
+  for (
+    const paymentAid
+    of registration.planned_payment_aids ?? []
+  ) {
+    labels.push(
+      getPaymentAidLabel(paymentAid),
+    );
+  }
+
+  return labels;
+}
+
+function formatAmount(
+  amountCents: number,
+  currency: string,
+): string {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: currency.toUpperCase(),
+  }).format(amountCents / 100);
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll('&', '&amp;')
@@ -55,18 +124,45 @@ function buildTextEmail(registration: Registration): string {
   const fullName =
     `${registration.first_name} ${registration.last_name}`;
 
+  const paymentMethods =
+    getPaymentMethodLabels(registration);
+
+  const paymentMethodsText =
+    paymentMethods.length > 0
+      ? paymentMethods
+        .map((method) => `- ${method}`)
+        .join('\n')
+      : '- Non renseigné';
+
+  const amount = formatAmount(
+    registration.payment_amount_cents,
+    registration.payment_currency,
+  );
+
   return `Bonjour,
 
-Nous avons bien reçu la demande d'inscription de ${fullName}.
+Votre inscription au club El Carino a bien été enregistrée.
+
+Adhérent :
+${fullName}
 
 Informations du dossier :
 - Profil : ${getAgeCategoryLabel(registration.age_category)}
 - Pratique : ${getPracticeTypeLabel(registration.practice_type)}
+- Montant à régler : ${amount}
 - Référence : ${registration.id}
 
-Le dossier est maintenant en cours de vérification.
+Mode(s) de règlement prévu(s) :
+${paymentMethodsText}
 
-Vous recevrez un nouvel e-mail lorsque le dossier sera validé ou si des informations complémentaires sont nécessaires.
+Le règlement n’est pas effectué en ligne.
+
+Les règlements, chèques et justificatifs liés aux aides ou coupons sont à remettre directement au club.
+Les chèques sont à établir à l’ordre de « ASC EL CARINO ».
+
+Les chèques vacances ne sont pas acceptés.
+
+Le bureau du club enregistrera les règlements au fur et à mesure de leur réception.
 
 Sportivement,
 
@@ -88,20 +184,45 @@ function buildHtmlEmail(registration: Registration): string {
 
   const registrationId = escapeHtml(registration.id);
 
+  const amount = escapeHtml(
+    formatAmount(
+      registration.payment_amount_cents,
+      registration.payment_currency,
+    ),
+  );
+
+  const paymentMethods =
+    getPaymentMethodLabels(registration);
+
+  const paymentMethodsHtml =
+    paymentMethods.length > 0
+      ? paymentMethods
+        .map(
+          (method) =>
+            `<li>${escapeHtml(method)}</li>`,
+        )
+        .join('')
+      : '<li>Non renseigné</li>';
+
   return `
     <!doctype html>
     <html lang="fr">
       <head>
         <meta charset="utf-8">
-        <title>Inscription reçue</title>
+        <title>Inscription El Carino enregistrée</title>
       </head>
 
       <body>
         <p>Bonjour,</p>
 
         <p>
-          Nous avons bien reçu la demande d'inscription de
-          <strong>${fullName}</strong>.
+          Votre inscription au club El Carino a bien été
+          enregistrée.
+        </p>
+
+        <p>
+          Adhérent :
+          <strong>${fullName}</strong>
         </p>
 
         <p>Informations du dossier :</p>
@@ -109,17 +230,36 @@ function buildHtmlEmail(registration: Registration): string {
         <ul>
           <li>Profil : ${ageCategory}</li>
           <li>Pratique : ${practiceType}</li>
+          <li>Montant à régler : <strong>${amount}</strong></li>
           <li>Référence : ${registrationId}</li>
         </ul>
 
         <p>
-          Le dossier est maintenant en cours de vérification.
+          <strong>Mode(s) de règlement prévu(s) :</strong>
+        </p>
+
+        <ul>
+          ${paymentMethodsHtml}
+        </ul>
+
+        <p>
+          Le règlement n’est pas effectué en ligne.
         </p>
 
         <p>
-          Vous recevrez un nouvel e-mail lorsque le dossier sera
-          validé ou si des informations complémentaires sont
-          nécessaires.
+          Les règlements, chèques et justificatifs liés aux
+          aides ou coupons sont à remettre directement au club.
+          Les chèques sont à établir à l’ordre de
+          « ASC EL CARINO ».
+        </p>
+
+        <p>
+          Les chèques vacances ne sont pas acceptés.
+        </p>
+
+        <p>
+          Le bureau du club enregistrera les règlements au fur
+          et à mesure de leur réception.
         </p>
 
         <p>
@@ -217,6 +357,10 @@ Deno.serve(async (request) => {
         age_category,
         practice_type,
         status,
+        payment_amount_cents,
+        payment_currency,
+        planned_payment_main_method,
+        planned_payment_aids,
         summary_email_sent_at
       `)
       .eq('id', registrationId)
@@ -253,6 +397,22 @@ Deno.serve(async (request) => {
       );
     }
 
+    const paymentMethods =
+      getPaymentMethodLabels(registration);
+
+    if (paymentMethods.length === 0) {
+      return Response.json(
+        {
+          success: false,
+          error:
+            'Aucun mode de règlement n’a encore été renseigné.',
+        },
+        {
+          status: 409,
+        },
+      );
+    }
+
     if (registration.summary_email_sent_at) {
       return Response.json({
         success: true,
@@ -275,7 +435,8 @@ Deno.serve(async (request) => {
     await transporter.sendMail({
       from: smtpFrom,
       to: registration.email,
-      subject: 'Votre inscription El Carino a bien été reçue',
+      subject:
+        'Confirmation de votre inscription El Carino',
       text: buildTextEmail(registration),
       html: buildHtmlEmail(registration),
     });

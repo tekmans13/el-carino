@@ -226,26 +226,18 @@ async function removeUploadedMedicalCertificate(
 async function sendRegistrationConfirmationEmail(
   registrationId,
 ) {
-  try {
-    const { error } = await supabase.functions.invoke(
-      'send-registration-email',
-      {
-        body: {
-          registrationId,
-        },
+  const { error } = await supabase.functions.invoke(
+    'send-registration-email',
+    {
+      body: {
+        registrationId,
       },
-    );
+    },
+  );
 
-    if (error) {
-      console.error(
-        'Impossible d’envoyer le mail de confirmation :',
-        error,
-      );
-    }
-  } catch (error) {
-    console.error(
-      'Erreur lors de l’appel de send-registration-email :',
-      error,
+  if (error) {
+    throw new Error(
+      `Le choix de règlement a été enregistré, mais le mail de confirmation n’a pas pu être envoyé : ${error.message}`,
     );
   }
 }
@@ -304,12 +296,39 @@ export async function createRegistration(
     );
   }
 
-  await sendRegistrationConfirmationEmail(
-    registrationId,
-  );
-
   return {
     id: registrationId,
     status: 'soumis',
   };
+}
+
+export async function updatePlannedPaymentMethods(
+  registrationId,
+  mainPaymentMethod,
+  paymentAids = [],
+) {
+  if (!registrationId) {
+    throw new Error(
+      'Impossible d’enregistrer le mode de règlement : inscription inconnue.',
+    );
+  }
+
+  const { error } = await supabase
+    .from('inscriptions')
+    .update({
+      planned_payment_main_method:
+        mainPaymentMethod || null,
+      planned_payment_aids: paymentAids,
+    })
+    .eq('id', registrationId);
+
+  if (error) {
+    throw new Error(
+      `Impossible d’enregistrer le mode de règlement : ${error.message}`,
+    );
+  }
+
+  await sendRegistrationConfirmationEmail(
+    registrationId,
+  );
 }
