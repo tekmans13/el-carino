@@ -262,20 +262,18 @@ export default function InscriptionPage() {
         className="registration-shell"
       >
         <header className="registration-topbar">
-            <div className="registration-brand">
-  <span
-    className="registration-brand-mark"
-    aria-hidden="true"
-  >
-    EC
-  </span>
+<div className="registration-brand">
+  <img
+    className="registration-brand-logo"
+    src="/logo-elcarino.jpg"
+    alt="El Carino Muay Thai"
+  />
 
   <span>
     <strong>El Carino</strong>
     <small>Boxe thaï</small>
   </span>
 </div>
-
           <div className="registration-help">
             <strong><span>Prêt pour l'inscription ?</span></strong>
             <span>Le processus est simple, rapide et conçu pour être accessible à tous.</span>

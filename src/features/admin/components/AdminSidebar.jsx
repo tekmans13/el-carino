@@ -119,16 +119,13 @@ export default function AdminSidebar({
         .join(' ')}
     >
       <header className="admin-sidebar-brand">
-        <span
-          className="admin-sidebar-brand-mark"
-          aria-hidden="true"
-        >
-          EC
-        </span>
-
+<img
+  className="admin-sidebar-brand-logo"
+  src="/logo-elcarino.jpg"
+  alt="El Carino Muay Thai"
+/>
         <span className="admin-sidebar-brand-text">
           <strong>El Carino</strong>
-          <small>Boxe thaï</small>
         </span>
 
         <button

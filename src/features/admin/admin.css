@@ -2219,3 +2219,10 @@
   font-size: 0.82rem;
   font-weight: 700;
 }
+.admin-sidebar-brand-logo {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  object-fit: cover;
+  border-radius: 10px;
+}
