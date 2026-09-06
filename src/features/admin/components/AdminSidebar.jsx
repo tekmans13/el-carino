@@ -34,7 +34,7 @@ const MENU_ITEMS = [
     label: 'Utilisateurs',
     path: '/admin/utilisateurs',
     icon: 'accounts',
-    enabled: false,
+    enabled: true,
   },
   {
     id: 'statistics',
