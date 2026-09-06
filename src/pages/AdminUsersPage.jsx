@@ -1,11 +1,17 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useState,
+} from 'react';
+
 import AdminHeader from '../features/admin/components/AdminHeader';
 import AdminSidebar from '../features/admin/components/AdminSidebar';
+
 import {
   createAdminUser,
   deleteAdminUser,
   getAdminUsers,
 } from '../features/admin/services/adminUsersService';
+
 import '../features/admin/admin.css';
 
 function formatDate(date) {
@@ -20,10 +26,14 @@ function formatDate(date) {
 }
 
 export default function AdminUsersPage() {
+  const [sidebarCollapsed, setSidebarCollapsed] =
+    useState(false);
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
-  const [deletingUserId, setDeletingUserId] = useState(null);
+  const [deletingUserId, setDeletingUserId] =
+    useState(null);
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -50,7 +60,7 @@ export default function AdminUsersPage() {
           setError(
             loadError instanceof Error
               ? loadError.message
-              : 'Une erreur est survenue.',
+              : 'Impossible de charger les utilisateurs.',
           );
         }
       } finally {
@@ -100,13 +110,20 @@ export default function AdminUsersPage() {
     const email = form.email.trim().toLowerCase();
     const password = form.password;
 
-    if (!firstName || !lastName || !email || !password) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !password
+    ) {
       setError('Tous les champs sont obligatoires.');
       return;
     }
 
     if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.');
+      setError(
+        'Le mot de passe doit contenir au moins 6 caractères.',
+      );
       return;
     }
 
@@ -183,182 +200,248 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="admin-layout">
-      <AdminSidebar activeItem="accounts" />
+    <div
+      className={[
+        'admin-dashboard',
+        sidebarCollapsed
+          ? 'is-sidebar-collapsed'
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <AdminSidebar
+        activeItem="accounts"
+        collapsed={sidebarCollapsed}
+        onToggle={() =>
+          setSidebarCollapsed(
+            (current) => !current,
+          )
+        }
+      />
 
-      <main className="admin-main">
-        <AdminHeader title="Utilisateurs" />
-
-        <div className="admin-content">
-          <section className="admin-card">
-            <div className="admin-card-header">
-              <div>
-                <h2>Membres du bureau</h2>
-                <p>
-                  Les utilisateurs créés ici peuvent se connecter à
-                  l'administration avec leur adresse email et leur mot de
-                  passe.
-                </p>
-              </div>
-            </div>
-
-            <form
-              className="admin-users-form"
-              onSubmit={handleSubmit}
-            >
-              <div className="admin-form-field">
-                <label htmlFor="firstName">Prénom</label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  value={form.firstName}
-                  onChange={handleChange}
-                  autoComplete="given-name"
-                  disabled={creating}
-                  required
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label htmlFor="lastName">Nom</label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  autoComplete="family-name"
-                  disabled={creating}
-                  required
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  autoComplete="email"
-                  disabled={creating}
-                  required
-                />
-              </div>
-
-              <div className="admin-form-field">
-                <label htmlFor="password">
-                  Mot de passe initial
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  autoComplete="new-password"
-                  minLength={6}
-                  disabled={creating}
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="admin-export-button"
-                disabled={creating}
-              >
-                {creating ? 'Création...' : 'Créer'}
-              </button>
-            </form>
+      <div className="admin-dashboard-content">
+        <main className="admin-page">
+          <section className="admin-shell">
+            <AdminHeader
+              title="Utilisateurs"
+              description="Gérez les membres du bureau autorisés à accéder au back-office."
+            />
 
             {error && (
               <div
-                className="admin-message admin-message-error"
+                className="admin-state-message admin-error-message"
                 role="alert"
               >
-                {error}
+                <strong>Une erreur est survenue</strong>
+                <p>{error}</p>
               </div>
             )}
 
             {success && (
               <div
-                className="admin-message admin-message-success"
+                className="admin-settings-message is-success"
                 role="status"
               >
                 {success}
               </div>
             )}
-          </section>
 
-          <section className="admin-card">
-            <div className="admin-card-header">
-              <div>
-                <h2>Utilisateurs existants</h2>
-                <p>
-                  {users.length} utilisateur
-                  {users.length > 1 ? 's' : ''}
-                </p>
-              </div>
-            </div>
+            <section className="admin-content-card">
+              <header className="admin-content-card-header">
+                <div className="admin-list-title">
+                  <h2>Ajouter un utilisateur</h2>
 
-            {loading ? (
-              <p>Chargement des utilisateurs...</p>
-            ) : users.length === 0 ? (
-              <p>Aucun utilisateur.</p>
-            ) : (
-              <div className="admin-table-wrapper">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Prénom</th>
-                      <th>Nom</th>
-                      <th>Email</th>
-                      <th>Créé le</th>
-                      <th>Dernière connexion</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
+                  <span>
+                    Nouveau membre du bureau
+                  </span>
+                </div>
+              </header>
 
-                  <tbody>
-                    {users.map((user) => (
-                      <tr key={user.id}>
-                        <td>{user.first_name || '—'}</td>
-                        <td>{user.last_name || '—'}</td>
-                        <td>{user.email}</td>
-                        <td>{formatDate(user.created_at)}</td>
-                        <td>
-                          {user.last_sign_in_at
-                            ? formatDate(user.last_sign_in_at)
-                            : 'Jamais'}
-                        </td>
-                        <td>
-                          <button
-                            type="button"
-                            className="admin-delete-button"
-                            onClick={() =>
-                              handleDeleteUser(user)
-                            }
-                            disabled={
-                              deletingUserId === user.id
-                            }
-                          >
-                            {deletingUserId === user.id
-                              ? 'Suppression...'
-                              : 'Supprimer'}
-                          </button>
-                        </td>
+              <form
+                className="admin-users-form"
+                onSubmit={handleSubmit}
+              >
+                <label className="admin-settings-field">
+                  <span className="admin-settings-label">
+                    Prénom
+                  </span>
+
+                  <input
+                    name="firstName"
+                    type="text"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    autoComplete="given-name"
+                    disabled={creating}
+                    required
+                  />
+                </label>
+
+                <label className="admin-settings-field">
+                  <span className="admin-settings-label">
+                    Nom
+                  </span>
+
+                  <input
+                    name="lastName"
+                    type="text"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    autoComplete="family-name"
+                    disabled={creating}
+                    required
+                  />
+                </label>
+
+                <label className="admin-settings-field">
+                  <span className="admin-settings-label">
+                    Email
+                  </span>
+
+                  <input
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    autoComplete="email"
+                    disabled={creating}
+                    required
+                  />
+                </label>
+
+                <label className="admin-settings-field">
+                  <span className="admin-settings-label">
+                    Mot de passe initial
+                  </span>
+
+                  <input
+                    name="password"
+                    type="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    autoComplete="new-password"
+                    minLength={6}
+                    disabled={creating}
+                    required
+                  />
+                </label>
+
+                <button
+                  type="submit"
+                  className="admin-export-button"
+                  disabled={creating}
+                >
+                  {creating
+                    ? 'Création…'
+                    : 'Créer'}
+                </button>
+              </form>
+            </section>
+
+            <section className="admin-content-card">
+              <header className="admin-content-card-header">
+                <div className="admin-list-title">
+                  <h2>Utilisateurs existants</h2>
+
+                  <span>
+                    {users.length} utilisateur
+                    {users.length > 1 ? 's' : ''}
+                  </span>
+                </div>
+              </header>
+
+              {loading && (
+                <div className="admin-state-message">
+                  <span className="admin-loader" />
+
+                  <p>
+                    Chargement des utilisateurs…
+                  </p>
+                </div>
+              )}
+
+              {!loading && users.length === 0 && (
+                <div className="admin-state-message">
+                  <p>Aucun utilisateur.</p>
+                </div>
+              )}
+
+              {!loading && users.length > 0 && (
+                <div className="admin-table-wrapper">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Créé le</th>
+                        <th>
+                          Dernière connexion
+                        </th>
+                        <th>Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    </thead>
+
+                    <tbody>
+                      {users.map((user) => (
+                        <tr key={user.id}>
+                          <td>
+                            {user.first_name || '—'}
+                          </td>
+
+                          <td>
+                            {user.last_name || '—'}
+                          </td>
+
+                          <td>{user.email}</td>
+
+                          <td>
+                            {formatDate(
+                              user.created_at,
+                            )}
+                          </td>
+
+                          <td>
+                            {user.last_sign_in_at
+                              ? formatDate(
+                                  user.last_sign_in_at,
+                                )
+                              : 'Jamais'}
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="admin-delete-button"
+                              onClick={() =>
+                                handleDeleteUser(user)
+                              }
+                              disabled={
+                                deletingUserId ===
+                                user.id
+                              }
+                            >
+                              {deletingUserId ===
+                              user.id
+                                ? 'Suppression…'
+                                : 'Supprimer'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+
+            <footer className="admin-footer">
+              El Carino — Back-office
+            </footer>
           </section>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
