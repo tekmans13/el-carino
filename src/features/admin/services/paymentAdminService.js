@@ -122,3 +122,24 @@ export async function createRegistrationPayment({
 
   return data;
 }
+
+export async function deleteRegistrationPayment(
+  paymentId,
+) {
+  if (!paymentId) {
+    throw new Error(
+      'La référence du règlement est obligatoire.',
+    );
+  }
+
+  const { error } = await supabase
+    .from('payments')
+    .delete()
+    .eq('id', paymentId);
+
+  if (error) {
+    throw new Error(
+      `Impossible de supprimer le règlement : ${error.message}`,
+    );
+  }
+}
