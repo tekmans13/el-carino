@@ -13,6 +13,7 @@ import {
 } from '../features/admin/services/adminUsersService';
 
 import '../features/admin/admin.css';
+import '../features/admin/admin-settings.css';
 
 function formatDate(date) {
   if (!date) {
