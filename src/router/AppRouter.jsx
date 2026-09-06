@@ -12,9 +12,10 @@ import InscriptionPage from '../pages/InscriptionPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
 import AdminPage from '../pages/AdminPage';
 import AdminRegistrationPage from '../pages/AdminRegistrationPage';
+import AdminPaymentsPage from '../pages/AdminPaymentsPage';
 import AdminSettingsPage from '../pages/AdminSettingsPage';
-import NotFoundPage from '../pages/NotFoundPage';
 import AdminUsersPage from '../pages/AdminUsersPage';
+import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRouter() {
   return (
@@ -61,6 +62,15 @@ export default function AppRouter() {
         />
 
         <Route
+          path="/admin/paiements"
+          element={
+            <ProtectedRoute>
+              <AdminPaymentsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin/parametres"
           element={
             <ProtectedRoute>
@@ -69,14 +79,14 @@ export default function AppRouter() {
           }
         />
 
-      <Route
-  path="/admin/utilisateurs"
-  element={
-    <ProtectedRoute>
-      <AdminUsersPage />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/admin/utilisateurs"
+          element={
+            <ProtectedRoute>
+              <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="*"
