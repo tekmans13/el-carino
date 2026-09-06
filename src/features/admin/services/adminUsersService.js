@@ -44,3 +44,25 @@ export async function createAdminUser({
 
   return data?.user;
 }
+export async function deleteAdminUser(userId) {
+  const { data, error } = await supabase.functions.invoke(
+    'delete-admin-user',
+    {
+      body: {
+        userId,
+      },
+    },
+  );
+
+  if (error) {
+    throw new Error(
+      `Impossible de supprimer l'utilisateur : ${error.message}`,
+    );
+  }
+
+  if (data?.error) {
+    throw new Error(data.error);
+  }
+
+  return true;
+}
