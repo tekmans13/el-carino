@@ -27,7 +27,7 @@ const MENU_ITEMS = [
     label: 'Paramètres',
     path: '/admin/parametres',
     icon: 'settings',
-    enabled: false,
+    enabled: true,
   },
   {
     id: 'accounts',
@@ -153,7 +153,8 @@ export default function AdminSidebar({
         aria-label="Navigation du back-office"
       >
         {MENU_ITEMS.map((item) => {
-          const isActive = item.id === activeItem;
+          const isActive =
+            item.id === activeItem;
 
           if (!item.enabled) {
             return (
@@ -183,8 +184,14 @@ export default function AdminSidebar({
                 .filter(Boolean)
                 .join(' ')}
               to={item.path}
-              aria-current={isActive ? 'page' : undefined}
-              title={collapsed ? item.label : undefined}
+              aria-current={
+                isActive ? 'page' : undefined
+              }
+              title={
+                collapsed
+                  ? item.label
+                  : undefined
+              }
             >
               <span className="admin-sidebar-link-icon">
                 <SidebarIcon name={item.icon} />
@@ -208,8 +215,10 @@ export default function AdminSidebar({
 
         <span className="admin-sidebar-account-text">
           <strong>Administration</strong>
+
           <small>
-            {userEmail || 'Compte administrateur'}
+            {userEmail
+              || 'Compte administrateur'}
           </small>
         </span>
       </footer>
