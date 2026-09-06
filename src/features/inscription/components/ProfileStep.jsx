@@ -171,6 +171,7 @@ export default function ProfileStep({
   formData,
   updateField,
   onNext,
+  adultAgeThreshold = 18,
 }) {
   const canContinue =
     formData.ageCategory !== ''
@@ -220,12 +221,12 @@ export default function ProfileStep({
 
             <strong>Enfant</strong>
             <span className="profile-choice-subtitle">
-              Moins de 15 ans
+              Moins de {adultAgeThreshold} ans
             </span>
 
             <p>
               Pour les enfants et adolescents jusqu’à
-              14 ans inclus.
+              {adultAgeThreshold - 1} ans inclus.
             </p>
 
             <SelectionIndicator
@@ -259,12 +260,15 @@ export default function ProfileStep({
 
             <strong>Adulte</strong>
             <span className="profile-choice-subtitle">
-              15 ans et plus
+              {adultAgeThreshold} ans et plus
             </span>
 
             <p>
-              Pour les adolescents à partir de 15 ans
-              et les adultes.
+              Pour les adhérents à partir de
+              {' '}
+              {adultAgeThreshold}
+              {' '}
+              ans.
             </p>
 
             <SelectionIndicator

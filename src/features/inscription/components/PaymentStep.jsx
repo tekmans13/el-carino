@@ -2,6 +2,11 @@ import { useState } from 'react';
 
 import { createRegistration } from '../services/registrationService';
 
+import {
+  formatEuroFromCents,
+  getRegistrationPricing,
+} from '../utils/registrationPricing';
+
 import './payment-step.css';
 
 function formatValue(value, labels = {}) {
@@ -24,6 +29,7 @@ function SummaryRow({ label, value }) {
 export default function PaymentStep({
   formData,
   medicalCertificate,
+  clubSettings,
   onPrevious,
 }) {
   const [saving, setSaving] = useState(false);
@@ -64,6 +70,11 @@ export default function PaymentStep({
       && formData.practiceType === 'competition'
     )
     || formData.healthQuestionnaireHasPositiveAnswer;
+
+  const pricing = getRegistrationPricing(
+    formData,
+    clubSettings,
+  );
 
   async function handleSaveRegistration() {
     if (saving || registration) {
@@ -253,13 +264,39 @@ export default function PaymentStep({
         <div>
           <span>Montant de l’inscription</span>
 
-          <p>
-            Le tarif sera récupéré depuis les paramètres
-            administrables de la saison.
-          </p>
+          {pricing ? (
+            <p>
+              {pricing.isAdult
+                ? 'Cotisation adulte'
+                : 'Cotisation mineur'}
+              {' : '}
+              {formatEuroFromCents(
+                pricing.baseFeeCents,
+              )}
+
+              {pricing.licenseFeeCents > 0 && (
+                <>
+                  {' + licence fédérale : '}
+                  {formatEuroFromCents(
+                    pricing.licenseFeeCents,
+                  )}
+                </>
+              )}
+            </p>
+          ) : (
+            <p>
+              Impossible de calculer le tarif.
+            </p>
+          )}
         </div>
 
-        <strong>À définir</strong>
+        <strong>
+          {pricing
+            ? formatEuroFromCents(
+              pricing.totalCents,
+            )
+            : 'À calculer'}
+        </strong>
       </section>
 
       {registration && (
@@ -296,8 +333,8 @@ export default function PaymentStep({
           <span aria-hidden="true">i</span>
 
           <p>
-            Enregistrez d’abord le dossier. Le paiement en
-            ligne sera activé dans l’étape suivante.
+            Enregistrez le dossier. Le règlement sera
+            ensuite suivi manuellement par le bureau.
           </p>
         </div>
       )}
@@ -330,7 +367,7 @@ export default function PaymentStep({
             className="payment-submit-button"
             disabled
           >
-            Continuer vers le paiement
+            Dossier enregistré
           </button>
         )}
       </div>

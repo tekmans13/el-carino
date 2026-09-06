@@ -3,7 +3,7 @@ import { useState } from 'react';
 import './contact-step.css';
 
 const DEFAULT_MINIMUM_AGE = 5;
-const DEFAULT_ADULT_AGE_THRESHOLD = 15;
+const DEFAULT_ADULT_AGE_THRESHOLD = 18;
 const DEFAULT_MAXIMUM_AGE = 80;
 
 function isValidEmail(value) {

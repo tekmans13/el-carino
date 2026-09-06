@@ -6,6 +6,7 @@ import PaymentStep from '../features/inscription/components/PaymentStep';
 import ProfileStep from '../features/inscription/components/ProfileStep';
 import RegistrationProgress from '../features/inscription/components/RegistrationProgress';
 import { useRegistrationForm } from '../features/inscription/hooks/useRegistrationForm';
+import { getClubSettings } from '../features/inscription/services/clubSettingsService';
 
 import '../features/inscription/registration.css';
 import '../features/inscription/components/registration-summary.css';
@@ -159,6 +160,15 @@ export default function InscriptionPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [maxStepReached, setMaxStepReached] = useState(1);
 
+  const [clubSettings, setClubSettings] =
+    useState(null);
+
+  const [settingsLoading, setSettingsLoading] =
+    useState(true);
+
+  const [settingsError, setSettingsError] =
+    useState('');
+
   const [
     medicalCertificate,
     setMedicalCertificate,
@@ -186,6 +196,41 @@ export default function InscriptionPage() {
       });
     });
   }, [currentStep]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadClubSettings() {
+      try {
+        setSettingsLoading(true);
+        setSettingsError('');
+
+        const settings = await getClubSettings();
+
+        if (active) {
+          setClubSettings(settings);
+        }
+      } catch (error) {
+        if (active) {
+          setSettingsError(
+            error instanceof Error
+              ? error.message
+              : 'Impossible de charger les paramètres du club.',
+          );
+        }
+      } finally {
+        if (active) {
+          setSettingsLoading(false);
+        }
+      }
+    }
+
+    loadClubSettings();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function goToStep(stepNumber) {
     if (stepNumber > maxStepReached) {
@@ -288,24 +333,53 @@ export default function InscriptionPage() {
               )}
             </header>
 
-            {currentStep === 1 && (
+            {settingsLoading && (
+              <div className="payment-information">
+                <span aria-hidden="true">i</span>
+
+                <p>
+                  Chargement des paramètres du club…
+                </p>
+              </div>
+            )}
+
+            {settingsError && (
+              <section
+                className="payment-save-error"
+                role="alert"
+              >
+                <strong>
+                  Impossible de démarrer l’inscription
+                </strong>
+
+                <p>{settingsError}</p>
+              </section>
+            )}
+
+            {clubSettings && currentStep === 1 && (
               <ProfileStep
                 formData={formData}
                 updateField={updateField}
+                adultAgeThreshold={
+                  clubSettings.adult_age_threshold
+                }
                 onNext={() => completeStep(2)}
               />
             )}
 
-            {currentStep === 2 && (
+            {clubSettings && currentStep === 2 && (
               <ContactStep
                 formData={formData}
                 updateField={updateField}
+                adultAgeThreshold={
+                  clubSettings.adult_age_threshold
+                }
                 onPrevious={() => goToStep(1)}
                 onNext={() => completeStep(3)}
               />
             )}
 
-            {currentStep === 3 && (
+            {clubSettings && currentStep === 3 && (
               <HealthStep
                 formData={formData}
                 updateField={updateField}
@@ -319,10 +393,11 @@ export default function InscriptionPage() {
               />
             )}
 
-            {currentStep === 4 && (
+            {clubSettings && currentStep === 4 && (
               <PaymentStep
                 formData={formData}
                 medicalCertificate={medicalCertificate}
+                clubSettings={clubSettings}
                 onPrevious={() => goToStep(3)}
               />
             )}
