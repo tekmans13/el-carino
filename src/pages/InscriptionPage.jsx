@@ -1,4 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import ContactStep from '../features/inscription/components/ContactStep';
 import HealthStep from '../features/inscription/components/HealthStep';
@@ -76,11 +81,15 @@ function RegistrationSummary({
             <strong>Profil</strong>
 
             <span>
-              {formatProfileValue(formData.ageCategory)}
+              {formatProfileValue(
+                formData.ageCategory,
+              )}
             </span>
 
             <span>
-              {formatProfileValue(formData.practiceType)}
+              {formatProfileValue(
+                formData.practiceType,
+              )}
             </span>
           </div>
         </li>
@@ -158,7 +167,11 @@ function RegistrationSummary({
 
 export default function InscriptionPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [maxStepReached, setMaxStepReached] = useState(1);
+  const [maxStepReached, setMaxStepReached] =
+    useState(1);
+
+  const [step4View, setStep4View] =
+    useState('summary');
 
   const [clubSettings, setClubSettings] =
     useState(null);
@@ -195,7 +208,7 @@ export default function InscriptionPage() {
         block: 'start',
       });
     });
-  }, [currentStep]);
+  }, [currentStep, step4View]);
 
   useEffect(() => {
     let active = true;
@@ -253,6 +266,7 @@ export default function InscriptionPage() {
     setMedicalCertificate(null);
     setCurrentStep(1);
     setMaxStepReached(1);
+    setStep4View('summary');
   }
 
   return (
@@ -262,22 +276,28 @@ export default function InscriptionPage() {
         className="registration-shell"
       >
         <header className="registration-topbar">
-<div className="registration-brand">
-  <img
-    className="registration-brand-logo"
-    src="/logo-elcarino.jpg"
-    alt="El Carino Muay Thai"
-  />
+          <div className="registration-brand">
+            <img
+              className="registration-brand-logo"
+              src="/logo-elcarino.jpg"
+              alt="El Carino Muay Thai"
+            />
 
-  <span>
-    <strong>El Carino</strong>
-    <small>Boxe thaï</small>
-  </span>
-</div>
+            <span>
+              <strong>El Carino</strong>
+              <small>Boxe thaï</small>
+            </span>
+          </div>
+
           <div className="registration-help">
-            <strong><span>Prêt pour l'inscription ?</span></strong>
-            <span>Le processus est simple, rapide et conçu pour être accessible à tous.</span>
+            <strong>
+              <span>Prêt pour l'inscription ?</span>
+            </strong>
 
+            <span>
+              Le processus est simple, rapide et conçu
+              pour être accessible à tous.
+            </span>
           </div>
         </header>
 
@@ -300,7 +320,13 @@ export default function InscriptionPage() {
                 Étape {currentStep} sur 4
               </p>
 
-              <h1>{stepTitle}</h1>
+              <h1>
+                {currentStep === 4
+                  ? step4View === 'payment'
+                    ? 'Règlement'
+                    : 'Récapitulatif'
+                  : stepTitle}
+              </h1>
 
               {currentStep === 1 && (
                 <p>
@@ -323,12 +349,21 @@ export default function InscriptionPage() {
                 </p>
               )}
 
-              {currentStep === 4 && (
-                <p>
-                  Vérifiez votre dossier avant de procéder
-                  au règlement.
-                </p>
-              )}
+              {currentStep === 4
+                && step4View === 'summary' && (
+                  <p>
+                    Vérifiez votre dossier avant
+                    d’enregistrer votre inscription.
+                  </p>
+                )}
+
+              {currentStep === 4
+                && step4View === 'payment' && (
+                  <p>
+                    Indiquez comment vous prévoyez de
+                    régler votre cotisation.
+                  </p>
+                )}
             </header>
 
             {settingsLoading && (
@@ -382,7 +417,9 @@ export default function InscriptionPage() {
                 formData={formData}
                 updateField={updateField}
                 updateHealthAnswer={updateHealthAnswer}
-                medicalCertificate={medicalCertificate}
+                medicalCertificate={
+                  medicalCertificate
+                }
                 onMedicalCertificateChange={
                   setMedicalCertificate
                 }
@@ -394,8 +431,14 @@ export default function InscriptionPage() {
             {clubSettings && currentStep === 4 && (
               <PaymentStep
                 formData={formData}
-                medicalCertificate={medicalCertificate}
+                medicalCertificate={
+                  medicalCertificate
+                }
                 clubSettings={clubSettings}
+                view={step4View}
+                onRegistrationSaved={() =>
+                  setStep4View('payment')
+                }
                 onPrevious={() => goToStep(3)}
               />
             )}
@@ -413,7 +456,6 @@ export default function InscriptionPage() {
 
           <div className="registration-footer-links">
             <span>Club affilié FFKMDA</span>
-
           </div>
         </footer>
       </section>

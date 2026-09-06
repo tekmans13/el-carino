@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-import { createRegistration } from '../services/registrationService';
+import {
+  createRegistration,
+  updatePlannedPaymentMethods,
+} from '../services/registrationService';
 
 import {
   formatEuroFromCents,
@@ -26,15 +29,80 @@ function SummaryRow({ label, value }) {
   );
 }
 
+const MAIN_PAYMENT_METHODS = [
+  {
+    value: 'cash',
+    label: 'Espèces',
+    description: 'En une seule fois',
+  },
+  {
+    value: 'check_1',
+    label: 'Chèque',
+    description: 'En 1 fois',
+  },
+  {
+    value: 'check_2',
+    label: 'Chèque',
+    description: 'En 2 fois',
+  },
+  {
+    value: 'check_3',
+    label: 'Chèque',
+    description: 'En 3 fois',
+  },
+];
+
+const ADDITIONAL_PAYMENT_METHODS = [
+  {
+    value: 'caf',
+    label: 'Coupons CAF',
+  },
+  {
+    value: 'cjeune',
+    label: 'C-Jeune',
+  },
+  {
+    value: 'pass_sport',
+    label: 'Pass’Sport',
+  },
+];
+
 export default function PaymentStep({
   formData,
   medicalCertificate,
   clubSettings,
+  view,
+  onRegistrationSaved,
   onPrevious,
 }) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [registration, setRegistration] = useState(null);
+
+  const [
+    mainPaymentMethod,
+    setMainPaymentMethod,
+  ] = useState('');
+
+  const [
+    additionalPaymentMethods,
+    setAdditionalPaymentMethods,
+  ] = useState([]);
+
+  const [
+    savingPaymentMethod,
+    setSavingPaymentMethod,
+  ] = useState(false);
+
+  const [
+    paymentMethodError,
+    setPaymentMethodError,
+  ] = useState('');
+
+  const [
+    paymentMethodSaved,
+    setPaymentMethodSaved,
+  ] = useState(false);
 
   const fullName = [
     formData.firstName,
@@ -76,6 +144,25 @@ export default function PaymentStep({
     clubSettings,
   );
 
+  const hasPaymentMethod =
+    Boolean(mainPaymentMethod)
+    || additionalPaymentMethods.length > 0;
+
+  function handleAdditionalPaymentMethod(method) {
+    setAdditionalPaymentMethods((currentMethods) => {
+      if (currentMethods.includes(method)) {
+        return currentMethods.filter(
+          (currentMethod) => currentMethod !== method,
+        );
+      }
+
+      return [
+        ...currentMethods,
+        method,
+      ];
+    });
+  }
+
   async function handleSaveRegistration() {
     if (saving || registration) {
       return;
@@ -92,6 +179,7 @@ export default function PaymentStep({
         );
 
       setRegistration(createdRegistration);
+      onRegistrationSaved();
     } catch (error) {
       setSaveError(
         error instanceof Error
@@ -101,6 +189,245 @@ export default function PaymentStep({
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleSavePaymentMethods() {
+    if (
+      savingPaymentMethod
+      || !registration
+      || !hasPaymentMethod
+    ) {
+      return;
+    }
+
+    try {
+      setSavingPaymentMethod(true);
+      setPaymentMethodError('');
+      setPaymentMethodSaved(false);
+
+      await updatePlannedPaymentMethods(
+        registration.id,
+        mainPaymentMethod,
+        additionalPaymentMethods,
+      );
+
+      setPaymentMethodSaved(true);
+    } catch (error) {
+      setPaymentMethodError(
+        error instanceof Error
+          ? error.message
+          : 'Une erreur est survenue pendant l’enregistrement du règlement.',
+      );
+    } finally {
+      setSavingPaymentMethod(false);
+    }
+  }
+
+  if (view === 'payment' && registration) {
+    return (
+      <section className="payment-step">
+        <section className="payment-price-card">
+          <div>
+            <span>Montant de votre cotisation</span>
+
+            {pricing ? (
+              <p>
+                {pricing.isAdult
+                  ? 'Cotisation adulte'
+                  : 'Cotisation mineur'}
+                {' : '}
+                {formatEuroFromCents(
+                  pricing.baseFeeCents,
+                )}
+
+                {pricing.licenseFeeCents > 0 && (
+                  <>
+                    {' + licence fédérale : '}
+                    {formatEuroFromCents(
+                      pricing.licenseFeeCents,
+                    )}
+                  </>
+                )}
+              </p>
+            ) : (
+              <p>
+                Impossible de calculer le tarif.
+              </p>
+            )}
+          </div>
+
+          <strong>
+            {pricing
+              ? formatEuroFromCents(
+                pricing.totalCents,
+              )
+              : 'À calculer'}
+          </strong>
+        </section>
+
+        <section className="payment-method-card">
+          <div className="payment-method-header">
+            <h2>
+              Comment souhaitez-vous régler ?
+            </h2>
+
+            <p>
+              Vous pouvez associer des aides ou coupons
+              à un règlement en espèces ou par chèque.
+            </p>
+          </div>
+
+          <div className="payment-method-section">
+            <div className="payment-method-section-header">
+              <strong>Règlement principal</strong>
+
+              <span>
+                Espèces ou chèque
+              </span>
+            </div>
+
+            <div className="payment-method-list">
+              {MAIN_PAYMENT_METHODS.map((method) => (
+                <label
+                  key={method.value}
+                  className={[
+                    'payment-method-option',
+                    mainPaymentMethod === method.value
+                      ? 'is-selected'
+                      : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  <input
+                    type="radio"
+                    name="mainPaymentMethod"
+                    value={method.value}
+                    checked={
+                      mainPaymentMethod === method.value
+                    }
+                    onChange={(event) =>
+                      setMainPaymentMethod(
+                        event.target.value,
+                      )
+                    }
+                  />
+
+                  <span>
+                    <strong>{method.label}</strong>
+
+                    <small>
+                      {method.description}
+                    </small>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="payment-method-section">
+            <div className="payment-method-section-header">
+              <strong>Aides et coupons</strong>
+
+              <span>
+                Plusieurs choix possibles
+              </span>
+            </div>
+
+            <div className="payment-method-list payment-method-list-additional">
+              {ADDITIONAL_PAYMENT_METHODS.map(
+                (method) => {
+                  const selected =
+                    additionalPaymentMethods.includes(
+                      method.value,
+                    );
+
+                  return (
+                    <label
+                      key={method.value}
+                      className={[
+                        'payment-method-option',
+                        selected
+                          ? 'is-selected'
+                          : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      <input
+                        type="checkbox"
+                        value={method.value}
+                        checked={selected}
+                        onChange={() =>
+                          handleAdditionalPaymentMethod(
+                            method.value,
+                          )
+                        }
+                      />
+
+                      <span>
+                        <strong>
+                          {method.label}
+                        </strong>
+                      </span>
+                    </label>
+                  );
+                },
+              )}
+            </div>
+          </div>
+        </section>
+
+        {paymentMethodError && (
+          <section
+            className="payment-error"
+            role="alert"
+          >
+            <strong>
+              Échec de l’enregistrement
+            </strong>
+
+            <p>{paymentMethodError}</p>
+          </section>
+        )}
+
+        {paymentMethodSaved && (
+          <section className="payment-success">
+            Choix de règlement enregistré.
+          </section>
+        )}
+
+        <div className="payment-information">
+          <span aria-hidden="true">i</span>
+
+          <p>
+            Le règlement n’est pas effectué en ligne.
+            Les règlements et justificatifs sont à
+            remettre directement au club. Les chèques
+            sont à établir à l’ordre de « ASC EL CARINO ».
+            Les chèques vacances ne sont pas acceptés.
+          </p>
+        </div>
+
+        <div className="payment-step-actions">
+          <div />
+
+          <button
+            type="button"
+            className="payment-submit-button"
+            onClick={handleSavePaymentMethods}
+            disabled={
+              !hasPaymentMethod
+              || savingPaymentMethod
+            }
+          >
+            {savingPaymentMethod
+              ? 'Enregistrement en cours…'
+              : 'Valider mon choix de règlement'}
+          </button>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -117,8 +444,8 @@ export default function PaymentStep({
           <h2>Vérifiez votre dossier</h2>
 
           <p>
-            Contrôlez les informations avant d’enregistrer
-            le dossier et de procéder au paiement.
+            Contrôlez les informations ci-dessous avant
+            d’enregistrer votre inscription.
           </p>
         </div>
       </header>
@@ -129,7 +456,9 @@ export default function PaymentStep({
 
           <div>
             <h3>Profil</h3>
-            <p>Type d’inscription et pratique choisie.</p>
+            <p>
+              Type d’inscription et pratique choisie.
+            </p>
           </div>
         </header>
 
@@ -158,7 +487,9 @@ export default function PaymentStep({
 
           <div>
             <h3>Informations personnelles</h3>
-            <p>Identité et coordonnées de l’adhérent.</p>
+            <p>
+              Identité et coordonnées de l’adhérent.
+            </p>
           </div>
         </header>
 
@@ -214,7 +545,9 @@ export default function PaymentStep({
 
           <div>
             <h3>Santé et autorisations</h3>
-            <p>État du questionnaire et des documents.</p>
+            <p>
+              État du questionnaire et des documents.
+            </p>
           </div>
         </header>
 
@@ -260,84 +593,27 @@ export default function PaymentStep({
         </div>
       </section>
 
-      <section className="payment-price-card">
-        <div>
-          <span>Montant de l’inscription</span>
-
-          {pricing ? (
-            <p>
-              {pricing.isAdult
-                ? 'Cotisation adulte'
-                : 'Cotisation mineur'}
-              {' : '}
-              {formatEuroFromCents(
-                pricing.baseFeeCents,
-              )}
-
-              {pricing.licenseFeeCents > 0 && (
-                <>
-                  {' + licence fédérale : '}
-                  {formatEuroFromCents(
-                    pricing.licenseFeeCents,
-                  )}
-                </>
-              )}
-            </p>
-          ) : (
-            <p>
-              Impossible de calculer le tarif.
-            </p>
-          )}
-        </div>
-
-        <strong>
-          {pricing
-            ? formatEuroFromCents(
-              pricing.totalCents,
-            )
-            : 'À calculer'}
-        </strong>
-      </section>
-
-      {registration && (
-        <section
-          className="payment-save-success"
-          aria-live="polite"
-        >
-          <span aria-hidden="true">✓</span>
-
-          <div>
-            <strong>Dossier enregistré</strong>
-
-            <p>
-              Référence :
-              {' '}
-              <code>{registration.id}</code>
-            </p>
-          </div>
-        </section>
-      )}
-
       {saveError && (
         <section
           className="payment-save-error"
           role="alert"
         >
-          <strong>Échec de l’enregistrement</strong>
+          <strong>
+            Échec de l’enregistrement
+          </strong>
+
           <p>{saveError}</p>
         </section>
       )}
 
-      {!registration && (
-        <div className="payment-information">
-          <span aria-hidden="true">i</span>
+      <div className="payment-information">
+        <span aria-hidden="true">i</span>
 
-          <p>
-            Enregistrez le dossier. Le règlement sera
-            ensuite suivi manuellement par le bureau.
-          </p>
-        </div>
-      )}
+        <p>
+          Après l’enregistrement de votre dossier,
+          vous pourrez indiquer votre mode de règlement.
+        </p>
+      </div>
 
       <div className="payment-step-actions">
         <button
@@ -350,26 +626,16 @@ export default function PaymentStep({
           Retour
         </button>
 
-        {!registration ? (
-          <button
-            type="button"
-            className="payment-submit-button"
-            onClick={handleSaveRegistration}
-            disabled={saving}
-          >
-            {saving
-              ? 'Enregistrement en cours…'
-              : 'Enregistrer le dossier'}
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="payment-submit-button"
-            disabled
-          >
-            Dossier enregistré
-          </button>
-        )}
+        <button
+          type="button"
+          className="payment-submit-button"
+          onClick={handleSaveRegistration}
+          disabled={saving}
+        >
+          {saving
+            ? 'Enregistrement en cours…'
+            : 'Enregistrer mon inscription'}
+        </button>
       </div>
     </section>
   );
