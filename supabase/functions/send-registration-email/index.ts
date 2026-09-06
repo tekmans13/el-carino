@@ -24,6 +24,26 @@ type Registration = {
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
+function jsonResponse(
+  body: Record<string, unknown>,
+  status = 200,
+) {
+  return Response.json(
+    body,
+    {
+      status,
+      headers: CORS_HEADERS,
+    },
+  );
+}
+
 function requireEnvironmentVariable(name: string): string {
   const value = Deno.env.get(name);
 
@@ -272,15 +292,23 @@ function buildHtmlEmail(registration: Registration): string {
 }
 
 Deno.serve(async (request) => {
+  if (request.method === 'OPTIONS') {
+    return new Response(
+      'ok',
+      {
+        status: 200,
+        headers: CORS_HEADERS,
+      },
+    );
+  }
+
   if (request.method !== 'POST') {
-    return Response.json(
+    return jsonResponse(
       {
         success: false,
         error: 'Méthode non autorisée.',
       },
-      {
-        status: 405,
-      },
+      405,
     );
   }
 
@@ -292,14 +320,12 @@ Deno.serve(async (request) => {
       !registrationId
       || !UUID_PATTERN.test(registrationId)
     ) {
-      return Response.json(
+      return jsonResponse(
         {
           success: false,
           error: 'La référence du dossier est invalide.',
         },
-        {
-          status: 400,
-        },
+        400,
       );
     }
 
@@ -373,27 +399,23 @@ Deno.serve(async (request) => {
     }
 
     if (!registration) {
-      return Response.json(
+      return jsonResponse(
         {
           success: false,
           error: 'Dossier introuvable.',
         },
-        {
-          status: 404,
-        },
+        404,
       );
     }
 
     if (registration.status !== 'soumis') {
-      return Response.json(
+      return jsonResponse(
         {
           success: false,
           error:
             'Le dossier ne possède pas le statut soumis.',
         },
-        {
-          status: 409,
-        },
+        409,
       );
     }
 
@@ -401,20 +423,18 @@ Deno.serve(async (request) => {
       getPaymentMethodLabels(registration);
 
     if (paymentMethods.length === 0) {
-      return Response.json(
+      return jsonResponse(
         {
           success: false,
           error:
             'Aucun mode de règlement n’a encore été renseigné.',
         },
-        {
-          status: 409,
-        },
+        409,
       );
     }
 
     if (registration.summary_email_sent_at) {
-      return Response.json({
+      return jsonResponse({
         success: true,
         alreadySent: true,
         message:
@@ -458,7 +478,7 @@ Deno.serve(async (request) => {
       );
     }
 
-    return Response.json({
+    return jsonResponse({
       success: true,
       alreadySent: false,
       message: 'E-mail de confirmation envoyé.',
@@ -469,7 +489,7 @@ Deno.serve(async (request) => {
       error,
     );
 
-    return Response.json(
+    return jsonResponse(
       {
         success: false,
         error:
@@ -477,9 +497,7 @@ Deno.serve(async (request) => {
             ? error.message
             : 'Erreur inconnue pendant l’envoi.',
       },
-      {
-        status: 500,
-      },
+      500,
     );
   }
 });
