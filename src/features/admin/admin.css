@@ -2233,7 +2233,7 @@
 
 .admin-users-form {
   grid-template-columns:
-    repeat(5, minmax(140px, 1fr))
+    repeat(4, minmax(140px, 1fr))
     auto;
 }
 
