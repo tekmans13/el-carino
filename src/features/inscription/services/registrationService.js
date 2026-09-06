@@ -1,5 +1,11 @@
 import { supabase } from '../../../services/supabase';
 
+import { getClubSettings } from './clubSettingsService';
+
+import {
+  getRegistrationPricing,
+} from '../utils/registrationPricing';
+
 const MEDICAL_CERTIFICATE_BUCKET =
   'medical-certificates';
 
@@ -39,6 +45,7 @@ function buildRegistrationPayload(
   formData,
   registrationId,
   medicalCertificate,
+  paymentAmountCents,
 ) {
   const certificateRequired =
     getCertificateRequired(formData);
@@ -125,6 +132,11 @@ function buildRegistrationPayload(
       formData.ageCategory === 'enfant'
         ? Boolean(formData.parentalAuthorization)
         : null,
+
+    payment_amount_cents:
+      paymentAmountCents,
+
+    payment_currency: 'eur',
 
     status: 'soumis',
   };
@@ -244,6 +256,19 @@ export async function createRegistration(
 ) {
   const registrationId = crypto.randomUUID();
 
+  const clubSettings = await getClubSettings();
+
+  const pricing = getRegistrationPricing(
+    formData,
+    clubSettings,
+  );
+
+  if (!pricing) {
+    throw new Error(
+      'Impossible de calculer le montant de l’inscription.',
+    );
+  }
+
   const certificateRequired =
     getCertificateRequired(formData);
 
@@ -262,6 +287,7 @@ export async function createRegistration(
     formData,
     registrationId,
     medicalCertificate,
+    pricing.totalCents,
   );
 
   const { error } = await supabase
