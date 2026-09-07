@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 import {
-  PAYMENT_STATUS_LABELS,
   PRACTICE_LABELS,
   PROFILE_LABELS,
   STATUS_LABELS,
@@ -13,6 +12,13 @@ import {
 } from '../utils/registrationFormatters';
 
 import StatusBadge from './StatusBadge';
+
+const PAYMENT_STATUS_LABELS = {
+  unpaid: 'Non payé',
+  partial: 'Partiellement payé',
+  paid: 'Payé',
+  undefined: 'À définir',
+};
 
 export default function RegistrationCard({
   registration,
@@ -39,7 +45,9 @@ export default function RegistrationCard({
             </strong>
 
             <span>
-              {formatDate(registration.created_at)}
+              {formatDate(
+                registration.created_at,
+              )}
             </span>
           </div>
         </div>
@@ -69,7 +77,9 @@ export default function RegistrationCard({
           <dt>E-mail</dt>
 
           <dd>
-            <a href={`mailto:${registration.email}`}>
+            <a
+              href={`mailto:${registration.email}`}
+            >
               {registration.email}
             </a>
           </dd>
@@ -79,7 +89,9 @@ export default function RegistrationCard({
           <dt>Téléphone</dt>
 
           <dd>
-            <a href={`tel:${registration.phone}`}>
+            <a
+              href={`tel:${registration.phone}`}
+            >
               {registration.phone}
             </a>
           </dd>
@@ -89,11 +101,20 @@ export default function RegistrationCard({
           <dt>Paiement</dt>
 
           <dd>
-            <StatusBadge
-              value={registration.payment_status}
-              labels={PAYMENT_STATUS_LABELS}
-              type="payment"
-            />
+            <span
+              className={[
+                'admin-payment-overview-status',
+                `is-${registration.computed_payment_status}`,
+              ].join(' ')}
+            >
+              {
+                PAYMENT_STATUS_LABELS[
+                  registration
+                    .computed_payment_status
+                ]
+                ?? 'À définir'
+              }
+            </span>
           </dd>
         </div>
       </dl>

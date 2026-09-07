@@ -1,11 +1,9 @@
 export const STATUS_LABELS = {
   brouillon: 'Brouillon',
-  soumis: 'Soumis',
+  soumis: 'À vérifier',
   incomplet: 'Incomplet',
   complement_demande: 'Complément demandé',
   valide: 'Validé',
-  en_attente_paiement: 'Paiement attendu',
-  paye: 'Payé',
   refuse: 'Refusé',
   annule: 'Annulé',
 };

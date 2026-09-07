@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 import {
-  PAYMENT_STATUS_LABELS,
   PRACTICE_LABELS,
   PROFILE_LABELS,
   STATUS_LABELS,
@@ -14,6 +13,15 @@ import {
 
 import RegistrationCard from './RegistrationCard';
 import StatusBadge from './StatusBadge';
+
+import '../admin-payments-overview.css';
+
+const PAYMENT_STATUS_LABELS = {
+  unpaid: 'Non payé',
+  partial: 'Partiellement payé',
+  paid: 'Payé',
+  undefined: 'À définir',
+};
 
 function MailIcon() {
   return (
@@ -213,7 +221,9 @@ export default function RegistrationTable({
                     {registration.email}
                   </a>
 
-                  <span>{registration.phone || '—'}</span>
+                  <span>
+                    {registration.phone || '—'}
+                  </span>
                 </td>
 
                 <td>
@@ -224,15 +234,26 @@ export default function RegistrationTable({
                 </td>
 
                 <td>
-                  <StatusBadge
-                    value={registration.payment_status}
-                    labels={PAYMENT_STATUS_LABELS}
-                    type="payment"
-                  />
+                  <span
+                    className={[
+                      'admin-payment-overview-status',
+                      `is-${registration.computed_payment_status}`,
+                    ].join(' ')}
+                  >
+                    {
+                      PAYMENT_STATUS_LABELS[
+                        registration
+                          .computed_payment_status
+                      ]
+                      ?? 'À définir'
+                    }
+                  </span>
                 </td>
 
                 <td className="admin-date-column">
-                  {formatDate(registration.created_at)}
+                  {formatDate(
+                    registration.created_at,
+                  )}
                 </td>
 
                 <td className="admin-actions-column">
@@ -255,15 +276,14 @@ export default function RegistrationTable({
                       <EyeIcon />
                     </Link>
 
-                    <button
-                      type="button"
+                    <Link
                       className="admin-icon-action"
-                      aria-label="Gérer le paiement"
-                      title="Paiement — à venir"
-                      disabled
+                      to={`/admin/inscriptions/${registration.id}`}
+                      aria-label={`Gérer le paiement de ${registration.first_name} ${registration.last_name}`}
+                      title="Gérer le paiement"
                     >
                       <PaymentIcon />
-                    </button>
+                    </Link>
 
                     <button
                       type="button"

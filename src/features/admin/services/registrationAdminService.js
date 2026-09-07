@@ -43,6 +43,8 @@ const REGISTRATION_LIST_FIELDS = `
 
   status,
   payment_status,
+  payment_amount_cents,
+  payment_currency,
   created_at
 `;
 
@@ -100,26 +102,118 @@ const ADMIN_EDITABLE_STATUSES = [
   'incomplet',
   'complement_demande',
   'valide',
-  'en_attente_paiement',
   'refuse',
   'annule',
 ];
 
+function getComputedPaymentStatus(
+  amountDueCents,
+  amountReceivedCents,
+) {
+  if (
+    amountDueCents === null
+    || amountDueCents === undefined
+  ) {
+    return 'undefined';
+  }
+
+  const due =
+    Number(amountDueCents);
+
+  const received =
+    Number(amountReceivedCents ?? 0);
+
+  if (
+    !Number.isFinite(due)
+    || due <= 0
+  ) {
+    return 'undefined';
+  }
+
+  if (received <= 0) {
+    return 'unpaid';
+  }
+
+  if (received < due) {
+    return 'partial';
+  }
+
+  return 'paid';
+}
+
 export async function listRegistrations() {
-  const { data, error } = await supabase
+  const {
+    data: registrations,
+    error: registrationsError,
+  } = await supabase
     .from('inscriptions')
     .select(REGISTRATION_LIST_FIELDS)
     .order('created_at', {
       ascending: false,
     });
 
-  if (error) {
+  if (registrationsError) {
     throw new Error(
-      `Impossible de charger les inscriptions : ${error.message}`,
+      `Impossible de charger les inscriptions : ${registrationsError.message}`,
     );
   }
 
-  return data ?? [];
+  const {
+    data: payments,
+    error: paymentsError,
+  } = await supabase
+    .from('payments')
+    .select(`
+      inscription_id,
+      amount_cents
+    `);
+
+  if (paymentsError) {
+    throw new Error(
+      `Impossible de charger les règlements : ${paymentsError.message}`,
+    );
+  }
+
+  const receivedByRegistration =
+    new Map();
+
+  for (const payment of payments ?? []) {
+    const currentAmount =
+      receivedByRegistration.get(
+        payment.inscription_id,
+      ) ?? 0;
+
+    receivedByRegistration.set(
+      payment.inscription_id,
+      currentAmount
+      + Number(payment.amount_cents ?? 0),
+    );
+  }
+
+  return (registrations ?? []).map(
+    (registration) => {
+      const amountReceivedCents =
+        receivedByRegistration.get(
+          registration.id,
+        ) ?? 0;
+
+      const amountDueCents =
+        registration.payment_amount_cents;
+
+      return {
+        ...registration,
+
+        amount_received_cents:
+          amountReceivedCents,
+
+        computed_payment_status:
+          getComputedPaymentStatus(
+            amountDueCents,
+            amountReceivedCents,
+          ),
+      };
+    },
+  );
 }
 
 export async function getRegistrationById(
