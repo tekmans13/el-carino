@@ -46,10 +46,8 @@ function isPdfFile(file) {
 
 function getCertificateRequired(formData) {
   return (
-    (
-      formData.ageCategory === 'adulte'
-      && formData.practiceType === 'competition'
-    )
+    formData.ageCategory === 'adulte'
+    || formData.practiceType === 'competition'
     || Boolean(
       formData.healthQuestionnaireHasPositiveAnswer,
     )

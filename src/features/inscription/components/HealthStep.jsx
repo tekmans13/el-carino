@@ -315,11 +315,17 @@ export default function HealthStep({
   const [isRulesModalOpen, setIsRulesModalOpen] =
     useState(false);
 
-  const isAdultCompetition =
-    formData.ageCategory === 'adulte'
-    && formData.practiceType === 'competition';
+  const isAdult =
+    formData.ageCategory === 'adulte';
 
-  const questionnaireRequired = !isAdultCompetition;
+  const isCompetition =
+    formData.practiceType === 'competition';
+
+  const certificateRequiredByProfile =
+    isAdult || isCompetition;
+
+  const questionnaireRequired =
+    !certificateRequiredByProfile;
 
   const applicableQuestions = useMemo(
     () =>
@@ -358,7 +364,7 @@ export default function HealthStep({
   );
 
   const certificateRequired =
-    isAdultCompetition || hasPositiveAnswer;
+    certificateRequiredByProfile || hasPositiveAnswer;
 
   const groupedQuestions = useMemo(
     () =>
@@ -572,21 +578,21 @@ export default function HealthStep({
         <header className="health-step-header">
           <h2>Santé et autorisations</h2>
 
-          {isAdultCompetition ? (
+          {certificateRequiredByProfile ? (
             <p>
-              Pour un adulte inscrit en compétition, le
+              Pour les adultes et les compétiteurs, le
               certificat médical est obligatoire.
             </p>
           ) : (
             <p>
-              Complétez le questionnaire de santé. Une seule
-              réponse positive rendra le certificat médical
-              obligatoire.
+              Pour un mineur en loisir, complétez le
+              questionnaire de santé. Une seule réponse positive
+              rendra le certificat médical obligatoire.
             </p>
           )}
         </header>
 
-        {isAdultCompetition && (
+        {certificateRequiredByProfile && (
           <section className="health-panel health-panel-information">
             <div className="health-panel-header">
               <span
@@ -600,9 +606,9 @@ export default function HealthStep({
                 <h3>Questionnaire non requis</h3>
 
                 <p>
-                  Votre profil est Adulte – Compétition.
-                  Passez directement au dépôt du certificat
-                  médical.
+                  {isCompetition
+                    ? 'Pour une inscription en compétition, passez directement au dépôt du certificat médical.'
+                    : 'Pour un adulte, passez directement au dépôt du certificat médical.'}
                 </p>
               </div>
             </div>
@@ -678,9 +684,11 @@ export default function HealthStep({
             error={errors.medicalCertificate}
             onChange={handleCertificateChange}
             mandatoryReason={
-              isAdultCompetition
+              isCompetition
                 ? 'Le questionnaire n’est pas requis pour ce profil. Fournissez un certificat médical de non-contre-indication à la pratique en compétition.'
-                : 'Au moins une réponse au questionnaire est positive. Une consultation médicale est nécessaire.'
+                : isAdult
+                  ? 'Le questionnaire n’est pas requis pour un adulte. Fournissez un certificat médical de non-contre-indication à la pratique du kick-boxing.'
+                  : 'Au moins une réponse au questionnaire est positive. Une consultation médicale est nécessaire.'
             }
           />
         )}
