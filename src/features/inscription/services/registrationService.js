@@ -475,6 +475,17 @@ export async function createRegistration(
       paiProtocolStoragePath,
     );
 
+    if (
+      error.code === '23505'
+      && error.message?.includes(
+        'inscriptions_unique_practitioner_identity_idx',
+      )
+    ) {
+      throw new Error(
+        'Une inscription existe déjà pour ce pratiquant. Si vous pensez qu’il s’agit d’une erreur, contactez le club.',
+      );
+    }
+
     throw new Error(
       `Impossible d’enregistrer l’inscription : ${error.message}`,
     );

@@ -210,6 +210,7 @@ export default function InscriptionPage() {
     formData,
     updateField,
     updateHealthAnswer,
+    clearStoredForm,
     resetForm,
   } = useRegistrationForm();
 
@@ -262,7 +263,43 @@ export default function InscriptionPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (step4View !== 'confirmation') {
+      return undefined;
+    }
+
+    window.history.pushState(
+      { elCarinoRegistrationComplete: true },
+      '',
+      window.location.href,
+    );
+
+    function preventBackNavigation() {
+      window.history.pushState(
+        { elCarinoRegistrationComplete: true },
+        '',
+        window.location.href,
+      );
+    }
+
+    window.addEventListener(
+      'popstate',
+      preventBackNavigation,
+    );
+
+    return () => {
+      window.removeEventListener(
+        'popstate',
+        preventBackNavigation,
+      );
+    };
+  }, [step4View]);
+
   function goToStep(stepNumber) {
+    if (step4View === 'confirmation') {
+      return;
+    }
+
     if (stepNumber > maxStepReached) {
       return;
     }
@@ -276,6 +313,11 @@ export default function InscriptionPage() {
     );
 
     setCurrentStep(nextStep);
+  }
+
+  function handlePaymentSaved() {
+    clearStoredForm();
+    setStep4View('confirmation');
   }
 
   function handleReset() {
@@ -473,9 +515,8 @@ export default function InscriptionPage() {
                 onRegistrationSaved={() =>
                   setStep4View('payment')
                 }
-                onPaymentSaved={() =>
-                  setStep4View('confirmation')
-                }
+                onPaymentSaved={handlePaymentSaved}
+                onRestart={handleReset}
                 onPrevious={() => goToStep(3)}
               />
             )}
@@ -483,14 +524,6 @@ export default function InscriptionPage() {
         </div>
 
         <footer className="registration-bottom-bar">
-          <button
-            type="button"
-            className="registration-reset-button"
-            onClick={handleReset}
-          >
-            Recommencer
-          </button>
-
           <div className="registration-footer-links">
             <span>Club affilié FFKMDA</span>
           </div>

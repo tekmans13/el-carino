@@ -107,15 +107,23 @@ export function useRegistrationForm() {
     });
   }
 
+  function clearStoredForm() {
+    sessionStorage.removeItem(STORAGE_KEY);
+  }
+
   function resetForm() {
     sessionStorage.removeItem(STORAGE_KEY);
-    setFormData(initialFormData);
+    setFormData({
+      ...initialFormData,
+      healthAnswers: {},
+    });
   }
 
   return {
     formData,
     updateField,
     updateHealthAnswer,
+    clearStoredForm,
     resetForm,
   };
 }
