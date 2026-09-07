@@ -184,6 +184,19 @@ Les chèques vacances ne sont pas acceptés.
 
 Le bureau du club enregistrera les règlements au fur et à mesure de leur réception.
 
+Informations pratiques :
+
+Lieu des entraînements :
+Gymnase du Collège de l’Estaque
+348 rue Rabelais
+13016 Marseille
+
+Horaires :
+- Mardi : 17h30 – 19h30 — Adolescents / adultes
+- Mercredi : 17h00 – 18h00 — Enfants
+- Mercredi : 18h30 – 20h00 — Adultes (arrivée à 18h15)
+- Samedi : 10h00 – 12h00 — Enfants / adolescents / adultes
+
 Sportivement,
 
 Le club El Carino`;
@@ -281,6 +294,30 @@ function buildHtmlEmail(registration: Registration): string {
           Le bureau du club enregistrera les règlements au fur
           et à mesure de leur réception.
         </p>
+
+        <hr>
+
+        <p>
+          <strong>Informations pratiques</strong>
+        </p>
+
+        <p>
+          <strong>Lieu des entraînements :</strong><br>
+          Gymnase du Collège de l’Estaque<br>
+          348 rue Rabelais<br>
+          13016 Marseille
+        </p>
+
+        <p>
+          <strong>Horaires :</strong>
+        </p>
+
+        <ul>
+          <li>Mardi : 17h30 – 19h30 — Adolescents / adultes</li>
+          <li>Mercredi : 17h00 – 18h00 — Enfants</li>
+          <li>Mercredi : 18h30 – 20h00 — Adultes (arrivée à 18h15)</li>
+          <li>Samedi : 10h00 – 12h00 — Enfants / adolescents / adultes</li>
+        </ul>
 
         <p>
           Sportivement,<br>
