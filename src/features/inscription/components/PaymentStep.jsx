@@ -138,6 +138,7 @@ export default function PaymentStep({
   view,
   onRegistrationSaved,
   onPaymentSaved,
+  onRestart,
   onPrevious,
 }) {
   const [saving, setSaving] = useState(false);
@@ -468,6 +469,18 @@ export default function PaymentStep({
               </div>
             </div>
           </section>
+        </div>
+
+        <div className="payment-step-actions">
+          <button
+            type="button"
+            className="payment-back-button"
+            onClick={onRestart}
+          >
+            Inscrire une autre personne
+          </button>
+
+          <div />
         </div>
       </section>
     );
