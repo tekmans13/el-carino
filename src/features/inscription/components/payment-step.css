@@ -328,6 +328,90 @@
   line-height: 1.5;
 }
 
+/* Confirmation : équipement + informations pratiques */
+
+.payment-confirmation-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.payment-practical-content {
+  padding: 18px 20px;
+}
+
+/* Équipement */
+
+.payment-equipment-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.payment-equipment-list li {
+  position: relative;
+  padding: 11px 10px 11px 38px;
+  border-bottom: 1px solid #eef2f6;
+  color: #344054;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.payment-equipment-list li:last-child {
+  border-bottom: 0;
+}
+
+.payment-equipment-list li::before {
+  content: '✓';
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff0f1;
+  color: #b91c1c;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.payment-practical-note {
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fff8e6;
+  color: #66551f;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+/* Informations pratiques */
+
+.payment-practical-section + .payment-practical-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eef2f6;
+}
+
+.payment-practical-section > strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #344054;
+  font-size: 0.86rem;
+}
+
+.payment-practical-section p {
+  margin: 0;
+  color: #667085;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
 /* Actions */
 
 .payment-step-actions {
@@ -448,6 +532,14 @@
   .payment-method-option {
     min-height: 60px;
     padding: 13px 14px;
+  }
+
+  .payment-practical-content {
+    padding: 16px;
+  }
+
+  .payment-equipment-list li {
+    padding-right: 0;
   }
 
   .payment-step-actions {

@@ -1,3 +1,5 @@
+// src/features/inscription/components/PaymentStep.jsx
+
 import { useState } from 'react';
 
 import {
@@ -78,6 +80,18 @@ const PAI_TYPE_LABELS = {
     'Troubles de la coagulation (prise d’anticoagulants)',
   other: 'Autre',
 };
+
+const REQUIRED_EQUIPMENT = [
+  'Protège-dents',
+  'Coquille',
+  'Gants à velcro et bandes',
+  'Protège-tibias',
+  'Protège-pieds Full-Contact en mousse avec talon',
+  'Pantalon Full-Contact ou short de Kick-Boxing',
+  'T-shirt de sport, de préférence celui du club',
+  'Casque et plastron pour les combats',
+  'Bouteille d’eau et serviette',
+];
 
 function getSelectedPaymentMethodLabels(
   mainPaymentMethod,
@@ -358,6 +372,104 @@ export default function PaymentStep({
             règlements au fur et à mesure de leur
             réception.
           </p>
+        </div>
+
+        <div className="payment-confirmation-grid">
+          <section className="payment-summary-card">
+            <header className="payment-summary-card-header">
+              <span aria-hidden="true">🥊</span>
+
+              <div>
+                <h3>
+                  Équipement obligatoire
+                </h3>
+
+                <p>
+                  À prévoir pour les entraînements.
+                </p>
+              </div>
+            </header>
+
+            <div className="payment-practical-content">
+              <ul className="payment-equipment-list">
+                {REQUIRED_EQUIPMENT.map(
+                  (equipment) => (
+                    <li key={equipment}>
+                      {equipment}
+                    </li>
+                  ),
+                )}
+              </ul>
+
+              <p className="payment-practical-note">
+                En cas de doute sur le matériel ou les
+                tailles, renseignez-vous auprès du club
+                avant votre achat.
+              </p>
+            </div>
+          </section>
+
+          <section className="payment-summary-card">
+            <header className="payment-summary-card-header">
+              <span aria-hidden="true">i</span>
+
+              <div>
+                <h3>
+                  Informations pratiques
+                </h3>
+
+                <p>
+                  Adresse et horaires des entraînements.
+                </p>
+              </div>
+            </header>
+
+            <div className="payment-practical-content">
+              <div className="payment-practical-section">
+                <strong>Lieu des entraînements</strong>
+
+                <p>
+                  Gymnase du Collège de l’Estaque
+                  <br />
+                  348 rue Rabelais
+                  <br />
+                  13016 Marseille
+                </p>
+              </div>
+
+              <div className="payment-practical-section">
+                <strong>Mardi</strong>
+
+                <p>
+                  17h30 – 19h30
+                  <br />
+                  Adolescents / adultes
+                </p>
+              </div>
+
+              <div className="payment-practical-section">
+                <strong>Mercredi</strong>
+
+                <p>
+                  17h00 – 18h00 : enfants
+                  <br />
+                  18h30 – 20h00 : adultes
+                  <br />
+                  Arrivée adultes à 18h15
+                </p>
+              </div>
+
+              <div className="payment-practical-section">
+                <strong>Samedi</strong>
+
+                <p>
+                  10h00 – 12h00
+                  <br />
+                  Enfants / adolescents / adultes
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     );
