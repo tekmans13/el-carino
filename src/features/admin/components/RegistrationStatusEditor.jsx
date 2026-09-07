@@ -7,7 +7,6 @@ const EDITABLE_STATUSES = [
   'incomplet',
   'complement_demande',
   'valide',
-  'en_attente_paiement',
   'refuse',
   'annule',
 ];
@@ -45,7 +44,9 @@ export default function RegistrationStatusEditor({
 
       await onSave(selectedStatus);
 
-      setSuccess('Le statut a été mis à jour.');
+      setSuccess(
+        'Le statut du dossier a été mis à jour.',
+      );
     } catch (saveError) {
       setError(
         saveError instanceof Error
@@ -64,8 +65,8 @@ export default function RegistrationStatusEditor({
           <h2>Traitement du dossier</h2>
 
           <p>
-            Modifie l’état d’avancement de cette
-            inscription.
+            Modifie l’état d’avancement administratif
+            de cette inscription.
           </p>
         </div>
       </header>
@@ -81,13 +82,19 @@ export default function RegistrationStatusEditor({
             value={selectedStatus}
             disabled={saving || disabled}
             onChange={(event) => {
-              setSelectedStatus(event.target.value);
+              setSelectedStatus(
+                event.target.value,
+              );
+
               setError('');
               setSuccess('');
             }}
           >
             {EDITABLE_STATUSES.map((status) => (
-              <option key={status} value={status}>
+              <option
+                key={status}
+                value={status}
+              >
                 {STATUS_LABELS[status]}
               </option>
             ))}
