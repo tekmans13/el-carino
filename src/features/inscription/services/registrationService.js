@@ -21,6 +21,22 @@ function normalizeOptionalValue(value) {
   return normalizedValue || null;
 }
 
+function normalizeOptionalNumber(value) {
+  if (
+    value === ''
+    || value === null
+    || value === undefined
+  ) {
+    return null;
+  }
+
+  const normalizedValue = Number(value);
+
+  return Number.isFinite(normalizedValue)
+    ? normalizedValue
+    : null;
+}
+
 function isPdfFile(file) {
   return (
     file instanceof File
@@ -112,6 +128,18 @@ function buildRegistrationPayload(
       normalizeOptionalValue(
         formData.legalRepresentativePhone,
       ),
+
+    height_cm:
+      normalizeOptionalNumber(formData.heightCm),
+
+    weight_kg:
+      normalizeOptionalNumber(formData.weightKg),
+
+    tshirt_size:
+      normalizeOptionalValue(formData.tshirtSize),
+
+    short_size:
+      normalizeOptionalValue(formData.shortSize),
 
     health_questionnaire_completed:
       Boolean(

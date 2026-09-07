@@ -6,6 +6,16 @@ const DEFAULT_MINIMUM_AGE = 5;
 const DEFAULT_ADULT_AGE_THRESHOLD = 18;
 const DEFAULT_MAXIMUM_AGE = 80;
 
+const CLOTHING_SIZES = [
+  'XS',
+  'S',
+  'M',
+  'L',
+  'XL',
+  'XXL',
+  '3XL',
+];
+
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
 }
@@ -221,6 +231,32 @@ function validateField(
 
       return null;
 
+    case 'heightCm':
+      if (
+        value
+        && (
+          Number(value) < 80
+          || Number(value) > 250
+        )
+      ) {
+        return 'La taille doit être comprise entre 80 et 250 cm.';
+      }
+
+      return null;
+
+    case 'weightKg':
+      if (
+        value
+        && (
+          Number(value) < 20
+          || Number(value) > 300
+        )
+      ) {
+        return 'Le poids doit être compris entre 20 et 300 kg.';
+      }
+
+      return null;
+
     default:
       return null;
   }
@@ -253,6 +289,8 @@ function validateForm(formData, settings) {
     'phone',
     'postalCode',
     'emergencyContactPhone',
+    'heightCm',
+    'weightKg',
   ];
 
   if (formData.ageCategory === 'enfant') {
@@ -411,6 +449,9 @@ export default function ContactStep({
       onNext();
     }
   }
+
+  const dotationIcon =
+    formData.ageCategory === 'enfant' ? '5' : '4';
 
   return (
     <form
@@ -710,6 +751,96 @@ export default function ContactStep({
           </div>
         </section>
       )}
+
+      <section className="contact-form-section">
+        <SectionHeader
+          icon={dotationIcon}
+          title="Dotation"
+          description="Mensurations et tailles pour les équipements du club."
+        />
+
+        <div className="contact-fields-grid">
+          <FormField
+            label="Taille (cm)"
+            htmlFor="heightCm"
+            error={errors.heightCm}
+          >
+            <input
+              id="heightCm"
+              name="heightCm"
+              type="number"
+              min="80"
+              max="250"
+              step="1"
+              value={formData.heightCm}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              inputMode="numeric"
+              placeholder="Ex. 175"
+            />
+          </FormField>
+
+          <FormField
+            label="Poids (kg)"
+            htmlFor="weightKg"
+            error={errors.weightKg}
+          >
+            <input
+              id="weightKg"
+              name="weightKg"
+              type="number"
+              min="20"
+              max="300"
+              step="0.1"
+              value={formData.weightKg}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              inputMode="decimal"
+              placeholder="Ex. 72"
+            />
+          </FormField>
+
+          <FormField
+            label="Taille T-shirt"
+            htmlFor="tshirtSize"
+          >
+            <select
+              id="tshirtSize"
+              name="tshirtSize"
+              value={formData.tshirtSize}
+              onChange={handleChange}
+            >
+              <option value="">Non renseignée</option>
+
+              {CLOTHING_SIZES.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </FormField>
+
+          <FormField
+            label="Taille short"
+            htmlFor="shortSize"
+          >
+            <select
+              id="shortSize"
+              name="shortSize"
+              value={formData.shortSize}
+              onChange={handleChange}
+            >
+              <option value="">Non renseignée</option>
+
+              {CLOTHING_SIZES.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </div>
+      </section>
 
       <div className="contact-step-actions">
         <button

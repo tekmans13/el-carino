@@ -680,6 +680,50 @@ export default function PaymentStep({
           <span aria-hidden="true">3</span>
 
           <div>
+            <h3>Dotation</h3>
+
+            <p>
+              Mensurations et tailles pour les équipements du club.
+            </p>
+          </div>
+        </header>
+
+        <div className="payment-summary-content">
+          <SummaryRow
+            label="Taille"
+            value={
+              formData.heightCm
+                ? `${formData.heightCm} cm`
+                : 'Non renseignée'
+            }
+          />
+
+          <SummaryRow
+            label="Poids"
+            value={
+              formData.weightKg
+                ? `${formData.weightKg} kg`
+                : 'Non renseigné'
+            }
+          />
+
+          <SummaryRow
+            label="T-shirt"
+            value={formatValue(formData.tshirtSize)}
+          />
+
+          <SummaryRow
+            label="Short"
+            value={formatValue(formData.shortSize)}
+          />
+        </div>
+      </section>
+
+      <section className="payment-summary-card">
+        <header className="payment-summary-card-header">
+          <span aria-hidden="true">4</span>
+
+          <div>
             <h3>Santé et autorisations</h3>
 
             <p>
