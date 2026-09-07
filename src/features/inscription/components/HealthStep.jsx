@@ -1,6 +1,43 @@
 import { useMemo, useState } from 'react';
 
+import ReglementModal from './ReglementModal';
 import './health-step.css';
+
+const MAX_PAI_PROTOCOL_SIZE = 5 * 1024 * 1024;
+
+const PAI_TYPES = [
+  {
+    value: 'asthma',
+    label: 'Asthme',
+  },
+  {
+    value: 'severe_allergy',
+    label:
+      'Allergie sévère (avec risque de choc)',
+  },
+  {
+    value: 'diabetes',
+    label: 'Diabète',
+  },
+  {
+    value: 'epilepsy',
+    label: 'Épilepsie',
+  },
+  {
+    value: 'cardiac_disorder',
+    label: 'Troubles cardiaques',
+  },
+  {
+    value: 'coagulation_disorder',
+    label:
+      'Troubles de la coagulation (prise d’anticoagulants)',
+  },
+  {
+    value: 'other',
+    label:
+      'Autre (affection médicale ou handicap à préciser)',
+  },
+];
 
 const HEALTH_QUESTIONS = [
   {
@@ -239,7 +276,7 @@ function MedicalCertificateUpload({
         <strong>Choisir le certificat médical</strong>
 
         <span>
-          Formats acceptés : PDF, JPEG, PNG ou WebP
+          Format accepté : PDF, 5 Mo maximum
         </span>
 
         {file && (
@@ -254,7 +291,7 @@ function MedicalCertificateUpload({
         name="medicalCertificate"
         className="medical-upload-input"
         type="file"
-        accept=".pdf,image/jpeg,image/png,image/webp"
+        accept="application/pdf,.pdf"
         onChange={onChange}
       />
 
@@ -269,10 +306,14 @@ export default function HealthStep({
   updateHealthAnswer,
   medicalCertificate,
   onMedicalCertificateChange,
+  paiProtocol,
+  onPaiProtocolChange,
   onPrevious,
   onNext,
 }) {
   const [errors, setErrors] = useState({});
+  const [isRulesModalOpen, setIsRulesModalOpen] =
+    useState(false);
 
   const isAdultCompetition =
     formData.ageCategory === 'adulte'
@@ -344,6 +385,94 @@ export default function HealthStep({
     }));
   }
 
+  function handlePaiChoice(value) {
+    updateField('hasPai', value);
+
+    if (value === 'no') {
+      updateField('paiType', '');
+      updateField('paiOtherDetails', '');
+
+      if (onPaiProtocolChange) {
+        onPaiProtocolChange(null);
+      }
+    }
+
+    setErrors((currentErrors) => ({
+      ...currentErrors,
+      hasPai: undefined,
+      paiType: undefined,
+      paiOtherDetails: undefined,
+      paiProtocol: undefined,
+    }));
+  }
+
+  function handlePaiTypeChange(event) {
+    const value = event.target.value;
+
+    updateField('paiType', value);
+
+    if (value !== 'other') {
+      updateField('paiOtherDetails', '');
+    }
+
+    setErrors((currentErrors) => ({
+      ...currentErrors,
+      paiType: undefined,
+      paiOtherDetails: undefined,
+    }));
+  }
+
+  function handlePaiProtocolChange(event) {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      if (onPaiProtocolChange) {
+        onPaiProtocolChange(null);
+      }
+
+      return;
+    }
+
+    if (file.type !== 'application/pdf') {
+      if (onPaiProtocolChange) {
+        onPaiProtocolChange(null);
+      }
+
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        paiProtocol:
+          'Le protocole PAI doit être un fichier PDF.',
+      }));
+
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > MAX_PAI_PROTOCOL_SIZE) {
+      if (onPaiProtocolChange) {
+        onPaiProtocolChange(null);
+      }
+
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        paiProtocol:
+          'Le protocole PAI ne doit pas dépasser 5 Mo.',
+      }));
+
+      event.target.value = '';
+      return;
+    }
+
+    if (onPaiProtocolChange) {
+      onPaiProtocolChange(file);
+    }
+
+    setErrors((currentErrors) => ({
+      ...currentErrors,
+      paiProtocol: undefined,
+    }));
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -367,12 +496,42 @@ export default function HealthStep({
         'Le certificat médical est obligatoire pour poursuivre.';
     }
 
+    if (!formData.hasPai) {
+      validationErrors.hasPai =
+        'Indiquez si l’adhérent bénéficie d’un PAI.';
+    }
+
+    if (formData.hasPai === 'yes') {
+      if (!formData.paiType) {
+        validationErrors.paiType =
+          'Sélectionnez le type de PAI.';
+      }
+
+      if (
+        formData.paiType === 'other'
+        && !formData.paiOtherDetails.trim()
+      ) {
+        validationErrors.paiOtherDetails =
+          'Précisez l’affection médicale ou le handicap.';
+      }
+
+      if (!paiProtocol) {
+        validationErrors.paiProtocol =
+          'Le protocole PAI est obligatoire.';
+      }
+    }
+
     if (
       formData.ageCategory === 'enfant'
       && !formData.parentalAuthorization
     ) {
       validationErrors.parentalAuthorization =
         'L’autorisation parentale est obligatoire.';
+    }
+
+    if (!formData.internalRulesAccepted) {
+      validationErrors.internalRulesAccepted =
+        'Vous devez accepter le règlement intérieur.';
     }
 
     if (!formData.imageConsent) {
@@ -404,264 +563,486 @@ export default function HealthStep({
   }
 
   return (
-    <form
-      className="health-step"
-      onSubmit={handleSubmit}
-      noValidate
-    >
-      <header className="health-step-header">
-        <h2>Santé et autorisations</h2>
+    <>
+      <form
+        className="health-step"
+        onSubmit={handleSubmit}
+        noValidate
+      >
+        <header className="health-step-header">
+          <h2>Santé et autorisations</h2>
 
-        {isAdultCompetition ? (
-          <p>
-            Pour un adulte inscrit en compétition, le
-            certificat médical est obligatoire.
-          </p>
-        ) : (
-          <p>
-            Complétez le questionnaire de santé. Une seule
-            réponse positive rendra le certificat médical
-            obligatoire.
-          </p>
-        )}
-      </header>
-
-      {isAdultCompetition && (
-        <section className="health-panel health-panel-information">
-          <div className="health-panel-header">
-            <span
-              className="health-panel-icon"
-              aria-hidden="true"
-            >
-              i
-            </span>
-
-            <div>
-              <h3>Questionnaire non requis</h3>
-
-              <p>
-                Votre profil est Adulte – Compétition.
-                Passez directement au dépôt du certificat
-                médical.
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {questionnaireRequired && (
-        <>
-          <div className="health-questionnaire-progress">
-            <span>Questionnaire de santé</span>
-
-            <strong>
-              {answeredQuestions} / {applicableQuestions.length}
-            </strong>
-          </div>
-
-          {errors.questionnaire && (
-            <p role="alert">{errors.questionnaire}</p>
+          {isAdultCompetition ? (
+            <p>
+              Pour un adulte inscrit en compétition, le
+              certificat médical est obligatoire.
+            </p>
+          ) : (
+            <p>
+              Complétez le questionnaire de santé. Une seule
+              réponse positive rendra le certificat médical
+              obligatoire.
+            </p>
           )}
+        </header>
 
-          {Object.entries(groupedQuestions).map(
-            ([groupName, questions]) => (
-              <section
-                key={groupName}
-                className="health-question-group"
+        {isAdultCompetition && (
+          <section className="health-panel health-panel-information">
+            <div className="health-panel-header">
+              <span
+                className="health-panel-icon"
+                aria-hidden="true"
               >
-                <h3>{groupName}</h3>
+                i
+              </span>
 
-                <div className="health-question-list">
-                  {questions.map((question) => (
-                    <Question
-                      key={question.id}
-                      question={question}
-                      answer={
-                        formData.healthAnswers[question.id]
-                      }
-                      onAnswer={updateHealthAnswer}
-                    />
-                  ))}
+              <div>
+                <h3>Questionnaire non requis</h3>
+
+                <p>
+                  Votre profil est Adulte – Compétition.
+                  Passez directement au dépôt du certificat
+                  médical.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {questionnaireRequired && (
+          <>
+            <div className="health-questionnaire-progress">
+              <span>Questionnaire de santé</span>
+
+              <strong>
+                {answeredQuestions} / {applicableQuestions.length}
+              </strong>
+            </div>
+
+            {errors.questionnaire && (
+              <p role="alert">{errors.questionnaire}</p>
+            )}
+
+            {Object.entries(groupedQuestions).map(
+              ([groupName, questions]) => (
+                <section
+                  key={groupName}
+                  className="health-question-group"
+                >
+                  <h3>{groupName}</h3>
+
+                  <div className="health-question-list">
+                    {questions.map((question) => (
+                      <Question
+                        key={question.id}
+                        question={question}
+                        answer={
+                          formData.healthAnswers[question.id]
+                        }
+                        onAnswer={updateHealthAnswer}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ),
+            )}
+
+            {allQuestionsAnswered && !hasPositiveAnswer && (
+              <section className="health-panel health-panel-success">
+                <div className="health-panel-header">
+                  <span
+                    className="health-panel-icon"
+                    aria-hidden="true"
+                  >
+                    ✓
+                  </span>
+
+                  <div>
+                    <h3>Aucun certificat médical demandé</h3>
+
+                    <p>
+                      Toutes les réponses sont négatives.
+                      L’attestation de santé suffit pour ce
+                      profil.
+                    </p>
+                  </div>
                 </div>
               </section>
-            ),
-          )}
-
-          {allQuestionsAnswered && !hasPositiveAnswer && (
-            <section className="health-panel health-panel-success">
-              <div className="health-panel-header">
-                <span
-                  className="health-panel-icon"
-                  aria-hidden="true"
-                >
-                  ✓
-                </span>
-
-                <div>
-                  <h3>Aucun certificat médical demandé</h3>
-
-                  <p>
-                    Toutes les réponses sont négatives.
-                    L’attestation de santé suffit pour ce
-                    profil.
-                  </p>
-                </div>
-              </div>
-            </section>
-          )}
-        </>
-      )}
-
-      {certificateRequired && (
-        <MedicalCertificateUpload
-          file={medicalCertificate}
-          error={errors.medicalCertificate}
-          onChange={handleCertificateChange}
-          mandatoryReason={
-            isAdultCompetition
-              ? 'Le questionnaire n’est pas requis pour ce profil. Fournissez un certificat médical de non-contre-indication à la pratique en compétition.'
-              : 'Au moins une réponse au questionnaire est positive. Une consultation médicale est nécessaire.'
-          }
-        />
-      )}
-
-      {questionnaireRequired && (
-        <fieldset className="health-authorization">
-          <legend>Attestation de santé</legend>
-
-          <label className="health-checkbox">
-            <input
-              type="checkbox"
-              checked={
-                formData.healthAttestationAccepted
-              }
-              onChange={(event) =>
-                updateField(
-                  'healthAttestationAccepted',
-                  event.target.checked,
-                )
-              }
-            />
-
-            <span>
-              Je certifie que les réponses données au
-              questionnaire sont exactes.
-            </span>
-          </label>
-
-          {errors.healthAttestationAccepted && (
-            <p role="alert">
-              {errors.healthAttestationAccepted}
-            </p>
-          )}
-        </fieldset>
-      )}
-
-      {formData.ageCategory === 'enfant' && (
-        <fieldset className="health-authorization">
-          <legend>Autorisation parentale</legend>
-
-          <label className="health-checkbox">
-            <input
-              type="checkbox"
-              checked={formData.parentalAuthorization}
-              onChange={(event) =>
-                updateField(
-                  'parentalAuthorization',
-                  event.target.checked,
-                )
-              }
-            />
-
-            <span>
-              En qualité de représentant légal, j’autorise
-              la pratique sportive ainsi que les soins
-              nécessaires en cas d’urgence.
-            </span>
-          </label>
-
-          {errors.parentalAuthorization && (
-            <p role="alert">
-              {errors.parentalAuthorization}
-            </p>
-          )}
-        </fieldset>
-      )}
-
-      <fieldset className="health-authorization">
-        <legend>Droit à l’image</legend>
-
-        <p>
-          Autorisez-vous le club à utiliser des photos
-          prises dans le cadre de ses activités ?
-        </p>
-
-        <div className="health-consent-options">
-          <label
-            className={
-              formData.imageConsent === 'accepted'
-                ? 'health-consent-card selected'
-                : 'health-consent-card'
-            }
-          >
-            <input
-              type="radio"
-              name="imageConsent"
-              value="accepted"
-              checked={
-                formData.imageConsent === 'accepted'
-              }
-              onChange={(event) =>
-                updateField(
-                  'imageConsent',
-                  event.target.value,
-                )
-              }
-            />
-
-            <span>J’accepte</span>
-          </label>
-
-          <label
-            className={
-              formData.imageConsent === 'refused'
-                ? 'health-consent-card selected'
-                : 'health-consent-card'
-            }
-          >
-            <input
-              type="radio"
-              name="imageConsent"
-              value="refused"
-              checked={
-                formData.imageConsent === 'refused'
-              }
-              onChange={(event) =>
-                updateField(
-                  'imageConsent',
-                  event.target.value,
-                )
-              }
-            />
-
-            <span>Je refuse</span>
-          </label>
-        </div>
-
-        {errors.imageConsent && (
-          <p role="alert">{errors.imageConsent}</p>
+            )}
+          </>
         )}
-      </fieldset>
 
-      <div className="form-actions">
-        <button type="button" onClick={onPrevious}>
-          Retour
-        </button>
+        {certificateRequired && (
+          <MedicalCertificateUpload
+            file={medicalCertificate}
+            error={errors.medicalCertificate}
+            onChange={handleCertificateChange}
+            mandatoryReason={
+              isAdultCompetition
+                ? 'Le questionnaire n’est pas requis pour ce profil. Fournissez un certificat médical de non-contre-indication à la pratique en compétition.'
+                : 'Au moins une réponse au questionnaire est positive. Une consultation médicale est nécessaire.'
+            }
+          />
+        )}
 
-        <button type="submit">
-          Continuer vers le paiement
-        </button>
-      </div>
-    </form>
+        {questionnaireRequired && (
+          <fieldset className="health-authorization">
+            <legend>Attestation de santé</legend>
+
+            <label className="health-checkbox">
+              <input
+                type="checkbox"
+                checked={
+                  formData.healthAttestationAccepted
+                }
+                onChange={(event) =>
+                  updateField(
+                    'healthAttestationAccepted',
+                    event.target.checked,
+                  )
+                }
+              />
+
+              <span>
+                Je certifie que les réponses données au
+                questionnaire sont exactes.
+              </span>
+            </label>
+
+            {errors.healthAttestationAccepted && (
+              <p role="alert">
+                {errors.healthAttestationAccepted}
+              </p>
+            )}
+          </fieldset>
+        )}
+
+        <fieldset className="health-authorization">
+          <legend>Projet d’accueil individualisé (PAI)</legend>
+
+          <p>
+            L’adhérent bénéficie-t-il d’un Projet d’accueil
+            individualisé (PAI) ?
+          </p>
+
+          <div className="health-consent-options">
+            <label
+              className={
+                formData.hasPai === 'no'
+                  ? 'health-consent-card selected'
+                  : 'health-consent-card'
+              }
+            >
+              <input
+                type="radio"
+                name="hasPai"
+                value="no"
+                checked={formData.hasPai === 'no'}
+                onChange={() => handlePaiChoice('no')}
+              />
+
+              <span>Non</span>
+            </label>
+
+            <label
+              className={
+                formData.hasPai === 'yes'
+                  ? 'health-consent-card selected'
+                  : 'health-consent-card'
+              }
+            >
+              <input
+                type="radio"
+                name="hasPai"
+                value="yes"
+                checked={formData.hasPai === 'yes'}
+                onChange={() => handlePaiChoice('yes')}
+              />
+
+              <span>Oui</span>
+            </label>
+          </div>
+
+          {errors.hasPai && (
+            <p role="alert">{errors.hasPai}</p>
+          )}
+
+          {formData.hasPai === 'yes' && (
+            <>
+              <div>
+                <label htmlFor="paiType">
+                  <strong>Type de PAI</strong>
+                </label>
+
+                <select
+                  id="paiType"
+                  name="paiType"
+                  value={formData.paiType}
+                  onChange={handlePaiTypeChange}
+                >
+                  <option value="">
+                    Sélectionnez une situation
+                  </option>
+
+                  {PAI_TYPES.map((paiType) => (
+                    <option
+                      key={paiType.value}
+                      value={paiType.value}
+                    >
+                      {paiType.label}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.paiType && (
+                  <p role="alert">{errors.paiType}</p>
+                )}
+              </div>
+
+              {formData.paiType === 'other' && (
+                <div>
+                  <label htmlFor="paiOtherDetails">
+                    <strong>
+                      Précisez l’affection médicale ou le
+                      handicap
+                    </strong>
+                  </label>
+
+                  <textarea
+                    id="paiOtherDetails"
+                    name="paiOtherDetails"
+                    rows="3"
+                    value={formData.paiOtherDetails}
+                    onChange={(event) => {
+                      updateField(
+                        'paiOtherDetails',
+                        event.target.value,
+                      );
+
+                      setErrors((currentErrors) => ({
+                        ...currentErrors,
+                        paiOtherDetails: undefined,
+                      }));
+                    }}
+                  />
+
+                  {errors.paiOtherDetails && (
+                    <p role="alert">
+                      {errors.paiOtherDetails}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <section className="health-panel health-panel-warning">
+                <div className="health-panel-header">
+                  <span
+                    className="health-panel-icon"
+                    aria-hidden="true"
+                  >
+                    !
+                  </span>
+
+                  <div>
+                    <h3>Protocole PAI obligatoire</h3>
+
+                    <p>
+                      Transmettez le protocole permettant au
+                      club de connaître la conduite à tenir.
+                    </p>
+                  </div>
+                </div>
+
+                <label
+                  className="medical-upload"
+                  htmlFor="paiProtocol"
+                >
+                  <strong>
+                    Choisir le protocole PAI
+                  </strong>
+
+                  <span>
+                    Format accepté : PDF, 5 Mo maximum
+                  </span>
+
+                  {paiProtocol && (
+                    <span className="medical-upload-file">
+                      Fichier sélectionné :{' '}
+                      {paiProtocol.name}
+                    </span>
+                  )}
+                </label>
+
+                <input
+                  id="paiProtocol"
+                  name="paiProtocol"
+                  className="medical-upload-input"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  onChange={handlePaiProtocolChange}
+                />
+
+                {errors.paiProtocol && (
+                  <p role="alert">
+                    {errors.paiProtocol}
+                  </p>
+                )}
+              </section>
+            </>
+          )}
+        </fieldset>
+
+        {formData.ageCategory === 'enfant' && (
+          <fieldset className="health-authorization">
+            <legend>Autorisation parentale</legend>
+
+            <label className="health-checkbox">
+              <input
+                type="checkbox"
+                checked={formData.parentalAuthorization}
+                onChange={(event) =>
+                  updateField(
+                    'parentalAuthorization',
+                    event.target.checked,
+                  )
+                }
+              />
+
+              <span>
+                En qualité de représentant légal, j’autorise
+                la pratique sportive ainsi que les soins
+                nécessaires en cas d’urgence.
+              </span>
+            </label>
+
+            {errors.parentalAuthorization && (
+              <p role="alert">
+                {errors.parentalAuthorization}
+              </p>
+            )}
+          </fieldset>
+        )}
+
+        <fieldset className="health-authorization">
+          <legend>Règlement intérieur</legend>
+
+          <p>
+            Consultez le règlement intérieur de
+            l’ASC EL CARINO avant de l’accepter.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setIsRulesModalOpen(true)}
+          >
+            Consulter le règlement intérieur
+          </button>
+
+          <label className="health-checkbox">
+            <input
+              type="checkbox"
+              checked={formData.internalRulesAccepted}
+              onChange={(event) =>
+                updateField(
+                  'internalRulesAccepted',
+                  event.target.checked,
+                )
+              }
+            />
+
+            <span>
+              Je reconnais avoir pris connaissance du
+              règlement intérieur et je l’accepte.
+            </span>
+          </label>
+
+          {errors.internalRulesAccepted && (
+            <p role="alert">
+              {errors.internalRulesAccepted}
+            </p>
+          )}
+        </fieldset>
+
+        <fieldset className="health-authorization">
+          <legend>Droit à l’image</legend>
+
+          <p>
+            Autorisez-vous le club à utiliser des photos
+            prises dans le cadre de ses activités ?
+          </p>
+
+          <div className="health-consent-options">
+            <label
+              className={
+                formData.imageConsent === 'accepted'
+                  ? 'health-consent-card selected'
+                  : 'health-consent-card'
+              }
+            >
+              <input
+                type="radio"
+                name="imageConsent"
+                value="accepted"
+                checked={
+                  formData.imageConsent === 'accepted'
+                }
+                onChange={(event) =>
+                  updateField(
+                    'imageConsent',
+                    event.target.value,
+                  )
+                }
+              />
+
+              <span>J’accepte</span>
+            </label>
+
+            <label
+              className={
+                formData.imageConsent === 'refused'
+                  ? 'health-consent-card selected'
+                  : 'health-consent-card'
+              }
+            >
+              <input
+                type="radio"
+                name="imageConsent"
+                value="refused"
+                checked={
+                  formData.imageConsent === 'refused'
+                }
+                onChange={(event) =>
+                  updateField(
+                    'imageConsent',
+                    event.target.value,
+                  )
+                }
+              />
+
+              <span>Je refuse</span>
+            </label>
+          </div>
+
+          {errors.imageConsent && (
+            <p role="alert">{errors.imageConsent}</p>
+          )}
+        </fieldset>
+
+        <div className="form-actions">
+          <button type="button" onClick={onPrevious}>
+            Retour
+          </button>
+
+          <button type="submit">
+            Continuer vers le paiement
+          </button>
+        </div>
+      </form>
+
+      <ReglementModal
+        isOpen={isRulesModalOpen}
+        onClose={() => setIsRulesModalOpen(false)}
+      />
+    </>
   );
 }

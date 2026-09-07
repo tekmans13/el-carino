@@ -12,6 +12,9 @@ const MEDICAL_CERTIFICATE_BUCKET =
 const MAX_MEDICAL_CERTIFICATE_SIZE =
   5 * 1024 * 1024;
 
+const MAX_PAI_PROTOCOL_SIZE =
+  5 * 1024 * 1024;
+
 function normalizeOptionalValue(value) {
   const normalizedValue = value?.trim();
 
@@ -41,10 +44,15 @@ function getMedicalCertificatePath(registrationId) {
   return `${registrationId}/certificat-medical.pdf`;
 }
 
+function getPaiProtocolPath(registrationId) {
+  return `${registrationId}/pai-protocole.pdf`;
+}
+
 function buildRegistrationPayload(
   formData,
   registrationId,
   medicalCertificate,
+  paiProtocol,
   paymentAmountCents,
 ) {
   const certificateRequired =
@@ -53,6 +61,13 @@ function buildRegistrationPayload(
   const certificatePath = medicalCertificate
     ? getMedicalCertificatePath(registrationId)
     : null;
+
+  const hasPai = formData.hasPai === 'yes';
+
+  const paiProtocolPath =
+    hasPai && paiProtocol
+      ? getPaiProtocolPath(registrationId)
+      : null;
 
   return {
     id: registrationId,
@@ -125,6 +140,38 @@ function buildRegistrationPayload(
         ? new Date().toISOString()
         : null,
 
+    has_pai: hasPai,
+
+    pai_type:
+      hasPai
+        ? formData.paiType
+        : null,
+
+    pai_other_details:
+      hasPai && formData.paiType === 'other'
+        ? normalizeOptionalValue(
+          formData.paiOtherDetails,
+        )
+        : null,
+
+    pai_protocol_storage_path:
+      paiProtocolPath,
+
+    pai_protocol_filename:
+      hasPai && paiProtocol
+        ? paiProtocol.name
+        : null,
+
+    pai_protocol_mime_type:
+      hasPai && paiProtocol
+        ? paiProtocol.type
+        : null,
+
+    pai_protocol_uploaded_at:
+      hasPai && paiProtocol
+        ? new Date().toISOString()
+        : null,
+
     image_consent:
       formData.imageConsent === 'accepted',
 
@@ -172,6 +219,53 @@ function validateMedicalCertificate(
   }
 }
 
+function validatePaiProtocol(
+  formData,
+  paiProtocol,
+) {
+  if (formData.hasPai !== 'yes') {
+    return;
+  }
+
+  if (!formData.paiType) {
+    throw new Error(
+      'Le type de PAI est obligatoire.',
+    );
+  }
+
+  if (
+    formData.paiType === 'other'
+    && !normalizeOptionalValue(
+      formData.paiOtherDetails,
+    )
+  ) {
+    throw new Error(
+      'La précision du PAI est obligatoire.',
+    );
+  }
+
+  if (!paiProtocol) {
+    throw new Error(
+      'Le protocole PAI est obligatoire pour ce dossier.',
+    );
+  }
+
+  if (!isPdfFile(paiProtocol)) {
+    throw new Error(
+      'Le protocole PAI doit être un fichier PDF.',
+    );
+  }
+
+  if (
+    paiProtocol.size
+    > MAX_PAI_PROTOCOL_SIZE
+  ) {
+    throw new Error(
+      'Le protocole PAI ne doit pas dépasser 5 Mo.',
+    );
+  }
+}
+
 async function uploadMedicalCertificate(
   registrationId,
   medicalCertificate,
@@ -204,7 +298,39 @@ async function uploadMedicalCertificate(
   return storagePath;
 }
 
-async function removeUploadedMedicalCertificate(
+async function uploadPaiProtocol(
+  registrationId,
+  paiProtocol,
+) {
+  if (!paiProtocol) {
+    return null;
+  }
+
+  const storagePath =
+    getPaiProtocolPath(registrationId);
+
+  const { error } = await supabase.storage
+    .from(MEDICAL_CERTIFICATE_BUCKET)
+    .upload(
+      storagePath,
+      paiProtocol,
+      {
+        contentType: 'application/pdf',
+        cacheControl: '3600',
+        upsert: false,
+      },
+    );
+
+  if (error) {
+    throw new Error(
+      `Impossible de transmettre le protocole PAI : ${error.message}`,
+    );
+  }
+
+  return storagePath;
+}
+
+async function removeUploadedFile(
   storagePath,
 ) {
   if (!storagePath) {
@@ -217,7 +343,7 @@ async function removeUploadedMedicalCertificate(
 
   if (error) {
     console.error(
-      'Impossible de supprimer le certificat après échec :',
+      'Impossible de supprimer le fichier après échec :',
       error,
     );
   }
@@ -245,6 +371,7 @@ async function sendRegistrationConfirmationEmail(
 export async function createRegistration(
   formData,
   medicalCertificate = null,
+  paiProtocol = null,
 ) {
   const registrationId = crypto.randomUUID();
 
@@ -269,16 +396,43 @@ export async function createRegistration(
     certificateRequired,
   );
 
-  const storagePath =
-    await uploadMedicalCertificate(
-      registrationId,
-      medicalCertificate,
+  validatePaiProtocol(
+    formData,
+    paiProtocol,
+  );
+
+  let medicalCertificateStoragePath = null;
+  let paiProtocolStoragePath = null;
+
+  try {
+    medicalCertificateStoragePath =
+      await uploadMedicalCertificate(
+        registrationId,
+        medicalCertificate,
+      );
+
+    paiProtocolStoragePath =
+      await uploadPaiProtocol(
+        registrationId,
+        paiProtocol,
+      );
+  } catch (error) {
+    await removeUploadedFile(
+      medicalCertificateStoragePath,
     );
+
+    await removeUploadedFile(
+      paiProtocolStoragePath,
+    );
+
+    throw error;
+  }
 
   const payload = buildRegistrationPayload(
     formData,
     registrationId,
     medicalCertificate,
+    paiProtocol,
     pricing.totalCents,
   );
 
@@ -287,8 +441,12 @@ export async function createRegistration(
     .insert(payload);
 
   if (error) {
-    await removeUploadedMedicalCertificate(
-      storagePath,
+    await removeUploadedFile(
+      medicalCertificateStoragePath,
+    );
+
+    await removeUploadedFile(
+      paiProtocolStoragePath,
     );
 
     throw new Error(

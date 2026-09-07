@@ -38,6 +38,14 @@ const REGISTRATION_LIST_FIELDS = `
   medical_certificate_filename,
   medical_certificate_uploaded_at,
 
+  has_pai,
+  pai_type,
+  pai_other_details,
+  pai_protocol_storage_path,
+  pai_protocol_filename,
+  pai_protocol_mime_type,
+  pai_protocol_uploaded_at,
+
   image_consent,
   parental_authorization,
 
@@ -81,6 +89,14 @@ const REGISTRATION_DETAIL_FIELDS = `
   medical_certificate_filename,
   medical_certificate_mime_type,
   medical_certificate_uploaded_at,
+
+  has_pai,
+  pai_type,
+  pai_other_details,
+  pai_protocol_storage_path,
+  pai_protocol_filename,
+  pai_protocol_mime_type,
+  pai_protocol_uploaded_at,
 
   image_consent,
   parental_authorization,
@@ -271,6 +287,37 @@ export async function createMedicalCertificateUrl(
   if (!data?.signedUrl) {
     throw new Error(
       'Supabase n’a pas retourné de lien vers le certificat médical.',
+    );
+  }
+
+  return data.signedUrl;
+}
+
+export async function createPaiProtocolUrl(
+  storagePath,
+) {
+  if (!storagePath) {
+    throw new Error(
+      'Aucun protocole PAI n’est associé à ce dossier.',
+    );
+  }
+
+  const { data, error } = await supabase.storage
+    .from(MEDICAL_CERTIFICATE_BUCKET)
+    .createSignedUrl(
+      storagePath,
+      60,
+    );
+
+  if (error) {
+    throw new Error(
+      `Impossible d’ouvrir le protocole PAI : ${error.message}`,
+    );
+  }
+
+  if (!data?.signedUrl) {
+    throw new Error(
+      'Supabase n’a pas retourné de lien vers le protocole PAI.',
     );
   }
 

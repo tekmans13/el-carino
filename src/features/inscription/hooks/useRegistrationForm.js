@@ -31,7 +31,12 @@ const initialFormData = {
   healthQuestionnaireHasPositiveAnswer: false,
   healthAttestationAccepted: false,
 
+  hasPai: '',
+  paiType: '',
+  paiOtherDetails: '',
+
   parentalAuthorization: false,
+  internalRulesAccepted: false,
   imageConsent: '',
 };
 

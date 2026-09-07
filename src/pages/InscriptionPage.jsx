@@ -199,6 +199,11 @@ export default function InscriptionPage() {
     setMedicalCertificate,
   ] = useState(null);
 
+  const [
+    paiProtocol,
+    setPaiProtocol,
+  ] = useState(null);
+
   const pageRef = useRef(null);
 
   const {
@@ -276,6 +281,7 @@ export default function InscriptionPage() {
   function handleReset() {
     resetForm();
     setMedicalCertificate(null);
+    setPaiProtocol(null);
     setCurrentStep(1);
     setMaxStepReached(1);
     setStep4View('summary');
@@ -446,6 +452,10 @@ export default function InscriptionPage() {
                 onMedicalCertificateChange={
                   setMedicalCertificate
                 }
+                paiProtocol={paiProtocol}
+                onPaiProtocolChange={
+                  setPaiProtocol
+                }
                 onPrevious={() => goToStep(2)}
                 onNext={() => completeStep(4)}
               />
@@ -457,6 +467,7 @@ export default function InscriptionPage() {
                 medicalCertificate={
                   medicalCertificate
                 }
+                paiProtocol={paiProtocol}
                 clubSettings={clubSettings}
                 view={step4View}
                 onRegistrationSaved={() =>
