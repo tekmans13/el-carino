@@ -639,10 +639,64 @@ export default function AdminRegistrationPage() {
                     </section>
                   )}
 
-                  <section className="admin-detail-card admin-detail-card-wide">
+                  <section className="admin-detail-card">
                     <header>
                       <span aria-hidden="true">
                         6
+                      </span>
+
+                      <div>
+                        <h2>
+                          Dotation
+                        </h2>
+
+                        <p>
+                          Mensurations et tailles d’équipement.
+                        </p>
+                      </div>
+                    </header>
+
+                    <dl>
+                      <DetailRow
+                        label="Taille"
+                        value={
+                          registration.height_cm
+                            ? `${registration.height_cm} cm`
+                            : '—'
+                        }
+                      />
+
+                      <DetailRow
+                        label="Poids"
+                        value={
+                          registration.weight_kg
+                            ? `${registration.weight_kg} kg`
+                            : '—'
+                        }
+                      />
+
+                      <DetailRow
+                        label="T-shirt"
+                        value={
+                          registration.tshirt_size
+                          ?? '—'
+                        }
+                      />
+
+                      <DetailRow
+                        label="Short"
+                        value={
+                          registration.short_size
+                          ?? '—'
+                        }
+                      />
+                    </dl>
+                  </section>
+
+                  <section className="admin-detail-card admin-detail-card-wide">
+                    <header>
+                      <span aria-hidden="true">
+                        7
                       </span>
 
                       <div>
@@ -849,7 +903,7 @@ export default function AdminRegistrationPage() {
                   <section className="admin-detail-card">
                     <header>
                       <span aria-hidden="true">
-                        7
+                        8
                       </span>
 
                       <div>

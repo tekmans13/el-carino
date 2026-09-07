@@ -26,6 +26,11 @@ const initialFormData = {
   legalRepresentativeEmail: '',
   legalRepresentativePhone: '',
 
+  heightCm: '',
+  weightKg: '',
+  tshirtSize: '',
+  shortSize: '',
+
   healthAnswers: {},
   healthQuestionnaireCompleted: false,
   healthQuestionnaireHasPositiveAnswer: false,

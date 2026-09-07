@@ -30,6 +30,11 @@ const REGISTRATION_LIST_FIELDS = `
   legal_representative_email,
   legal_representative_phone,
 
+  height_cm,
+  weight_kg,
+  tshirt_size,
+  short_size,
+
   health_questionnaire_completed,
   health_questionnaire_has_positive_answer,
 
@@ -80,6 +85,11 @@ const REGISTRATION_DETAIL_FIELDS = `
   legal_representative_name,
   legal_representative_email,
   legal_representative_phone,
+
+  height_cm,
+  weight_kg,
+  tshirt_size,
+  short_size,
 
   health_questionnaire_completed,
   health_questionnaire_has_positive_answer,
