@@ -1,0 +1,123 @@
+.reglement-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.68);
+}
+
+.reglement-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 960px);
+  height: min(90vh, 900px);
+  overflow: hidden;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.reglement-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #ddd;
+}
+
+.reglement-modal-header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.reglement-modal-header p {
+  margin: 4px 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.reglement-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f1f1;
+  color: #222;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.reglement-modal-close:hover {
+  background: #e2e2e2;
+}
+
+.reglement-modal-content {
+  flex: 1;
+  min-height: 0;
+  background: #555;
+}
+
+.reglement-modal-content iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.reglement-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 22px;
+  border-top: 1px solid #ddd;
+}
+
+.reglement-modal-footer a {
+  font-weight: 600;
+}
+
+.reglement-modal-footer button {
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .reglement-modal-overlay {
+    padding: 0;
+  }
+
+  .reglement-modal {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .reglement-modal-header {
+    padding: 14px 16px;
+  }
+
+  .reglement-modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+  }
+
+  .reglement-modal-footer a,
+  .reglement-modal-footer button {
+    text-align: center;
+  }
+}

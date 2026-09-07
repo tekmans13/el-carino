@@ -67,6 +67,18 @@ const ADDITIONAL_PAYMENT_METHODS = [
   },
 ];
 
+const PAI_TYPE_LABELS = {
+  asthma: 'Asthme',
+  severe_allergy:
+    'Allergie sévère (avec risque de choc)',
+  diabetes: 'Diabète',
+  epilepsy: 'Épilepsie',
+  cardiac_disorder: 'Troubles cardiaques',
+  coagulation_disorder:
+    'Troubles de la coagulation (prise d’anticoagulants)',
+  other: 'Autre',
+};
+
 function getSelectedPaymentMethodLabels(
   mainPaymentMethod,
   additionalPaymentMethods,
@@ -107,6 +119,7 @@ function getSelectedPaymentMethodLabels(
 export default function PaymentStep({
   formData,
   medicalCertificate,
+  paiProtocol,
   clubSettings,
   view,
   onRegistrationSaved,
@@ -215,6 +228,7 @@ export default function PaymentStep({
         await createRegistration(
           formData,
           medicalCertificate,
+          paiProtocol,
         );
 
       setRegistration(createdRegistration);
@@ -694,6 +708,45 @@ export default function PaymentStep({
                 : 'Non requis'
             }
           />
+
+          <SummaryRow
+            label="PAI"
+            value={
+              formData.hasPai === 'yes'
+                ? 'Oui'
+                : 'Non'
+            }
+          />
+
+          {formData.hasPai === 'yes' && (
+            <>
+              <SummaryRow
+                label="Type de PAI"
+                value={formatValue(
+                  formData.paiType,
+                  PAI_TYPE_LABELS,
+                )}
+              />
+
+              {formData.paiType === 'other' && (
+                <SummaryRow
+                  label="Précision PAI"
+                  value={formatValue(
+                    formData.paiOtherDetails,
+                  )}
+                />
+              )}
+
+              <SummaryRow
+                label="Protocole PAI"
+                value={
+                  paiProtocol
+                    ? paiProtocol.name
+                    : 'Non fourni'
+                }
+              />
+            </>
+          )}
 
           <SummaryRow
             label="Autorisation parentale"
