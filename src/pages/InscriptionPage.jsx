@@ -525,7 +525,7 @@ export default function InscriptionPage() {
 
         <footer className="registration-bottom-bar">
           <div className="registration-footer-links">
-            <span>Club affilié FFKMDA</span>
+            <span>Club affilié à la fédération FFKMDA</span>
           </div>
         </footer>
       </section>
