@@ -193,10 +193,8 @@ export default function PaymentStep({
   };
 
   const certificateRequired =
-    (
-      formData.ageCategory === 'adulte'
-      && formData.practiceType === 'competition'
-    )
+    formData.ageCategory === 'adulte'
+    || formData.practiceType === 'competition'
     || formData.healthQuestionnaireHasPositiveAnswer;
 
   const pricing = getRegistrationPricing(
