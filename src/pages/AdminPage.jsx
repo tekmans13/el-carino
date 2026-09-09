@@ -11,7 +11,10 @@ import RegistrationFilters from '../features/admin/components/RegistrationFilter
 import RegistrationTable from '../features/admin/components/RegistrationTable';
 
 import { exportRegistrationsToExcel } from '../features/admin/services/exportExcel';
-import { listRegistrations } from '../features/admin/services/registrationAdminService';
+import {
+  deleteRegistration,
+  listRegistrations,
+} from '../features/admin/services/registrationAdminService';
 
 import { normalizeSearchValue } from '../features/admin/utils/registrationFormatters';
 
@@ -27,6 +30,12 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [exportError, setExportError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+
+  const [
+    deletingRegistrationId,
+    setDeletingRegistrationId,
+  ] = useState(null);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] =
@@ -167,6 +176,39 @@ export default function AdminPage() {
     }
   }
 
+  async function handleDeleteRegistration(
+    registration,
+  ) {
+    if (!registration?.id) {
+      return;
+    }
+
+    try {
+      setDeleteError('');
+      setDeletingRegistrationId(
+        registration.id,
+      );
+
+      await deleteRegistration(
+        registration.id,
+      );
+
+      setRegistrations((current) =>
+        current.filter(
+          (item) =>
+            item.id !== registration.id,
+        ));
+    } catch (deleteException) {
+      setDeleteError(
+        deleteException instanceof Error
+          ? deleteException.message
+          : 'Impossible de supprimer le dossier.',
+      );
+    } finally {
+      setDeletingRegistrationId(null);
+    }
+  }
+
   return (
     <div
       className={[
@@ -235,6 +277,19 @@ export default function AdminPage() {
                 </div>
               )}
 
+              {deleteError && (
+                <div
+                  className="admin-state-message admin-error-message"
+                  role="alert"
+                >
+                  <strong>
+                    Suppression impossible
+                  </strong>
+
+                  <p>{deleteError}</p>
+                </div>
+              )}
+
               <RegistrationFilters
                 search={search}
                 statusFilter={statusFilter}
@@ -292,6 +347,12 @@ export default function AdminPage() {
                   <RegistrationTable
                     registrations={
                       filteredRegistrations
+                    }
+                    onDelete={
+                      handleDeleteRegistration
+                    }
+                    deletingRegistrationId={
+                      deletingRegistrationId
                     }
                   />
                 )}

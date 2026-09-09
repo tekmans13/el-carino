@@ -149,7 +149,23 @@ function DeleteIcon() {
 
 export default function RegistrationTable({
   registrations,
+  onDelete,
+  deletingRegistrationId,
 }) {
+  function handleDelete(registration) {
+    const confirmed = window.confirm(
+      `Supprimer définitivement le dossier de ${registration.first_name} ${registration.last_name} ?\n\n`
+      + 'Les paiements et les documents associés seront également supprimés.\n\n'
+      + 'Cette opération est irréversible.',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    onDelete(registration);
+  }
+
   return (
     <>
       <div className="admin-table-wrapper">
@@ -170,144 +186,162 @@ export default function RegistrationTable({
           </thead>
 
           <tbody>
-            {registrations.map((registration) => (
-              <tr key={registration.id}>
-                <td className="admin-member-column">
-                  <div className="admin-member-cell">
-                    <span
-                      className="admin-registration-avatar"
-                      aria-hidden="true"
-                    >
-                      {getInitials(
-                        registration.first_name,
-                        registration.last_name,
-                      )}
-                    </span>
+            {registrations.map((registration) => {
+              const deleting =
+                deletingRegistrationId
+                === registration.id;
 
-                    <div>
-                      <strong>
-                        {registration.first_name}
-                        {' '}
-                        {registration.last_name}
-                      </strong>
+              return (
+                <tr key={registration.id}>
+                  <td className="admin-member-column">
+                    <div className="admin-member-cell">
+                      <span
+                        className="admin-registration-avatar"
+                        aria-hidden="true"
+                      >
+                        {getInitials(
+                          registration.first_name,
+                          registration.last_name,
+                        )}
+                      </span>
 
-                      <small>
-                        Réf.
-                        {' '}
-                        {registration.id.slice(0, 8)}
-                      </small>
+                      <div>
+                        <strong>
+                          {registration.first_name}
+                          {' '}
+                          {registration.last_name}
+                        </strong>
+
+                        <small>
+                          Réf.
+                          {' '}
+                          {registration.id.slice(0, 8)}
+                        </small>
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                <td>
-                  <span className="admin-category-badge is-profile">
-                    {PROFILE_LABELS[
-                      registration.age_category
-                    ] ?? '—'}
-                  </span>
-                </td>
+                  <td>
+                    <span className="admin-category-badge is-profile">
+                      {PROFILE_LABELS[
+                        registration.age_category
+                      ] ?? '—'}
+                    </span>
+                  </td>
 
-                <td>
-                  <span className="admin-category-badge is-practice">
-                    {PRACTICE_LABELS[
-                      registration.practice_type
-                    ] ?? '—'}
-                  </span>
-                </td>
+                  <td>
+                    <span className="admin-category-badge is-practice">
+                      {PRACTICE_LABELS[
+                        registration.practice_type
+                      ] ?? '—'}
+                    </span>
+                  </td>
 
-                <td className="admin-contact-column">
-                  <a href={`mailto:${registration.email}`}>
-                    {registration.email}
-                  </a>
-
-                  <span>
-                    {registration.phone || '—'}
-                  </span>
-                </td>
-
-                <td>
-                  <StatusBadge
-                    value={registration.status}
-                    labels={STATUS_LABELS}
-                  />
-                </td>
-
-                <td>
-                  <span
-                    className={[
-                      'admin-payment-overview-status',
-                      `is-${registration.computed_payment_status}`,
-                    ].join(' ')}
-                  >
-                    {
-                      PAYMENT_STATUS_LABELS[
-                        registration
-                          .computed_payment_status
-                      ]
-                      ?? 'À définir'
-                    }
-                  </span>
-                </td>
-
-                <td className="admin-date-column">
-                  {formatDate(
-                    registration.created_at,
-                  )}
-                </td>
-
-                <td className="admin-actions-column">
-                  <div className="admin-row-actions">
-                    <a
-                      className="admin-icon-action"
-                      href={`mailto:${registration.email}`}
-                      aria-label={`Envoyer un e-mail à ${registration.first_name} ${registration.last_name}`}
-                      title="Envoyer un e-mail"
-                    >
-                      <MailIcon />
+                  <td className="admin-contact-column">
+                    <a href={`mailto:${registration.email}`}>
+                      {registration.email}
                     </a>
 
-                    <Link
-                      className="admin-icon-action is-primary"
-                      to={`/admin/inscriptions/${registration.id}`}
-                      aria-label={`Ouvrir le dossier de ${registration.first_name} ${registration.last_name}`}
-                      title="Ouvrir le dossier"
-                    >
-                      <EyeIcon />
-                    </Link>
+                    <span>
+                      {registration.phone || '—'}
+                    </span>
+                  </td>
 
-                    <Link
-                      className="admin-icon-action"
-                      to={`/admin/inscriptions/${registration.id}`}
-                      aria-label={`Gérer le paiement de ${registration.first_name} ${registration.last_name}`}
-                      title="Gérer le paiement"
-                    >
-                      <PaymentIcon />
-                    </Link>
+                  <td>
+                    <StatusBadge
+                      value={registration.status}
+                      labels={STATUS_LABELS}
+                    />
+                  </td>
 
-                    <button
-                      type="button"
-                      className="admin-icon-action"
-                      aria-label="Modifier le dossier"
-                      title="Modification — à venir"
-                      disabled
+                  <td>
+                    <span
+                      className={[
+                        'admin-payment-overview-status',
+                        `is-${registration.computed_payment_status}`,
+                      ].join(' ')}
                     >
-                      <EditIcon />
-                    </button>
+                      {
+                        PAYMENT_STATUS_LABELS[
+                          registration
+                            .computed_payment_status
+                        ]
+                        ?? 'À définir'
+                      }
+                    </span>
+                  </td>
 
-                    <button
-                      type="button"
-                      className="admin-icon-action is-danger"
-                      aria-label="Supprimer le dossier"
-                      title="Suppression — à venir"
-                      disabled
-                    >
-                      <DeleteIcon />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  <td className="admin-date-column">
+                    {formatDate(
+                      registration.created_at,
+                    )}
+                  </td>
+
+                  <td className="admin-actions-column">
+                    <div className="admin-row-actions">
+                      <a
+                        className="admin-icon-action"
+                        href={`mailto:${registration.email}`}
+                        aria-label={`Envoyer un e-mail à ${registration.first_name} ${registration.last_name}`}
+                        title="Envoyer un e-mail"
+                      >
+                        <MailIcon />
+                      </a>
+
+                      <Link
+                        className="admin-icon-action is-primary"
+                        to={`/admin/inscriptions/${registration.id}`}
+                        aria-label={`Ouvrir le dossier de ${registration.first_name} ${registration.last_name}`}
+                        title="Ouvrir le dossier"
+                      >
+                        <EyeIcon />
+                      </Link>
+
+                      <Link
+                        className="admin-icon-action"
+                        to={`/admin/inscriptions/${registration.id}`}
+                        aria-label={`Gérer le paiement de ${registration.first_name} ${registration.last_name}`}
+                        title="Gérer le paiement"
+                      >
+                        <PaymentIcon />
+                      </Link>
+
+                      <button
+                        type="button"
+                        className="admin-icon-action"
+                        aria-label="Modifier le dossier"
+                        title="Modification — à venir"
+                        disabled
+                      >
+                        <EditIcon />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="admin-icon-action is-danger"
+                        aria-label={`Supprimer le dossier de ${registration.first_name} ${registration.last_name}`}
+                        title={
+                          deleting
+                            ? 'Suppression en cours…'
+                            : 'Supprimer définitivement'
+                        }
+                        onClick={() =>
+                          handleDelete(registration)
+                        }
+                        disabled={
+                          deleting
+                          || Boolean(
+                            deletingRegistrationId,
+                          )
+                        }
+                      >
+                        <DeleteIcon />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
