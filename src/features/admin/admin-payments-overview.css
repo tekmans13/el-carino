@@ -79,7 +79,7 @@
 }
 
 .admin-payments-overview-table {
-  min-width: 1050px;
+  min-width: 1180px;
 }
 
 .admin-payments-overview-table th:last-child,
@@ -128,6 +128,12 @@
   border-color: #efb6ba;
   background: #fff4f4;
   color: #b42318;
+}
+
+.admin-payment-overview-status.is-pending {
+  border-color: #b8c7e0;
+  background: #f2f6fc;
+  color: #344f7a;
 }
 
 .admin-payment-overview-status.is-partial {

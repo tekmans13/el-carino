@@ -18,6 +18,7 @@ import '../admin-payments-overview.css';
 
 const PAYMENT_STATUS_LABELS = {
   unpaid: 'Non payé',
+  pending: 'En attente d’encaissement',
   partial: 'Partiellement payé',
   paid: 'Payé',
   undefined: 'À définir',
