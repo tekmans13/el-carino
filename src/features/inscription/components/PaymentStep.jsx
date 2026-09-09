@@ -5,6 +5,7 @@ import { useState } from 'react';
 import {
   createRegistration,
   updatePlannedPaymentMethods,
+  updateRegistration,
 } from '../services/registrationService';
 
 import {
@@ -136,6 +137,7 @@ export default function PaymentStep({
   paiProtocol,
   clubSettings,
   view,
+  registration,
   onRegistrationSaved,
   onPaymentSaved,
   onRestart,
@@ -143,7 +145,6 @@ export default function PaymentStep({
 }) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-  const [registration, setRegistration] = useState(null);
 
   const [
     mainPaymentMethod,
@@ -229,7 +230,7 @@ export default function PaymentStep({
   }
 
   async function handleSaveRegistration() {
-    if (saving || registration) {
+    if (saving) {
       return;
     }
 
@@ -237,15 +238,26 @@ export default function PaymentStep({
       setSaving(true);
       setSaveError('');
 
-      const createdRegistration =
-        await createRegistration(
-          formData,
-          medicalCertificate,
-          paiProtocol,
-        );
+      if (registration?.id) {
+        const updatedRegistration =
+          await updateRegistration(
+            registration.id,
+            formData,
+            medicalCertificate,
+            paiProtocol,
+          );
 
-      setRegistration(createdRegistration);
-      onRegistrationSaved();
+        onRegistrationSaved(updatedRegistration);
+      } else {
+        const createdRegistration =
+          await createRegistration(
+            formData,
+            medicalCertificate,
+            paiProtocol,
+          );
+
+        onRegistrationSaved(createdRegistration);
+      }
     } catch (error) {
       setSaveError(
         error instanceof Error

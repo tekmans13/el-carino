@@ -215,6 +215,111 @@ function buildRegistrationPayload(
   };
 }
 
+function buildRegistrationUpdatePayload(
+  formData,
+  paymentAmountCents,
+) {
+  const certificateRequired =
+    getCertificateRequired(formData);
+
+  const hasPai = formData.hasPai === 'yes';
+
+  return {
+    age_category: formData.ageCategory,
+    practice_type: formData.practiceType,
+
+    last_name: formData.lastName.trim(),
+    first_name: formData.firstName.trim(),
+    gender: formData.gender,
+    birth_date: formData.birthDate,
+
+    email: formData.email.trim(),
+    phone: formData.phone.trim(),
+
+    address_line1: formData.addressLine1.trim(),
+
+    address_line2: normalizeOptionalValue(
+      formData.addressLine2,
+    ),
+
+    postal_code: formData.postalCode.trim(),
+    city: formData.city.trim(),
+
+    emergency_contact_name:
+      formData.emergencyContactName.trim(),
+
+    emergency_contact_phone:
+      formData.emergencyContactPhone.trim(),
+
+    legal_representative_name:
+      normalizeOptionalValue(
+        formData.legalRepresentativeName,
+      ),
+
+    legal_representative_email:
+      normalizeOptionalValue(
+        formData.legalRepresentativeEmail,
+      ),
+
+    legal_representative_phone:
+      normalizeOptionalValue(
+        formData.legalRepresentativePhone,
+      ),
+
+    height_cm:
+      normalizeOptionalNumber(formData.heightCm),
+
+    weight_kg:
+      normalizeOptionalNumber(formData.weightKg),
+
+    tshirt_size:
+      normalizeOptionalValue(formData.tshirtSize),
+
+    short_size:
+      normalizeOptionalValue(formData.shortSize),
+
+    health_questionnaire_completed:
+      Boolean(
+        formData.healthQuestionnaireCompleted,
+      ),
+
+    health_questionnaire_has_positive_answer:
+      Boolean(
+        formData.healthQuestionnaireHasPositiveAnswer,
+      ),
+
+    medical_certificate_required:
+      certificateRequired,
+
+    has_pai: hasPai,
+
+    pai_type:
+      hasPai
+        ? formData.paiType
+        : null,
+
+    pai_other_details:
+      hasPai && formData.paiType === 'other'
+        ? normalizeOptionalValue(
+          formData.paiOtherDetails,
+        )
+        : null,
+
+    image_consent:
+      formData.imageConsent === 'accepted',
+
+    parental_authorization:
+      formData.ageCategory === 'enfant'
+        ? Boolean(formData.parentalAuthorization)
+        : null,
+
+    payment_amount_cents:
+      paymentAmountCents,
+
+    payment_currency: 'eur',
+  };
+}
+
 function validateMedicalCertificate(
   medicalCertificate,
   certificateRequired,
@@ -394,6 +499,26 @@ async function sendRegistrationConfirmationEmail(
   }
 }
 
+function throwRegistrationDatabaseError(
+  error,
+  action,
+) {
+  if (
+    error.code === '23505'
+    && error.message?.includes(
+      'inscriptions_unique_practitioner_identity_idx',
+    )
+  ) {
+    throw new Error(
+      'Une inscription existe déjà pour ce pratiquant. Si vous pensez qu’il s’agit d’une erreur, contactez le club.',
+    );
+  }
+
+  throw new Error(
+    `Impossible ${action} l’inscription : ${error.message}`,
+  );
+}
+
 export async function createRegistration(
   formData,
   medicalCertificate = null,
@@ -475,25 +600,75 @@ export async function createRegistration(
       paiProtocolStoragePath,
     );
 
-    if (
-      error.code === '23505'
-      && error.message?.includes(
-        'inscriptions_unique_practitioner_identity_idx',
-      )
-    ) {
-      throw new Error(
-        'Une inscription existe déjà pour ce pratiquant. Si vous pensez qu’il s’agit d’une erreur, contactez le club.',
-      );
-    }
-
-    throw new Error(
-      `Impossible d’enregistrer l’inscription : ${error.message}`,
+    throwRegistrationDatabaseError(
+      error,
+      'd’enregistrer',
     );
   }
 
   return {
     id: registrationId,
     status: 'soumis',
+  };
+}
+
+export async function updateRegistration(
+  registrationId,
+  formData,
+  medicalCertificate = null,
+  paiProtocol = null,
+) {
+  if (!registrationId) {
+    throw new Error(
+      'Impossible de modifier l’inscription : inscription inconnue.',
+    );
+  }
+
+  const clubSettings = await getClubSettings();
+
+  const pricing = getRegistrationPricing(
+    formData,
+    clubSettings,
+  );
+
+  if (!pricing) {
+    throw new Error(
+      'Impossible de calculer le montant de l’inscription.',
+    );
+  }
+
+  const certificateRequired =
+    getCertificateRequired(formData);
+
+  validateMedicalCertificate(
+    medicalCertificate,
+    certificateRequired,
+  );
+
+  validatePaiProtocol(
+    formData,
+    paiProtocol,
+  );
+
+  const payload = buildRegistrationUpdatePayload(
+    formData,
+    pricing.totalCents,
+  );
+
+  const { error } = await supabase
+    .from('inscriptions')
+    .update(payload)
+    .eq('id', registrationId);
+
+  if (error) {
+    throwRegistrationDatabaseError(
+      error,
+      'de modifier',
+    );
+  }
+
+  return {
+    id: registrationId,
   };
 }
 
