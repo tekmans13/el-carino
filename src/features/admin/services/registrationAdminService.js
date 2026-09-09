@@ -135,6 +135,7 @@ const ADMIN_EDITABLE_STATUSES = [
 function getComputedPaymentStatus(
   amountDueCents,
   amountReceivedCents,
+  amountCashedCents,
 ) {
   if (
     amountDueCents === null
@@ -149,6 +150,9 @@ function getComputedPaymentStatus(
   const received =
     Number(amountReceivedCents ?? 0);
 
+  const cashed =
+    Number(amountCashedCents ?? 0);
+
   if (
     !Number.isFinite(due)
     || due <= 0
@@ -156,11 +160,18 @@ function getComputedPaymentStatus(
     return 'undefined';
   }
 
-  if (received <= 0) {
+  if (
+    cashed <= 0
+    && received > 0
+  ) {
+    return 'pending';
+  }
+
+  if (cashed <= 0) {
     return 'unpaid';
   }
 
-  if (received < due) {
+  if (cashed < due) {
     return 'partial';
   }
 
@@ -191,7 +202,8 @@ export async function listRegistrations() {
     .from('payments')
     .select(`
       inscription_id,
-      amount_cents
+      amount_cents,
+      cashed_at
     `);
 
   if (paymentsError) {
@@ -200,31 +212,63 @@ export async function listRegistrations() {
     );
   }
 
-  const receivedByRegistration =
+  const paymentsByRegistration =
     new Map();
 
   for (const payment of payments ?? []) {
-    const currentAmount =
-      receivedByRegistration.get(
+    const current =
+      paymentsByRegistration.get(
         payment.inscription_id,
-      ) ?? 0;
+      ) ?? {
+        amountReceivedCents: 0,
+        amountCashedCents: 0,
+      };
 
-    receivedByRegistration.set(
+    const paymentAmountCents =
+      Number(payment.amount_cents ?? 0);
+
+    current.amountReceivedCents +=
+      paymentAmountCents;
+
+    if (payment.cashed_at) {
+      current.amountCashedCents +=
+        paymentAmountCents;
+    }
+
+    paymentsByRegistration.set(
       payment.inscription_id,
-      currentAmount
-      + Number(payment.amount_cents ?? 0),
+      current,
     );
   }
 
   return (registrations ?? []).map(
     (registration) => {
-      const amountReceivedCents =
-        receivedByRegistration.get(
+      const paymentSummary =
+        paymentsByRegistration.get(
           registration.id,
-        ) ?? 0;
+        ) ?? {
+          amountReceivedCents: 0,
+          amountCashedCents: 0,
+        };
 
       const amountDueCents =
         registration.payment_amount_cents;
+
+      const amountReceivedCents =
+        paymentSummary.amountReceivedCents;
+
+      const amountCashedCents =
+        paymentSummary.amountCashedCents;
+
+      const remainingAmountCents =
+        amountDueCents === null
+        || amountDueCents === undefined
+          ? null
+          : Math.max(
+            Number(amountDueCents)
+            - amountCashedCents,
+            0,
+          );
 
       return {
         ...registration,
@@ -232,10 +276,17 @@ export async function listRegistrations() {
         amount_received_cents:
           amountReceivedCents,
 
+        amount_cashed_cents:
+          amountCashedCents,
+
+        remaining_amount_cents:
+          remainingAmountCents,
+
         computed_payment_status:
           getComputedPaymentStatus(
             amountDueCents,
             amountReceivedCents,
+            amountCashedCents,
           ),
       };
     },

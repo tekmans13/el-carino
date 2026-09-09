@@ -8,6 +8,7 @@ import {
   createRegistrationPayment,
   deleteRegistrationPayment,
   listRegistrationPayments,
+  markRegistrationPaymentAsCashed,
 } from '../services/paymentAdminService';
 
 import '../admin-payments.css';
@@ -97,8 +98,19 @@ function getPaymentMethodLabel(value) {
 function getPaymentStatus(
   amountDueCents,
   amountReceivedCents,
+  amountCashedCents,
 ) {
-  if (amountReceivedCents <= 0) {
+  if (
+    amountCashedCents <= 0
+    && amountReceivedCents > 0
+  ) {
+    return {
+      value: 'pending',
+      label: 'En attente d’encaissement',
+    };
+  }
+
+  if (amountCashedCents <= 0) {
     return {
       value: 'unpaid',
       label: 'Non payé',
@@ -106,7 +118,7 @@ function getPaymentStatus(
   }
 
   if (
-    amountReceivedCents < amountDueCents
+    amountCashedCents < amountDueCents
   ) {
     return {
       value: 'partial',
@@ -146,6 +158,11 @@ export default function RegistrationPayments({
   const [
     deletingPaymentId,
     setDeletingPaymentId,
+  ] = useState(null);
+
+  const [
+    cashingPaymentId,
+    setCashingPaymentId,
   ] = useState(null);
 
   const [formVisible, setFormVisible] =
@@ -188,10 +205,32 @@ export default function RegistrationPayments({
       [payments],
     );
 
+  const amountCashedCents =
+    useMemo(
+      () =>
+        payments.reduce(
+          (total, payment) => {
+            if (!payment.cashed_at) {
+              return total;
+            }
+
+            return (
+              total
+              + Number(
+                payment.amount_cents
+                ?? 0,
+              )
+            );
+          },
+          0,
+        ),
+      [payments],
+    );
+
   const remainingAmountCents =
     Math.max(
       amountDueCents
-      - amountReceivedCents,
+      - amountCashedCents,
       0,
     );
 
@@ -199,6 +238,7 @@ export default function RegistrationPayments({
     getPaymentStatus(
       amountDueCents,
       amountReceivedCents,
+      amountCashedCents,
     );
 
   useEffect(() => {
@@ -324,7 +364,9 @@ export default function RegistrationPayments({
       setNote('');
 
       setSuccessMessage(
-        'Le règlement a bien été enregistré.',
+        paymentMethod === 'cash'
+          ? 'Le règlement a bien été enregistré et encaissé.'
+          : 'Le règlement a bien été enregistré. Il est en attente d’encaissement.',
       );
     } catch (submitError) {
       setFormError(
@@ -334,6 +376,78 @@ export default function RegistrationPayments({
       );
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleCashPayment(
+    payment,
+  ) {
+    if (
+      !payment?.id
+      || payment.cashed_at
+    ) {
+      return;
+    }
+
+    const method =
+      getPaymentMethodLabel(
+        payment.payment_method,
+      );
+
+    const paymentAmount =
+      formatAmount(
+        payment.amount_cents,
+        currency,
+      );
+
+    const confirmed =
+      window.confirm(
+        `Confirmer l’encaissement ?\n\n`
+        + `${paymentAmount} — ${method}\n`
+        + `${formatPaymentDate(payment.received_at)}\n\n`
+        + 'Ce règlement sera comptabilisé dans le montant payé.',
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setCashingPaymentId(
+        payment.id,
+      );
+
+      setError('');
+      setFormError('');
+      setSuccessMessage('');
+
+      const updatedPayment =
+        await markRegistrationPaymentAsCashed(
+          payment.id,
+        );
+
+      setPayments(
+        (currentPayments) =>
+          currentPayments.map(
+            (currentPayment) =>
+              currentPayment.id
+              === updatedPayment.id
+                ? updatedPayment
+                : currentPayment,
+          ),
+      );
+
+      setSuccessMessage(
+        'Le règlement a été marqué comme encaissé.',
+      );
+    } catch (cashError) {
+      setError(
+        cashError instanceof Error
+          ? cashError.message
+          : 'Impossible de valider l’encaissement du règlement.',
+      );
+    } finally {
+      setCashingPaymentId(null);
     }
   }
 
@@ -410,7 +524,7 @@ export default function RegistrationPayments({
           <h2>Paiement</h2>
 
           <p>
-            Suivi des règlements reçus par le club.
+            Suivi des règlements reçus et encaissés par le club.
           </p>
         </div>
       </header>
@@ -445,7 +559,20 @@ export default function RegistrationPayments({
 
           <article>
             <span>
-              Reste à payer
+              Encaissé
+            </span>
+
+            <strong>
+              {formatAmount(
+                amountCashedCents,
+                currency,
+              )}
+            </strong>
+          </article>
+
+          <article>
+            <span>
+              Reste à encaisser
             </span>
 
             <strong>
@@ -707,7 +834,11 @@ export default function RegistrationPayments({
                       </th>
 
                       <th>
-                        Action
+                        Encaissement
+                      </th>
+
+                      <th>
+                        Actions
                       </th>
                     </tr>
                   </thead>
@@ -742,24 +873,66 @@ export default function RegistrationPayments({
                           </td>
 
                           <td>
-                            <button
-                              type="button"
-                              className="admin-payment-delete-button"
-                              onClick={() =>
-                                handleDeletePayment(
-                                  payment,
-                                )
-                              }
-                              disabled={
-                                deletingPaymentId
-                                === payment.id
-                              }
-                            >
-                              {deletingPaymentId
-                              === payment.id
-                                ? 'Suppression…'
-                                : 'Supprimer'}
-                            </button>
+                            {payment.cashed_at ? (
+                              <span className="admin-payment-cashed-status is-cashed">
+                                ✓ Encaissé le{' '}
+                                {formatPaymentDate(
+                                  payment.cashed_at,
+                                )}
+                              </span>
+                            ) : (
+                              <span className="admin-payment-cashed-status is-pending">
+                                En attente
+                              </span>
+                            )}
+                          </td>
+
+                          <td>
+                            <div className="admin-payment-row-actions">
+                              {!payment.cashed_at && (
+                                <button
+                                  type="button"
+                                  className="admin-payment-cash-button"
+                                  onClick={() =>
+                                    handleCashPayment(
+                                      payment,
+                                    )
+                                  }
+                                  disabled={
+                                    cashingPaymentId
+                                      === payment.id
+                                    || deletingPaymentId
+                                      === payment.id
+                                  }
+                                >
+                                  {cashingPaymentId
+                                    === payment.id
+                                    ? 'Validation…'
+                                    : 'Encaissé'}
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                className="admin-payment-delete-button"
+                                onClick={() =>
+                                  handleDeletePayment(
+                                    payment,
+                                  )
+                                }
+                                disabled={
+                                  deletingPaymentId
+                                    === payment.id
+                                  || cashingPaymentId
+                                    === payment.id
+                                }
+                              >
+                                {deletingPaymentId
+                                  === payment.id
+                                  ? 'Suppression…'
+                                  : 'Supprimer'}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ),

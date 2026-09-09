@@ -6,6 +6,7 @@ const PAYMENT_FIELDS = `
   amount_cents,
   payment_method,
   received_at,
+  cashed_at,
   note,
   created_by,
   created_at
@@ -101,6 +102,11 @@ export async function createRegistrationPayment({
   const receivedAt =
     `${receivedDate}T12:00:00.000Z`;
 
+  const cashedAt =
+    paymentMethod === 'cash'
+      ? new Date().toISOString()
+      : null;
+
   const { data, error } = await supabase
     .from('payments')
     .insert({
@@ -108,6 +114,7 @@ export async function createRegistrationPayment({
       amount_cents: amountCents,
       payment_method: paymentMethod,
       received_at: receivedAt,
+      cashed_at: cashedAt,
       note: normalizedNote || null,
       created_by: authData.user?.id ?? null,
     })
@@ -117,6 +124,33 @@ export async function createRegistrationPayment({
   if (error) {
     throw new Error(
       `Impossible d’enregistrer le règlement : ${error.message}`,
+    );
+  }
+
+  return data;
+}
+
+export async function markRegistrationPaymentAsCashed(
+  paymentId,
+) {
+  if (!paymentId) {
+    throw new Error(
+      'La référence du règlement est obligatoire.',
+    );
+  }
+
+  const { data, error } = await supabase
+    .from('payments')
+    .update({
+      cashed_at: new Date().toISOString(),
+    })
+    .eq('id', paymentId)
+    .select(PAYMENT_FIELDS)
+    .single();
+
+  if (error) {
+    throw new Error(
+      `Impossible de marquer le règlement comme encaissé : ${error.message}`,
     );
   }
 

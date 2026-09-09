@@ -4,7 +4,7 @@
 
 .admin-payment-summary {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -47,6 +47,12 @@
   border-color: #e4b4b8;
   background: #fff4f4;
   color: #b42318;
+}
+
+.admin-payment-status.is-pending {
+  border-color: #c8d4e3;
+  background: #f5f8fc;
+  color: #475467;
 }
 
 .admin-payment-status.is-partial {
@@ -295,8 +301,8 @@
   border-bottom: 0;
 }
 
-.admin-payment-table td:nth-last-child(2),
-.admin-payment-table th:nth-last-child(2) {
+.admin-payment-table td:nth-child(4),
+.admin-payment-table th:nth-child(4) {
   text-align: right;
 }
 
@@ -306,21 +312,69 @@
 
 .admin-payment-table td:last-child,
 .admin-payment-table th:last-child {
-  width: 100px;
+  min-width: 180px;
   text-align: right;
 }
 
+.admin-payment-cashed-status {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 27px;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: 0.71rem;
+  font-weight: 850;
+}
+
+.admin-payment-cashed-status.is-cashed {
+  border-color: #abd9bf;
+  background: #eefaf3;
+  color: #14683d;
+}
+
+.admin-payment-cashed-status.is-pending {
+  border-color: #f0cc86;
+  background: #fff9eb;
+  color: #946200;
+}
+
+.admin-payment-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.admin-payment-cash-button,
 .admin-payment-delete-button {
   min-height: 32px;
   padding: 6px 10px;
-  border: 1px solid #efb6ba;
   border-radius: 8px;
-  background: #ffffff;
-  color: #b42318;
   font: inherit;
   font-size: 0.73rem;
   font-weight: 800;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-payment-cash-button {
+  border: 1px solid #abd9bf;
+  background: #eefaf3;
+  color: #14683d;
+}
+
+.admin-payment-cash-button:hover {
+  border-color: #75bd94;
+  background: #e3f6eb;
+}
+
+.admin-payment-delete-button {
+  border: 1px solid #efb6ba;
+  background: #ffffff;
+  color: #b42318;
 }
 
 .admin-payment-delete-button:hover {
@@ -328,6 +382,7 @@
   background: #fff4f4;
 }
 
+.admin-payment-cash-button:disabled,
 .admin-payment-delete-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -355,6 +410,13 @@
 
 .admin-payment-loading p {
   margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .admin-payment-summary {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
@@ -403,6 +465,6 @@
   }
 
   .admin-payment-table {
-    min-width: 700px;
+    min-width: 850px;
   }
 }

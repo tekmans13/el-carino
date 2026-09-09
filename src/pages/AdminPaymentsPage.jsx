@@ -20,6 +20,7 @@ import '../features/admin/admin-payments-overview.css';
 
 const PAYMENT_STATUS_LABELS = {
   unpaid: 'Non payé',
+  pending: 'En attente d’encaissement',
   partial: 'Partiellement payé',
   paid: 'Payé',
   undefined: 'À définir',
@@ -192,6 +193,13 @@ export default function AdminPaymentsPage() {
                 ?? 0,
               );
 
+            const cashed =
+              Number(
+                registration
+                  .amount_cashed_cents
+                ?? 0,
+              );
+
             const remaining =
               Number(
                 registration
@@ -200,8 +208,13 @@ export default function AdminPaymentsPage() {
               );
 
             result.amountDueCents += due;
+
             result.amountReceivedCents +=
               received;
+
+            result.amountCashedCents +=
+              cashed;
+
             result.remainingAmountCents +=
               remaining;
 
@@ -224,6 +237,14 @@ export default function AdminPaymentsPage() {
             if (
               registration
                 .computed_payment_status
+              === 'pending'
+            ) {
+              result.pendingCount += 1;
+            }
+
+            if (
+              registration
+                .computed_payment_status
               === 'unpaid'
             ) {
               result.unpaidCount += 1;
@@ -234,9 +255,11 @@ export default function AdminPaymentsPage() {
           {
             amountDueCents: 0,
             amountReceivedCents: 0,
+            amountCashedCents: 0,
             remainingAmountCents: 0,
             paidCount: 0,
             partialCount: 0,
+            pendingCount: 0,
             unpaidCount: 0,
           },
         );
@@ -270,7 +293,7 @@ export default function AdminPaymentsPage() {
           <section className="admin-shell">
             <AdminHeader
               title="Paiements"
-              description="Suivez les cotisations et les règlements reçus par le club."
+              description="Suivez les cotisations, les règlements reçus et leur encaissement."
             />
 
             {error && (
@@ -293,7 +316,7 @@ export default function AdminPaymentsPage() {
                 <section className="admin-payments-statistics">
                   <article>
                     <span>
-                      À encaisser
+                      Montant à régler
                     </span>
 
                     <strong>
@@ -306,7 +329,7 @@ export default function AdminPaymentsPage() {
 
                   <article>
                     <span>
-                      Déjà reçu
+                      Reçu
                     </span>
 
                     <strong>
@@ -319,7 +342,20 @@ export default function AdminPaymentsPage() {
 
                   <article>
                     <span>
-                      Reste à recevoir
+                      Encaissé
+                    </span>
+
+                    <strong>
+                      {formatAmount(
+                        statistics
+                          .amountCashedCents,
+                      )}
+                    </strong>
+                  </article>
+
+                  <article>
+                    <span>
+                      Reste à encaisser
                     </span>
 
                     <strong>
@@ -327,20 +363,6 @@ export default function AdminPaymentsPage() {
                         statistics
                           .remainingAmountCents,
                       )}
-                    </strong>
-                  </article>
-
-                  <article>
-                    <span>
-                      Dossiers payés
-                    </span>
-
-                    <strong>
-                      {statistics.paidCount}
-                      {' '}
-                      /
-                      {' '}
-                      {registrations.length}
                     </strong>
                   </article>
                 </section>
@@ -408,6 +430,10 @@ export default function AdminPaymentsPage() {
                           Non payé
                         </option>
 
+                        <option value="pending">
+                          En attente d’encaissement
+                        </option>
+
                         <option value="partial">
                           Partiellement payé
                         </option>
@@ -460,7 +486,11 @@ export default function AdminPaymentsPage() {
                               </th>
 
                               <th>
-                                Reste
+                                Encaissé
+                              </th>
+
+                              <th>
+                                Reste à encaisser
                               </th>
 
                               <th>
@@ -529,6 +559,17 @@ export default function AdminPaymentsPage() {
                                   </td>
 
                                   <td>
+                                    <strong>
+                                      {formatAmount(
+                                        registration
+                                          .amount_cashed_cents,
+                                        registration
+                                          .payment_currency,
+                                      )}
+                                    </strong>
+                                  </td>
+
+                                  <td>
                                     {formatAmount(
                                       registration
                                         .remaining_amount_cents,
@@ -549,6 +590,7 @@ export default function AdminPaymentsPage() {
                                           registration
                                             .computed_payment_status
                                         ]
+                                        ?? 'À définir'
                                       }
                                     </span>
                                   </td>
@@ -585,6 +627,17 @@ export default function AdminPaymentsPage() {
                       {
                         statistics
                           .unpaidCount
+                      }
+                    </strong>
+                  </span>
+
+                  <span>
+                    En attente :
+                    {' '}
+                    <strong>
+                      {
+                        statistics
+                          .pendingCount
                       }
                     </strong>
                   </span>

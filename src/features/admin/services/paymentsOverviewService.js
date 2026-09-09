@@ -17,12 +17,14 @@ const PAYMENT_FIELDS = `
   amount_cents,
   payment_method,
   received_at,
+  cashed_at,
   created_at
 `;
 
 function getComputedPaymentStatus(
   amountDueCents,
   amountReceivedCents,
+  amountCashedCents,
 ) {
   if (
     amountDueCents === null
@@ -31,11 +33,18 @@ function getComputedPaymentStatus(
     return 'undefined';
   }
 
-  if (amountReceivedCents <= 0) {
+  if (
+    amountCashedCents <= 0
+    && amountReceivedCents > 0
+  ) {
+    return 'pending';
+  }
+
+  if (amountCashedCents <= 0) {
     return 'unpaid';
   }
 
-  if (amountReceivedCents < amountDueCents) {
+  if (amountCashedCents < amountDueCents) {
     return 'partial';
   }
 
@@ -84,12 +93,24 @@ export async function getPaymentsOverview() {
         payment.inscription_id,
       ) ?? {
         amountReceivedCents: 0,
+        amountCashedCents: 0,
         paymentCount: 0,
+        pendingPaymentCount: 0,
         lastPaymentAt: null,
       };
 
-    current.amountReceivedCents +=
+    const paymentAmountCents =
       Number(payment.amount_cents ?? 0);
+
+    current.amountReceivedCents +=
+      paymentAmountCents;
+
+    if (payment.cashed_at) {
+      current.amountCashedCents +=
+        paymentAmountCents;
+    } else {
+      current.pendingPaymentCount += 1;
+    }
 
     current.paymentCount += 1;
 
@@ -118,7 +139,9 @@ export async function getPaymentsOverview() {
           registration.id,
         ) ?? {
           amountReceivedCents: 0,
+          amountCashedCents: 0,
           paymentCount: 0,
+          pendingPaymentCount: 0,
           lastPaymentAt: null,
         };
 
@@ -128,13 +151,16 @@ export async function getPaymentsOverview() {
       const amountReceivedCents =
         paymentSummary.amountReceivedCents;
 
+      const amountCashedCents =
+        paymentSummary.amountCashedCents;
+
       const remainingAmountCents =
         amountDueCents === null
         || amountDueCents === undefined
           ? null
           : Math.max(
             Number(amountDueCents)
-            - amountReceivedCents,
+            - amountCashedCents,
             0,
           );
 
@@ -144,11 +170,17 @@ export async function getPaymentsOverview() {
         amount_received_cents:
           amountReceivedCents,
 
+        amount_cashed_cents:
+          amountCashedCents,
+
         remaining_amount_cents:
           remainingAmountCents,
 
         payment_count:
           paymentSummary.paymentCount,
+
+        pending_payment_count:
+          paymentSummary.pendingPaymentCount,
 
         last_payment_at:
           paymentSummary.lastPaymentAt,
@@ -157,6 +189,7 @@ export async function getPaymentsOverview() {
           getComputedPaymentStatus(
             amountDueCents,
             amountReceivedCents,
+            amountCashedCents,
           ),
       };
     },
