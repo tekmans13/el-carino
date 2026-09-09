@@ -185,6 +185,9 @@ export default function InscriptionPage() {
   const [step4View, setStep4View] =
     useState('summary');
 
+  const [registration, setRegistration] =
+    useState(null);
+
   const [clubSettings, setClubSettings] =
     useState(null);
 
@@ -312,7 +315,18 @@ export default function InscriptionPage() {
       Math.max(currentMaximum, nextStep),
     );
 
+    if (nextStep === 4) {
+      setStep4View('summary');
+    }
+
     setCurrentStep(nextStep);
+  }
+
+  function handleRegistrationSaved(
+    savedRegistration,
+  ) {
+    setRegistration(savedRegistration);
+    setStep4View('payment');
   }
 
   function handlePaymentSaved() {
@@ -324,6 +338,7 @@ export default function InscriptionPage() {
     resetForm();
     setMedicalCertificate(null);
     setPaiProtocol(null);
+    setRegistration(null);
     setCurrentStep(1);
     setMaxStepReached(1);
     setStep4View('summary');
@@ -512,8 +527,9 @@ export default function InscriptionPage() {
                 paiProtocol={paiProtocol}
                 clubSettings={clubSettings}
                 view={step4View}
-                onRegistrationSaved={() =>
-                  setStep4View('payment')
+                registration={registration}
+                onRegistrationSaved={
+                  handleRegistrationSaved
                 }
                 onPaymentSaved={handlePaymentSaved}
                 onRestart={handleReset}
@@ -525,7 +541,9 @@ export default function InscriptionPage() {
 
         <footer className="registration-bottom-bar">
           <div className="registration-footer-links">
-            <span>Club affilié à la fédération FFKMDA</span>
+            <span>
+              Club affilié à la fédération FFKMDA
+            </span>
           </div>
         </footer>
       </section>
