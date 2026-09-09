@@ -395,6 +395,77 @@ async function deleteMedicalCertificate(
   }
 }
 
+async function deleteRegistrationDocuments(
+  registration,
+) {
+  const storagePaths = [
+    registration.medical_certificate_storage_path,
+    registration.pai_protocol_storage_path,
+  ].filter(Boolean);
+
+  if (storagePaths.length === 0) {
+    return;
+  }
+
+  const { error } = await supabase.storage
+    .from(MEDICAL_CERTIFICATE_BUCKET)
+    .remove(storagePaths);
+
+  if (error) {
+    throw new Error(
+      `Impossible de supprimer les documents associés : ${error.message}`,
+    );
+  }
+}
+
+export async function deleteRegistration(
+  registrationId,
+) {
+  if (!registrationId) {
+    throw new Error(
+      'La référence du dossier est obligatoire.',
+    );
+  }
+
+  const { data: registration, error: loadError } =
+    await supabase
+      .from('inscriptions')
+      .select(`
+        id,
+        medical_certificate_storage_path,
+        pai_protocol_storage_path
+      `)
+      .eq('id', registrationId)
+      .maybeSingle();
+
+  if (loadError) {
+    throw new Error(
+      `Impossible de charger le dossier avant suppression : ${loadError.message}`,
+    );
+  }
+
+  if (!registration) {
+    throw new Error(
+      'Le dossier à supprimer est introuvable.',
+    );
+  }
+
+  await deleteRegistrationDocuments(
+    registration,
+  );
+
+  const { error: deleteError } = await supabase
+    .from('inscriptions')
+    .delete()
+    .eq('id', registrationId);
+
+  if (deleteError) {
+    throw new Error(
+      `Impossible de supprimer le dossier : ${deleteError.message}`,
+    );
+  }
+}
+
 export async function replaceMedicalCertificate(
   registration,
   file,
