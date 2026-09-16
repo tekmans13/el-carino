@@ -2231,20 +2231,6 @@
   color: #172033;
 }
 
-.admin-users-form {
-  grid-template-columns:
-    repeat(4, minmax(140px, 1fr))
-    auto;
-}
-
-.admin-users-form .admin-export-button {
-  width: auto;
-  min-width: 150px;
-  min-height: 40px;
-  padding: 0 18px;
-  white-space: nowrap;
-}
-
 /* =========================================================
    Déconnexion du back-office
    ========================================================= */
@@ -2364,5 +2350,132 @@
   .admin-sidebar.is-collapsed
     .admin-sidebar-logout-label {
     display: inline;
+  }
+}
+/* =========================================================
+   Gestion des utilisateurs
+   ========================================================= */
+
+.admin-users-form {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(220px, 1fr));
+  gap: 18px 20px;
+  max-width: 820px;
+  padding: 24px;
+}
+
+.admin-users-form .admin-settings-field {
+  min-width: 0;
+  margin: 0;
+}
+
+.admin-users-form .admin-settings-label {
+  display: block;
+  margin-bottom: 7px;
+  color: #344054;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.admin-users-form
+  .admin-settings-field
+  input {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 9px 11px;
+  border: 1px solid #b8c2cf;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+  font-size: 0.84rem;
+}
+
+.admin-users-form
+  .admin-settings-field
+  input:focus {
+  border-color: #c91f26;
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(201, 31, 38, 0.1);
+}
+
+.admin-users-form
+  .admin-settings-field
+  input:disabled {
+  background: #f5f7fa;
+  color: #98a2b3;
+  cursor: not-allowed;
+}
+
+.admin-users-form .admin-export-button {
+  width: auto;
+  min-width: 180px;
+  min-height: 42px;
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 0 20px;
+  border-radius: 9px;
+}
+
+
+/* Bouton de suppression dans la liste */
+
+.admin-delete-button {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border: 1px solid #efb6ba;
+  border-radius: 8px;
+  background: #fff4f4;
+  color: #b42318;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.admin-delete-button:hover:not(:disabled) {
+  border-color: #c91f26;
+  background: #c91f26;
+  color: #ffffff;
+  box-shadow:
+    0 4px 10px rgba(201, 31, 38, 0.16);
+}
+
+.admin-delete-button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(201, 31, 38, 0.12);
+}
+
+.admin-delete-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .admin-users-form {
+    grid-template-columns: 1fr;
+    max-width: none;
+    padding: 18px;
+  }
+
+  .admin-users-form .admin-export-button {
+    width: 100%;
+    grid-column: 1;
   }
 }
