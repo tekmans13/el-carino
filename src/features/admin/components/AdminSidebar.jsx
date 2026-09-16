@@ -47,7 +47,7 @@ const MENU_ITEMS = [
     label: 'Statistiques',
     path: '/admin/statistiques',
     icon: 'statistics',
-    enabled: false,
+    enabled: true,
   },
 ];
 

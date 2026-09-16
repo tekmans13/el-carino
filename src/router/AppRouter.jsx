@@ -15,6 +15,7 @@ import AdminRegistrationPage from '../pages/AdminRegistrationPage';
 import AdminPaymentsPage from '../pages/AdminPaymentsPage';
 import AdminSettingsPage from '../pages/AdminSettingsPage';
 import AdminUsersPage from '../pages/AdminUsersPage';
+import AdminStatisticsPage from '../pages/AdminStatisticsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRouter() {
@@ -88,6 +89,14 @@ export default function AppRouter() {
           }
         />
 
+      <Route
+  path="/admin/statistiques"
+  element={
+    <ProtectedRoute>
+      <AdminStatisticsPage />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="*"
           element={<NotFoundPage />}
