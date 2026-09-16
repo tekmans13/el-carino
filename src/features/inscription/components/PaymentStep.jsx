@@ -4,8 +4,7 @@ import { useState } from 'react';
 
 import {
   createRegistration,
-  updatePlannedPaymentMethods,
-  updateRegistration,
+  sendRegistrationConfirmationEmail,
 } from '../services/registrationService';
 
 import {
@@ -138,12 +137,12 @@ export default function PaymentStep({
   clubSettings,
   view,
   registration,
+  onContinueToPayment,
   onRegistrationSaved,
   onPaymentSaved,
   onRestart,
   onPrevious,
 }) {
-  const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
 
   const [
@@ -165,6 +164,11 @@ export default function PaymentStep({
     paymentMethodError,
     setPaymentMethodError,
   ] = useState('');
+
+  const [
+    confirmationEmailSent,
+    setConfirmationEmailSent,
+  ] = useState(true);
 
   const fullName = [
     formData.firstName,
@@ -229,50 +233,14 @@ export default function PaymentStep({
     });
   }
 
-  async function handleSaveRegistration() {
-    if (saving) {
-      return;
-    }
-
-    try {
-      setSaving(true);
-      setSaveError('');
-
-      if (registration?.id) {
-        const updatedRegistration =
-          await updateRegistration(
-            registration.id,
-            formData,
-            medicalCertificate,
-            paiProtocol,
-          );
-
-        onRegistrationSaved(updatedRegistration);
-      } else {
-        const createdRegistration =
-          await createRegistration(
-            formData,
-            medicalCertificate,
-            paiProtocol,
-          );
-
-        onRegistrationSaved(createdRegistration);
-      }
-    } catch (error) {
-      setSaveError(
-        error instanceof Error
-          ? error.message
-          : 'Une erreur est survenue pendant l’enregistrement.',
-      );
-    } finally {
-      setSaving(false);
-    }
+  function handleContinueToPayment() {
+    setSaveError('');
+    onContinueToPayment();
   }
 
   async function handleSavePaymentMethods() {
     if (
       savingPaymentMethod
-      || !registration
       || !hasPaymentMethod
     ) {
       return;
@@ -282,18 +250,38 @@ export default function PaymentStep({
       setSavingPaymentMethod(true);
       setPaymentMethodError('');
 
-      await updatePlannedPaymentMethods(
-        registration.id,
-        mainPaymentMethod,
-        additionalPaymentMethods,
-      );
+      const createdRegistration =
+        await createRegistration(
+          formData,
+          medicalCertificate,
+          paiProtocol,
+          mainPaymentMethod,
+          additionalPaymentMethods,
+        );
+
+      onRegistrationSaved(createdRegistration);
+
+      try {
+        await sendRegistrationConfirmationEmail(
+          createdRegistration.id,
+        );
+
+        setConfirmationEmailSent(true);
+      } catch (emailError) {
+        console.error(
+          'Inscription enregistrée mais envoi du mail impossible :',
+          emailError,
+        );
+
+        setConfirmationEmailSent(false);
+      }
 
       onPaymentSaved();
     } catch (error) {
       setPaymentMethodError(
         error instanceof Error
           ? error.message
-          : 'Une erreur est survenue pendant l’enregistrement du règlement.',
+          : 'Une erreur est survenue pendant l’enregistrement de l’inscription.',
       );
     } finally {
       setSavingPaymentMethod(false);
@@ -375,10 +363,22 @@ export default function PaymentStep({
           <span aria-hidden="true">i</span>
 
           <p>
-            Un e-mail récapitulatif vous a été envoyé à
-            {' '}
-            <strong>{formData.email}</strong>.
-            {' '}
+            {confirmationEmailSent ? (
+              <>
+                Un e-mail récapitulatif vous a été envoyé à
+                {' '}
+                <strong>{formData.email}</strong>.
+                {' '}
+              </>
+            ) : (
+              <>
+                Votre inscription est bien enregistrée.
+                {' '}
+                L'e-mail récapitulatif n'a pas pu être
+                envoyé.
+                {' '}
+              </>
+            )}
             Le bureau du club enregistrera les
             règlements au fur et à mesure de leur
             réception.
@@ -498,7 +498,7 @@ export default function PaymentStep({
     );
   }
 
-  if (view === 'payment' && registration) {
+  if (view === 'payment') {
     return (
       <section className="payment-step">
         <section className="payment-price-card">
@@ -692,7 +692,7 @@ export default function PaymentStep({
           >
             {savingPaymentMethod
               ? 'Enregistrement en cours…'
-              : 'Valider mon choix de règlement'}
+              : 'Valider mon inscription'}
           </button>
         </div>
       </section>
@@ -965,8 +965,10 @@ export default function PaymentStep({
         <span aria-hidden="true">i</span>
 
         <p>
-          Après l’enregistrement de votre dossier,
+          Après vérification de votre dossier,
           vous pourrez indiquer votre mode de règlement.
+          L’inscription ne sera enregistrée qu’après
+          validation finale.
         </p>
       </div>
 
@@ -975,7 +977,6 @@ export default function PaymentStep({
           type="button"
           className="payment-back-button"
           onClick={onPrevious}
-          disabled={saving}
         >
           <span aria-hidden="true">←</span>
           Retour
@@ -984,12 +985,9 @@ export default function PaymentStep({
         <button
           type="button"
           className="payment-submit-button"
-          onClick={handleSaveRegistration}
-          disabled={saving}
+          onClick={handleContinueToPayment}
         >
-          {saving
-            ? 'Enregistrement en cours…'
-            : 'Enregistrer mon inscription'}
+          Continuer vers le règlement
         </button>
       </div>
     </section>

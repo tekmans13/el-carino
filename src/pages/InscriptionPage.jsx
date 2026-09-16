@@ -322,11 +322,14 @@ export default function InscriptionPage() {
     setCurrentStep(nextStep);
   }
 
+  function handleContinueToPayment() {
+    setStep4View('payment');
+  }
+
   function handleRegistrationSaved(
     savedRegistration,
   ) {
     setRegistration(savedRegistration);
-    setStep4View('payment');
   }
 
   function handlePaymentSaved() {
@@ -528,6 +531,9 @@ export default function InscriptionPage() {
                 clubSettings={clubSettings}
                 view={step4View}
                 registration={registration}
+                onContinueToPayment={
+                  handleContinueToPayment
+                }
                 onRegistrationSaved={
                   handleRegistrationSaved
                 }

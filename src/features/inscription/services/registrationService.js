@@ -68,6 +68,8 @@ function buildRegistrationPayload(
   medicalCertificate,
   paiProtocol,
   paymentAmountCents,
+  mainPaymentMethod,
+  paymentAids,
 ) {
   const certificateRequired =
     getCertificateRequired(formData);
@@ -210,6 +212,12 @@ function buildRegistrationPayload(
       paymentAmountCents,
 
     payment_currency: 'eur',
+
+    planned_payment_main_method:
+      mainPaymentMethod || null,
+
+    planned_payment_aids:
+      paymentAids,
 
     status: 'soumis',
   };
@@ -480,7 +488,7 @@ async function removeUploadedFile(
   }
 }
 
-async function sendRegistrationConfirmationEmail(
+export async function sendRegistrationConfirmationEmail(
   registrationId,
 ) {
   const { error } = await supabase.functions.invoke(
@@ -523,6 +531,8 @@ export async function createRegistration(
   formData,
   medicalCertificate = null,
   paiProtocol = null,
+  mainPaymentMethod = null,
+  paymentAids = [],
 ) {
   const registrationId = crypto.randomUUID();
 
@@ -585,6 +595,8 @@ export async function createRegistration(
     medicalCertificate,
     paiProtocol,
     pricing.totalCents,
+    mainPaymentMethod,
+    paymentAids,
   );
 
   const { error } = await supabase
@@ -610,95 +622,4 @@ export async function createRegistration(
     id: registrationId,
     status: 'soumis',
   };
-}
-
-export async function updateRegistration(
-  registrationId,
-  formData,
-  medicalCertificate = null,
-  paiProtocol = null,
-) {
-  if (!registrationId) {
-    throw new Error(
-      'Impossible de modifier l’inscription : inscription inconnue.',
-    );
-  }
-
-  const clubSettings = await getClubSettings();
-
-  const pricing = getRegistrationPricing(
-    formData,
-    clubSettings,
-  );
-
-  if (!pricing) {
-    throw new Error(
-      'Impossible de calculer le montant de l’inscription.',
-    );
-  }
-
-  const certificateRequired =
-    getCertificateRequired(formData);
-
-  validateMedicalCertificate(
-    medicalCertificate,
-    certificateRequired,
-  );
-
-  validatePaiProtocol(
-    formData,
-    paiProtocol,
-  );
-
-  const payload = buildRegistrationUpdatePayload(
-    formData,
-    pricing.totalCents,
-  );
-
-  const { error } = await supabase
-    .from('inscriptions')
-    .update(payload)
-    .eq('id', registrationId);
-
-  if (error) {
-    throwRegistrationDatabaseError(
-      error,
-      'de modifier',
-    );
-  }
-
-  return {
-    id: registrationId,
-  };
-}
-
-export async function updatePlannedPaymentMethods(
-  registrationId,
-  mainPaymentMethod,
-  paymentAids = [],
-) {
-  if (!registrationId) {
-    throw new Error(
-      'Impossible d’enregistrer le mode de règlement : inscription inconnue.',
-    );
-  }
-
-  const { error } = await supabase
-    .from('inscriptions')
-    .update({
-      planned_payment_main_method:
-        mainPaymentMethod || null,
-      planned_payment_aids: paymentAids,
-    })
-    .eq('id', registrationId);
-
-  if (error) {
-    throw new Error(
-      `Impossible d’enregistrer le mode de règlement : ${error.message}`,
-    );
-  }
-
-  await sendRegistrationConfirmationEmail(
-    registrationId,
-  );
 }
