@@ -775,6 +775,42 @@ export default function AdminStatisticsPage() {
                   />
                 </section>
 
+                <section className="admin-statistics-aids">
+                  <header>
+                    <div>
+                      <h2>Montants par moyen de paiement</h2>
+                      <p>Règlements réellement enregistrés</p>
+                    </div>
+                  </header>
+
+                  <div>
+                    {[
+                      ['Espèces', 'cash'],
+                      ['Chèques', 'check'],
+                      ['CAF', 'caf'],
+                      ['C-Jeune', 'cjeune'],
+                      ["Pass'Sport", 'pass_sport'],
+                    ].map(([label, method]) => (
+                      <article key={method}>
+                        <span>{label}</span>
+                        <strong>
+                          {formatCurrency(
+                            statistics.payments.byMethod[method]
+                              .receivedCents,
+                          )}
+                        </strong>
+                        <small>
+                          Encaissé :{' '}
+                          {formatCurrency(
+                            statistics.payments.byMethod[method]
+                              .cashedCents,
+                          )}
+                        </small>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+
                 <section className="admin-statistics-grid">
                   <DistributionCard
                     title="État des règlements"

@@ -136,7 +136,7 @@ function buildDailyRegistrations(registrations) {
   return result;
 }
 
-function buildPaymentStatistics(paymentsOverview) {
+function buildPaymentStatistics(paymentsOverview, payments) {
   const result = {
     expectedCents: 0,
     receivedCents: 0,
@@ -149,6 +149,14 @@ function buildPaymentStatistics(paymentsOverview) {
       unpaid: 0,
       pending: 0,
       undefined: 0,
+    },
+
+    byMethod: {
+      cash: { receivedCents: 0, cashedCents: 0 },
+      check: { receivedCents: 0, cashedCents: 0 },
+      caf: { receivedCents: 0, cashedCents: 0 },
+      cjeune: { receivedCents: 0, cashedCents: 0 },
+      pass_sport: { receivedCents: 0, cashedCents: 0 },
     },
   };
 
@@ -189,6 +197,25 @@ function buildPaymentStatistics(paymentsOverview) {
     );
   }
 
+  for (const payment of payments ?? []) {
+    const method = payment.payment_method;
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        result.byMethod,
+        method,
+      )
+    ) {
+      const amount = Number(payment.amount_cents ?? 0);
+
+      result.byMethod[method].receivedCents += amount;
+
+      if (payment.cashed_at) {
+        result.byMethod[method].cashedCents += amount;
+      }
+    }
+  }
+
   return result;
 }
 
@@ -196,6 +223,7 @@ export async function getAdminStatistics() {
   const [
     registrationsResult,
     paymentsOverview,
+    paymentsResult,
   ] = await Promise.all([
     supabase
       .from('inscriptions')
@@ -205,6 +233,10 @@ export async function getAdminStatistics() {
       }),
 
     getPaymentsOverview(),
+
+    supabase
+      .from('payments')
+      .select('amount_cents, payment_method, cashed_at'),
   ]);
 
   if (registrationsResult.error) {
@@ -215,8 +247,19 @@ export async function getAdminStatistics() {
     );
   }
 
+  if (paymentsResult.error) {
+    throw new Error(
+      `Impossible de charger les paiements : ${
+        paymentsResult.error.message
+      }`,
+    );
+  }
+
   const registrations =
     registrationsResult.data ?? [];
+
+  const payments =
+    paymentsResult.data ?? [];
 
   const statistics = {
     total: registrations.length,
@@ -263,7 +306,7 @@ export async function getAdminStatistics() {
     dailyRegistrations: [],
 
     payments:
-      buildPaymentStatistics(paymentsOverview),
+      buildPaymentStatistics(paymentsOverview, payments),
   };
 
   for (const registration of registrations) {
