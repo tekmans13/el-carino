@@ -31,7 +31,10 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit -- --passWithNoTests
 
-      - name: Run Playwright
+      - name: Run E2E tests
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run test:e2e
 
       - name: Build app
