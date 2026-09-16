@@ -1,4 +1,9 @@
-import { Link } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom';
+
+import { supabase } from '../../../services/supabase';
 
 const MENU_ITEMS = [
   {
@@ -110,12 +115,49 @@ function SidebarIcon({ name }) {
   );
 }
 
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10 4H5v16h5" />
+      <path d="M14 8l4 4-4 4" />
+      <path d="M18 12H9" />
+    </svg>
+  );
+}
+
 export default function AdminSidebar({
   activeItem = 'registrations',
   userEmail = '',
   collapsed = false,
   onToggle,
 }) {
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    const { error } =
+      await supabase.auth.signOut();
+
+    if (error) {
+      console.error(
+        'Erreur lors de la déconnexion :',
+        error,
+      );
+
+      window.alert(
+        'Impossible de vous déconnecter.',
+      );
+
+      return;
+    }
+
+    navigate(
+      '/admin/login',
+      {
+        replace: true,
+      },
+    );
+  }
+
   return (
     <aside
       className={[
@@ -236,6 +278,22 @@ export default function AdminSidebar({
               || 'Compte administrateur'}
           </small>
         </span>
+
+        <button
+          type="button"
+          className="admin-sidebar-logout"
+          onClick={handleLogout}
+          aria-label="Se déconnecter"
+          title="Se déconnecter"
+        >
+          <span className="admin-sidebar-logout-icon">
+            <LogoutIcon />
+          </span>
+
+          <span className="admin-sidebar-logout-label">
+            Déconnexion
+          </span>
+        </button>
       </footer>
     </aside>
   );
