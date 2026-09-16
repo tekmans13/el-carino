@@ -47,6 +47,38 @@ const PAI_TYPE_LABELS = {
     'Autre (affection médicale ou handicap)',
 };
 
+const PLANNED_PAYMENT_MAIN_LABELS = {
+  cash: 'Espèces — En une seule fois',
+  check_1: 'Chèque — En 1 fois',
+  check_2: 'Chèque — En 2 fois',
+  check_3: 'Chèque — En 3 fois',
+};
+
+const PLANNED_PAYMENT_AID_LABELS = {
+  caf: 'Coupons CAF',
+  cjeune: 'C-Jeune',
+  pass_sport: 'Pass’Sport',
+};
+
+function formatPlannedPaymentMainMethod(value) {
+  return PLANNED_PAYMENT_MAIN_LABELS[value]
+    ?? 'Non renseigné';
+}
+
+function formatPlannedPaymentAids(value) {
+  if (!Array.isArray(value) || value.length === 0) {
+    return 'Aucune';
+  }
+
+  return value
+    .map(
+      (aid) =>
+        PLANNED_PAYMENT_AID_LABELS[aid]
+        ?? aid,
+    )
+    .join(', ');
+}
+
 function formatBoolean(value) {
   if (value === true) {
     return 'Oui';
@@ -937,6 +969,46 @@ export default function AdminRegistrationPage() {
                                 .parental_authorization,
                             )
                             : 'Non concerné'
+                        }
+                      />
+                    </dl>
+                  </section>
+
+                  <section className="admin-detail-card">
+                    <header>
+                      <span aria-hidden="true">
+                        9
+                      </span>
+
+                      <div>
+                        <h2>
+                          Paiement prévu
+                        </h2>
+
+                        <p>
+                          Moyens de paiement déclarés lors de l'inscription.
+                        </p>
+                      </div>
+                    </header>
+
+                    <dl>
+                      <DetailRow
+                        label="Mode principal"
+                        value={
+                          formatPlannedPaymentMainMethod(
+                            registration
+                              .planned_payment_main_method,
+                          )
+                        }
+                      />
+
+                      <DetailRow
+                        label="Aides prévues"
+                        value={
+                          formatPlannedPaymentAids(
+                            registration
+                              .planned_payment_aids,
+                          )
                         }
                       />
                     </dl>

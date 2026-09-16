@@ -517,7 +517,7 @@ export default function RegistrationPayments({
     <section className="admin-detail-card admin-detail-card-wide">
       <header>
         <span aria-hidden="true">
-          8
+          10
         </span>
 
         <div>
