@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 
 import { supabase } from '../../../services/supabase';
+import { useAuth } from '../../../hooks/useAuth';
 
 const MENU_ITEMS = [
   {
@@ -125,13 +126,70 @@ function LogoutIcon() {
   );
 }
 
+function getDisplayName(profile, user) {
+  if (profile?.display_name) {
+    return profile.display_name;
+  }
+
+  if (user?.email) {
+    return user.email.split('@')[0];
+  }
+
+  return 'Administration';
+}
+
+function getInitials(displayName) {
+  const parts = displayName
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return 'AD';
+  }
+
+  if (parts.length === 1) {
+    return parts[0]
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  return (
+    parts[0][0]
+    + parts[parts.length - 1][0]
+  ).toUpperCase();
+}
+
+function getRoleLabel(role) {
+  if (role === 'admin') {
+    return 'Compte administrateur';
+  }
+
+  if (role === 'bureau') {
+    return 'Compte bureau';
+  }
+
+  return 'Compte utilisateur';
+}
 export default function AdminSidebar({
   activeItem = 'registrations',
-  userEmail = '',
   collapsed = false,
   onToggle,
 }) {
   const navigate = useNavigate();
+      const {
+    user,
+    profile,
+  } = useAuth();
+
+  const displayName =
+    getDisplayName(profile, user);
+
+  const initials =
+    getInitials(displayName);
+
+  const roleLabel =
+    getRoleLabel(profile?.role);
 
   async function handleLogout() {
     const { error } =
@@ -261,23 +319,22 @@ export default function AdminSidebar({
       </nav>
 
       <footer className="admin-sidebar-account">
-        <span
-          className="admin-sidebar-avatar"
-          aria-hidden="true"
-        >
-          AD
-        </span>
+  <span
+    className="admin-sidebar-avatar"
+    aria-hidden="true"
+  >
+    {initials}
+  </span>
 
-        <span className="admin-sidebar-account-text">
-          <strong>
-            Administration
-          </strong>
+  <span className="admin-sidebar-account-text">
+    <strong>
+      {displayName}
+    </strong>
 
-          <small>
-            {userEmail
-              || 'Compte administrateur'}
-          </small>
-        </span>
+    <small>
+      {roleLabel}
+    </small>
+  </span>
 
         <button
           type="button"

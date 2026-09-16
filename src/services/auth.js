@@ -30,3 +30,21 @@ export async function getSession() {
 export function onAuthStateChange(callback) {
   return supabase.auth.onAuthStateChange(callback);
 }
+
+/**
+ * Retourne le profil back-office de l'utilisateur connecté.
+ */
+export async function getProfile(userId) {
+  return supabase
+    .from('profiles')
+    .select(
+      `
+        id,
+        email,
+        display_name,
+        role
+      `,
+    )
+    .eq('id', userId)
+    .single();
+}
