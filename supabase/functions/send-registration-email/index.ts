@@ -244,119 +244,616 @@ function buildHtmlEmail(registration: Registration): string {
     paymentMethods.length > 0
       ? paymentMethods
         .map(
-          (method) =>
-            `<li>${escapeHtml(method)}</li>`,
+          (method) => `
+            <tr>
+              <td style="
+                padding: 5px 0;
+                font-size: 15px;
+                line-height: 22px;
+                color: #263442;
+              ">
+                ✓ ${escapeHtml(method)}
+              </td>
+            </tr>
+          `,
         )
         .join('')
-      : '<li>Non renseigné</li>';
+      : `
+        <tr>
+          <td style="
+            padding: 5px 0;
+            font-size: 15px;
+            color: #263442;
+          ">
+            Non renseigné
+          </td>
+        </tr>
+      `;
 
   return `
     <!doctype html>
     <html lang="fr">
       <head>
         <meta charset="utf-8">
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        >
         <title>Inscription El Carino enregistrée</title>
       </head>
 
-      <body>
-        <p>Bonjour,</p>
+      <body
+        style="
+          margin: 0;
+          padding: 0;
+          background: #f5f7fa;
+          font-family: Arial, Helvetica, sans-serif;
+          color: #263442;
+        "
+      >
+        <table
+          role="presentation"
+          width="100%"
+          cellspacing="0"
+          cellpadding="0"
+          border="0"
+          style="background: #f5f7fa;"
+        >
+          <tr>
+            <td
+              align="center"
+              style="padding: 32px 12px;"
+            >
+              <table
+                role="presentation"
+                width="100%"
+                cellspacing="0"
+                cellpadding="0"
+                border="0"
+                style="
+                  width: 100%;
+                  max-width: 640px;
+                  background: #ffffff;
+                  border-radius: 14px;
+                  overflow: hidden;
+                  border: 1px solid #dce3ec;
+                "
+              >
+                <tr>
+                  <td
+                    style="
+                      padding: 28px 32px;
+                      background: #f1fbf5;
+                      border-bottom: 4px solid #17834d;
+                    "
+                  >
+                    <table
+                      role="presentation"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                    >
+                      <tr>
+                        <td
+                          valign="top"
+                          style="padding-right: 16px;"
+                        >
+                          <div
+                            style="
+                              width: 42px;
+                              height: 42px;
+                              line-height: 42px;
+                              text-align: center;
+                              border-radius: 50%;
+                              background: #17834d;
+                              color: #ffffff;
+                              font-size: 22px;
+                              font-weight: bold;
+                            "
+                          >
+                            ✓
+                          </div>
+                        </td>
 
-        <p>
-          Votre inscription au club El Carino a bien été
-          enregistrée.
-        </p>
+                        <td>
+                          <div
+                            style="
+                              font-size: 12px;
+                              line-height: 18px;
+                              font-weight: bold;
+                              text-transform: uppercase;
+                              letter-spacing: 1px;
+                              color: #17834d;
+                            "
+                          >
+                            ASC EL CARINO
+                          </div>
 
-        <p>
-          Adhérent :
-          <strong>${fullName}</strong>
-        </p>
+                          <h1
+                            style="
+                              margin: 4px 0 6px;
+                              font-size: 24px;
+                              line-height: 30px;
+                              color: #1d2a36;
+                            "
+                          >
+                            Inscription enregistrée
+                          </h1>
 
-        <p>Informations du dossier :</p>
+                          <p
+                            style="
+                              margin: 0;
+                              font-size: 15px;
+                              line-height: 22px;
+                              color: #536273;
+                            "
+                          >
+                            Votre inscription a bien été prise
+                            en compte.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 
-        <ul>
-          <li>Profil : ${ageCategory}</li>
-          <li>Pratique : ${practiceType}</li>
-          <li>Montant à régler : <strong>${amount}</strong></li>
-          <li>Référence : ${registrationId}</li>
-        </ul>
+                <tr>
+                  <td style="padding: 28px 32px 8px;">
+                    <p
+                      style="
+                        margin: 0 0 8px;
+                        font-size: 16px;
+                        line-height: 24px;
+                      "
+                    >
+                      Bonjour,
+                    </p>
 
-        <p>
-          <strong>Mode(s) de règlement prévu(s) :</strong>
-        </p>
+                    <p
+                      style="
+                        margin: 0;
+                        font-size: 16px;
+                        line-height: 24px;
+                      "
+                    >
+                      L'inscription de
+                      <strong>${fullName}</strong>
+                      au club El Carino est enregistrée.
+                    </p>
+                  </td>
+                </tr>
 
-        <ul>
-          ${paymentMethodsHtml}
-        </ul>
+                <tr>
+                  <td style="padding: 16px 32px;">
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      style="
+                        background: #fff7f7;
+                        border: 1px solid #f1d7d9;
+                        border-radius: 12px;
+                      "
+                    >
+                      <tr>
+                        <td style="padding: 20px;">
+                          <table
+                            role="presentation"
+                            width="100%"
+                            cellspacing="0"
+                            cellpadding="0"
+                            border="0"
+                          >
+                            <tr>
+                              <td>
+                                <div
+                                  style="
+                                    font-size: 13px;
+                                    color: #6b7785;
+                                  "
+                                >
+                                  Cotisation annuelle
+                                </div>
 
-        <p>
-          Le règlement n’est pas effectué en ligne.
-        </p>
+                                <div
+                                  style="
+                                    margin-top: 4px;
+                                    font-size: 15px;
+                                    font-weight: bold;
+                                    color: #263442;
+                                  "
+                                >
+                                  El Carino
+                                </div>
+                              </td>
 
-        <p>
-          Les règlements, chèques et justificatifs liés aux
-          aides ou coupons sont à remettre directement au club.
-          Les chèques sont à établir à l’ordre de
-          « ASC EL CARINO ».
-        </p>
+                              <td
+                                align="right"
+                                valign="middle"
+                                style="
+                                  font-size: 25px;
+                                  font-weight: bold;
+                                  color: #c91f26;
+                                  white-space: nowrap;
+                                "
+                              >
+                                ${amount}
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 
-        <p>
-          Les chèques vacances ne sont pas acceptés.
-        </p>
+                <tr>
+                  <td style="padding: 0 32px 16px;">
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      style="
+                        border: 1px solid #dce3ec;
+                        border-radius: 12px;
+                        background: #ffffff;
+                      "
+                    >
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            background: #fbfcfe;
+                            border-bottom: 1px solid #e4e9ef;
+                          "
+                        >
+                          <strong
+                            style="
+                              font-size: 16px;
+                              color: #1d2a36;
+                            "
+                          >
+                            Dossier d'inscription
+                          </strong>
+                        </td>
+                      </tr>
 
-        <p>
-          Le bureau du club enregistrera les règlements au fur
-          et à mesure de leur réception.
-        </p>
+                      <tr>
+                        <td style="padding: 16px 20px;">
+                          <table
+                            role="presentation"
+                            width="100%"
+                            cellspacing="0"
+                            cellpadding="0"
+                            border="0"
+                          >
+                            <tr>
+                              <td style="padding: 5px 0;">
+                                <strong>Profil :</strong>
+                                ${ageCategory}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 5px 0;">
+                                <strong>Pratique :</strong>
+                                ${practiceType}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td
+                                style="
+                                  padding: 5px 0;
+                                  font-size: 12px;
+                                  color: #6b7785;
+                                "
+                              >
+                                Référence : ${registrationId}
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 
-        <hr>
+                <tr>
+                  <td style="padding: 0 32px 16px;">
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      style="
+                        border: 1px solid #dce3ec;
+                        border-radius: 12px;
+                        background: #ffffff;
+                      "
+                    >
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            background: #fbfcfe;
+                            border-bottom: 1px solid #e4e9ef;
+                          "
+                        >
+                          <strong
+                            style="
+                              font-size: 16px;
+                              color: #1d2a36;
+                            "
+                          >
+                            Mode(s) de règlement prévu(s)
+                          </strong>
+                        </td>
+                      </tr>
 
-        <p>
-          <strong>Informations pratiques</strong>
-        </p>
+                      <tr>
+                        <td style="padding: 14px 20px;">
+                          <table
+                            role="presentation"
+                            width="100%"
+                            cellspacing="0"
+                            cellpadding="0"
+                            border="0"
+                          >
+                            ${paymentMethodsHtml}
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 
-        <p>
-          <strong>Lieu des entraînements :</strong><br>
-          Gymnase du Collège de l’Estaque<br>
-          348 rue Rabelais<br>
-          13016 Marseille
-        </p>
+                <tr>
+                  <td style="padding: 0 32px 16px;">
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      style="
+                        background: #f2f7fc;
+                        border: 1px solid #d8e5f1;
+                        border-radius: 12px;
+                      "
+                    >
+                      <tr>
+                        <td
+                          valign="top"
+                          style="
+                            width: 24px;
+                            padding: 16px 0 16px 18px;
+                            color: #315f91;
+                            font-weight: bold;
+                          "
+                        >
+                          i
+                        </td>
 
-        <p>
-          <strong>Horaires :</strong>
-        </p>
+                        <td
+                          style="
+                            padding: 16px 18px 16px 10px;
+                            font-size: 14px;
+                            line-height: 21px;
+                            color: #3d5268;
+                          "
+                        >
+                          Le règlement n'est pas effectué en
+                          ligne. Les règlements, chèques et
+                          justificatifs liés aux aides ou
+                          coupons sont à remettre directement
+                          au club.<br><br>
 
-        <ul>
-          <li>Mardi : 17h30 – 19h30 — Adolescents / adultes</li>
-          <li>Mercredi : 17h00 – 18h00 — Enfants</li>
-          <li>Mercredi : 18h30 – 20h00 — Adultes (arrivée à 18h15)</li>
-          <li>Samedi : 10h00 – 12h00 — Enfants / adolescents / adultes</li>
-        </ul>
+                          Les chèques sont à établir à l'ordre
+                          de <strong>« ASC EL CARINO »</strong>.
+                          Les chèques vacances ne sont pas
+                          acceptés.
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 
-        <p>
-          <strong>Équipement obligatoire :</strong>
-        </p>
+                <tr>
+                  <td style="padding: 8px 32px 16px;">
+                    <h2
+                      style="
+                        margin: 0 0 14px;
+                        font-size: 19px;
+                        line-height: 25px;
+                        color: #1d2a36;
+                      "
+                    >
+                      Informations pratiques
+                    </h2>
 
-        <ul>
-          <li>Protège-dents</li>
-          <li>Coquille</li>
-          <li>Gants à velcro et bandes</li>
-          <li>Protège-tibias</li>
-          <li>Protège-pieds Full-Contact en mousse avec talon</li>
-          <li>Pantalon Full-Contact ou short de Kick-Boxing</li>
-          <li>T-shirt de sport, de préférence celui du club</li>
-          <li>Casque et plastron pour les combats</li>
-          <li>Bouteille d’eau et serviette</li>
-        </ul>
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      style="
+                        border: 1px solid #dce3ec;
+                        border-radius: 12px;
+                        background: #ffffff;
+                      "
+                    >
+                      <tr>
+                        <td
+                          style="
+                            padding: 18px 20px;
+                            font-size: 14px;
+                            line-height: 22px;
+                          "
+                        >
+                          <strong>Lieu des entraînements</strong>
+                          <br>
+                          Gymnase du Collège de l'Estaque<br>
+                          348 rue Rabelais<br>
+                          13016 Marseille
 
-        <p>
-          En cas de doute sur le matériel ou les tailles,
-          renseignez-vous auprès du club avant votre achat.
-        </p>
+                          <div
+                            style="
+                              height: 1px;
+                              background: #e4e9ef;
+                              margin: 16px 0;
+                            "
+                          ></div>
 
-        <p>
-          Sportivement,<br>
-          Le club El Carino
-        </p>
+                          <strong>Horaires</strong>
+
+                          <ul
+                            style="
+                              margin: 10px 0 0;
+                              padding-left: 20px;
+                            "
+                          >
+                            <li style="margin-bottom: 6px;">
+                              Mardi : 17h30 – 19h30 —
+                              Adolescents / adultes
+                            </li>
+                            <li style="margin-bottom: 6px;">
+                              Mercredi : 17h00 – 18h00 —
+                              Enfants
+                            </li>
+                            <li style="margin-bottom: 6px;">
+                              Mercredi : 18h30 – 20h00 —
+                              Adultes (arrivée à 18h15)
+                            </li>
+                            <li>
+                              Samedi : 10h00 – 12h00 —
+                              Enfants / adolescents / adultes
+                            </li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 0 32px 28px;">
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      style="
+                        border: 1px solid #dce3ec;
+                        border-radius: 12px;
+                        background: #ffffff;
+                      "
+                    >
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            background: #fbfcfe;
+                            border-bottom: 1px solid #e4e9ef;
+                          "
+                        >
+                          <strong
+                            style="
+                              font-size: 16px;
+                              color: #1d2a36;
+                            "
+                          >
+                            Équipement obligatoire
+                          </strong>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td
+                          style="
+                            padding: 16px 20px;
+                            font-size: 14px;
+                            line-height: 21px;
+                          "
+                        >
+                          <ul
+                            style="
+                              margin: 0;
+                              padding-left: 20px;
+                            "
+                          >
+                            <li>Protège-dents</li>
+                            <li>Coquille</li>
+                            <li>Gants à velcro et bandes</li>
+                            <li>Protège-tibias</li>
+                            <li>
+                              Protège-pieds Full-Contact en
+                              mousse avec talon
+                            </li>
+                            <li>
+                              Pantalon Full-Contact ou short
+                              de Kick-Boxing
+                            </li>
+                            <li>
+                              T-shirt de sport, de préférence
+                              celui du club
+                            </li>
+                            <li>
+                              Casque et plastron pour les
+                              combats
+                            </li>
+                            <li>
+                              Bouteille d'eau et serviette
+                            </li>
+                          </ul>
+
+                          <p
+                            style="
+                              margin: 14px 0 0;
+                              padding: 12px;
+                              background: #fff8e6;
+                              border-radius: 8px;
+                              font-size: 13px;
+                              line-height: 19px;
+                              color: #65511d;
+                            "
+                          >
+                            En cas de doute sur le matériel ou
+                            les tailles, renseignez-vous auprès
+                            du club avant votre achat.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td
+                    style="
+                      padding: 22px 32px;
+                      background: #fbfcfe;
+                      border-top: 1px solid #e4e9ef;
+                      font-size: 13px;
+                      line-height: 20px;
+                      color: #6b7785;
+                    "
+                  >
+                    Sportivement,<br>
+                    <strong style="color: #263442;">
+                      Le club El Carino
+                    </strong>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </body>
     </html>
   `;
