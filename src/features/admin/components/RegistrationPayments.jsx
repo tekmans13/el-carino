@@ -908,7 +908,7 @@ export default function RegistrationPayments({
                                   {cashingPaymentId
                                     === payment.id
                                     ? 'Validation…'
-                                    : 'Encaissé'}
+                                    : 'Encaisser'}
                                 </button>
                               )}
 
