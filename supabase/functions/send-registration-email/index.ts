@@ -197,6 +197,19 @@ Horaires :
 - Mercredi : 18h30 – 20h00 — Adultes (arrivée à 18h15)
 - Samedi : 10h00 – 12h00 — Enfants / adolescents / adultes
 
+Équipement obligatoire :
+- Protège-dents
+- Coquille
+- Gants à velcro et bandes
+- Protège-tibias
+- Protège-pieds Full-Contact en mousse avec talon
+- Pantalon Full-Contact ou short de Kick-Boxing
+- T-shirt de sport, de préférence celui du club
+- Casque et plastron pour les combats
+- Bouteille d’eau et serviette
+
+En cas de doute sur le matériel ou les tailles, renseignez-vous auprès du club avant votre achat.
+
 Sportivement,
 
 Le club El Carino`;
@@ -318,6 +331,27 @@ function buildHtmlEmail(registration: Registration): string {
           <li>Mercredi : 18h30 – 20h00 — Adultes (arrivée à 18h15)</li>
           <li>Samedi : 10h00 – 12h00 — Enfants / adolescents / adultes</li>
         </ul>
+
+        <p>
+          <strong>Équipement obligatoire :</strong>
+        </p>
+
+        <ul>
+          <li>Protège-dents</li>
+          <li>Coquille</li>
+          <li>Gants à velcro et bandes</li>
+          <li>Protège-tibias</li>
+          <li>Protège-pieds Full-Contact en mousse avec talon</li>
+          <li>Pantalon Full-Contact ou short de Kick-Boxing</li>
+          <li>T-shirt de sport, de préférence celui du club</li>
+          <li>Casque et plastron pour les combats</li>
+          <li>Bouteille d’eau et serviette</li>
+        </ul>
+
+        <p>
+          En cas de doute sur le matériel ou les tailles,
+          renseignez-vous auprès du club avant votre achat.
+        </p>
 
         <p>
           Sportivement,<br>
