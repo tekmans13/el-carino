@@ -262,6 +262,9 @@ export default function AdminUsersPage() {
               <form
                 className="admin-users-form"
                 onSubmit={handleSubmit}
+                autoComplete="off"
+                data-lpignore="true"
+                data-1p-ignore="true"
               >
                 <label className="admin-settings-field">
                   <span className="admin-settings-label">
@@ -273,7 +276,7 @@ export default function AdminUsersPage() {
                     type="text"
                     value={form.firstName}
                     onChange={handleChange}
-                    autoComplete="given-name"
+                    autoComplete="off"
                     disabled={creating}
                     required
                   />
@@ -289,7 +292,7 @@ export default function AdminUsersPage() {
                     type="text"
                     value={form.lastName}
                     onChange={handleChange}
-                    autoComplete="family-name"
+                    autoComplete="off"
                     disabled={creating}
                     required
                   />
@@ -305,7 +308,7 @@ export default function AdminUsersPage() {
                     type="email"
                     value={form.email}
                     onChange={handleChange}
-                    autoComplete="email"
+                    autoComplete="off"
                     disabled={creating}
                     required
                   />
@@ -318,13 +321,18 @@ export default function AdminUsersPage() {
 
                   <input
                     name="password"
-                    type="password"
+                    type="text"
                     value={form.password}
                     onChange={handleChange}
-                    autoComplete="new-password"
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
                     minLength={6}
                     disabled={creating}
                     required
+                    style={{
+                      WebkitTextSecurity: 'disc',
+                    }}
                   />
                 </label>
 
