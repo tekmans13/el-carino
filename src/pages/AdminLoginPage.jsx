@@ -7,7 +7,7 @@ export default function AdminLoginPage() {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
     setSubmitting(true);
     setErrorMessage('');
 
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(username, password);
 
     if (error) {
       setErrorMessage(error.message);
@@ -43,14 +43,16 @@ export default function AdminLoginPage() {
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email">Adresse e-mail</label>
+          <label htmlFor="username">Identifiant</label>
           <input
-            id="email"
-            name="email"
-            type="email"
+            id="username"
+            name="username"
+            type="text"
             autoComplete="username"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            value={username}
+            onChange={(event) =>
+              setUsername(event.target.value)
+            }
             required
           />
         </div>
@@ -63,7 +65,9 @@ export default function AdminLoginPage() {
             type="password"
             autoComplete="current-password"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) =>
+              setPassword(event.target.value)
+            }
             required
           />
         </div>

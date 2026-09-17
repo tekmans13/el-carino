@@ -53,8 +53,8 @@ Un accès au back-office El Carino vient de vous être créé.
 Adresse de connexion :
 ${siteUrl}
 
-Email :
-${email}
+Identifiant :
+${firstName}
 
 Mot de passe initial :
 ${password}
@@ -80,7 +80,6 @@ function buildHtmlEmail({
   siteUrl: string;
 }): string {
   const safeFirstName = escapeHtml(firstName);
-  const safeEmail = escapeHtml(email);
   const safePassword = escapeHtml(password);
   const safeSiteUrl = escapeHtml(siteUrl);
 
@@ -106,11 +105,10 @@ function buildHtmlEmail({
           </a>
         </p>
 
-        <p>
-          <strong>Email :</strong><br>
-          ${safeEmail}
-        </p>
-
+<p>
+  <strong>Identifiant :</strong><br>
+  ${safeFirstName}
+</p>
         <p>
           <strong>Mot de passe initial :</strong><br>
           ${safePassword}
