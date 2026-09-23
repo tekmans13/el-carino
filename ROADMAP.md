@@ -12,7 +12,7 @@ Créer une application d'inscription complète pour le club El Carino, avec :
 - le calcul et le suivi des paiements ;
 - des paramètres administrables.
 
-Le site institutionnel complet sera développé dans une phase ultérieure.
+Le site institutionnel est désormais intégré à l'application et utilisé comme page d'accueil publique.
 
 ---
 
@@ -75,6 +75,26 @@ Le site institutionnel complet sera développé dans une phase ultérieure.
 - [x] Téléversement du certificat médical
 - [x] Stockage privé des documents
 - [x] Consultation du certificat par le bureau
+
+### PAI
+
+- [x] Déclaration d'un PAI pendant l'inscription
+- [x] Enregistrement du type de PAI
+- [x] Informations complémentaires pour un PAI de type Autre
+- [x] Téléversement du protocole PAI
+- [x] Consultation du protocole PAI dans le back-office
+- [ ] Modification du PAI après l'inscription depuis le back-office
+- [ ] Ajout ou remplacement du protocole PAI après l'inscription depuis le back-office
+
+### Paiement prévu
+
+- [x] Choix du moyen de paiement prévu
+- [x] Espèces
+- [x] Paiement en 1, 2 ou 3 chèques
+- [x] Aide CAF
+- [x] CJeune
+- [x] Pass'Sport
+- [x] Affichage du paiement prévu dans le back-office
 
 ### Navigation
 
@@ -141,7 +161,7 @@ Fonctionnalités :
 - [ ] Mot de passe oublié
 - [ ] Page de définition d'un nouveau mot de passe
 - [ ] Déconnexion
-- [ ] Gestion des comptes du bureau
+- [x] Gestion des comptes du bureau
 
 ### Liste des inscriptions
 
@@ -186,3 +206,74 @@ Valeurs actuelles :
 Âge minimum : 5 ans
 Âge adulte : 18 ans
 Âge maximum : 80 ans
+```
+
+---
+
+# 7. Statistiques
+
+- [x] Nombre total d'inscriptions
+- [x] Répartition Enfant / Adulte
+- [x] Répartition Loisir / Compétition
+- [x] Répartition par sexe
+- [x] Répartition par statut
+- [x] Évolution quotidienne des inscriptions
+- [x] Montants attendus
+- [x] Montants reçus
+- [x] Montants encaissés
+- [x] Reste à percevoir
+- [x] Moyens de paiement prévus
+- [x] Aides prévues
+
+---
+
+# 8. Documents publics
+
+- [x] Rubrique Documents dans le back-office
+- [x] Bucket Supabase `club-documents`
+- [x] Lecture publique des documents du club
+- [x] Écriture réservée aux rôles Admin et Bureau
+- [x] Téléversement des statuts
+- [x] Publication sous le nom fixe `statuts-el-carino.pdf`
+- [x] Lien vers les statuts depuis la page d'accueil
+
+---
+
+# 9. Site public
+
+- [x] Nouvelle page d'accueil
+- [x] Présentation du club
+- [x] Horaires des entraînements
+- [x] Adresse et carte du gymnase
+- [x] Équipements nécessaires
+- [x] Flux Facebook
+- [x] Accès à l'inscription
+- [x] Saison d'inscription dynamique
+- [x] Responsive desktop et mobile
+
+---
+
+# 10. Référencement
+
+- [x] Titre SEO
+- [x] Meta description
+- [x] URL canonique
+- [x] Open Graph
+- [x] `robots.txt`
+- [x] `sitemap.xml`
+- [x] Données structurées `SportsClub`
+- [x] Image publique pour les données structurées
+- [x] Google Search Console
+- [ ] Google Business Profile / présence Google Maps
+
+---
+
+# À traiter avant la version 1.0.0
+
+- [ ] Empêcher les doubles inscriptions accidentelles
+- [ ] Générer un numéro de dossier lisible
+- [ ] Modifier un PAI après inscription depuis le back-office
+- [ ] Ajouter ou remplacer le protocole PAI après inscription
+- [ ] Finaliser les communications administratives
+- [ ] Revoir les différences de permissions entre Admin et Bureau
+- [ ] Revue finale des tests E2E

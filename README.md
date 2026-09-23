@@ -1,14 +1,28 @@
 # El Carino
 
-Version actuelle : **0.8.0**
+Version actuelle : **0.9.0**
 
-Application web de gestion des inscriptions du club El Carino.
+Application web de gestion des inscriptions et site public du club El Cariño Muay Thaï.
 
 Cette application permet de gérer l'ensemble du processus d'inscription des adhérents, depuis le formulaire public jusqu'au suivi administratif, en passant par la gestion des documents, des paiements et des communications.
 
 ---
 
 # Fonctionnalités
+
+## Site public
+
+- Page d'accueil responsive
+- Présentation du club
+- Horaires et lieu des entraînements
+- Équipements nécessaires
+- Publications Facebook
+- Accès au formulaire d'inscription
+- Saison d'inscription dynamique
+- Consultation des statuts de l'association
+- Référencement local : métadonnées SEO, sitemap et données structurées
+
+---
 
 ## Inscription publique
 
@@ -24,6 +38,8 @@ Cette application permet de gérer l'ensemble du processus d'inscription des adh
 - Téléversement du certificat médical
 - Validation complète des données
 - Enregistrement sécurisé dans Supabase
+- Gestion du PAI et téléversement du protocole PAI
+- Choix du moyen de paiement prévu et des aides
 - Envoi d'un e-mail de confirmation
 
 ---
@@ -43,6 +59,11 @@ L'espace d'administration permet de :
 - remplacer un certificat médical ;
 - supprimer automatiquement l'ancien certificat dans Supabase Storage ;
 - suivre l'état des paiements ;
+- consulter les moyens de paiement prévus et les aides ;
+- consulter les statistiques ;
+- gérer les utilisateurs Admin et Bureau ;
+- gérer les paramètres du club ;
+- gérer les documents publics du club ;
 - exporter les dossiers au format Excel.
 
 ---
@@ -57,6 +78,31 @@ Le back-office permet de :
 - remplacer un certificat médical existant ;
 - supprimer automatiquement l'ancien document après un remplacement réussi ;
 - conserver les métadonnées du document dans la base de données.
+
+---
+
+## Documents publics du club
+
+La rubrique **Admin > Documents** permet de publier les documents publics du club.
+
+Les statuts de l'association sont stockés dans le bucket Supabase `club-documents`.
+Quel que soit le nom du PDF téléversé, il est publié sous le nom fixe
+`statuts-el-carino.pdf` et utilisé par le lien présent sur la page d'accueil.
+
+---
+
+## Paiement prévu
+
+Lors de l'inscription, l'adhérent peut indiquer :
+
+- espèces ;
+- paiement en 1, 2 ou 3 chèques ;
+- aide CAF ;
+- CJeune ;
+- Pass'Sport.
+
+Ces informations sont visibles dans le back-office et restent distinctes des
+paiements réellement enregistrés.
 
 ---
 
