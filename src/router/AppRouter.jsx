@@ -8,7 +8,7 @@ import {
 import ScrollToTop from '../components/ScrollToTop';
 import ProtectedRoute from '../components/ProtectedRoute';
 
-import HomeV2Page from '../pages/HomeV2Page';
+import HomePage from '../pages/HomePage';
 import ClubPage from '../pages/ClubPage';
 import InscriptionPage from '../pages/InscriptionPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
@@ -29,7 +29,7 @@ export default function AppRouter() {
       <Routes>
         <Route
           path="/"
-          element={<HomeV2Page />}
+          element={<HomePage />}
         />
 
         <Route

@@ -10,6 +10,8 @@ export async function getClubSettings() {
       adult_annual_fee_cents,
       federal_license_fee_cents,
       registration_season,
+      registration_open,
+      registration_reopen_date,
       created_at,
       updated_at
     `)
@@ -38,6 +40,9 @@ export async function updateClubSettings(settingsId, values) {
       Number(values.federalLicenseFee) * 100,
     ),
     registration_season: values.registrationSeason,
+    registration_open: values.registrationOpen,
+    registration_reopen_date:
+      values.registrationReopenDate || null,
     updated_at: new Date().toISOString(),
   };
 

@@ -39,6 +39,12 @@ export default function AdminSettingsPage() {
   const [registrationSeason, setRegistrationSeason] =
     useState('');
 
+  const [registrationOpen, setRegistrationOpen] =
+    useState(true);
+
+  const [registrationReopenDate, setRegistrationReopenDate] =
+    useState('');
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -92,6 +98,14 @@ export default function AdminSettingsPage() {
 
         setRegistrationSeason(
           data.registration_season ?? '',
+        );
+
+        setRegistrationOpen(
+          data.registration_open ?? true,
+        );
+
+        setRegistrationReopenDate(
+          data.registration_reopen_date ?? '',
         );
       } catch (loadError) {
         if (active) {
@@ -209,6 +223,11 @@ export default function AdminSettingsPage() {
               parsedFederalLicenseFee,
             registrationSeason:
               registrationSeason.trim(),
+            registrationOpen,
+            registrationReopenDate:
+              registrationOpen
+                ? ''
+                : registrationReopenDate,
           },
         );
 
@@ -243,6 +262,14 @@ export default function AdminSettingsPage() {
 
       setRegistrationSeason(
         updatedSettings.registration_season,
+      );
+
+      setRegistrationOpen(
+        updatedSettings.registration_open,
+      );
+
+      setRegistrationReopenDate(
+        updatedSettings.registration_reopen_date ?? '',
       );
 
       setSaveSuccess(
@@ -404,6 +431,62 @@ export default function AdminSettingsPage() {
                         bouton d’inscription du site.
                       </small>
                     </label>
+
+                    <label className="admin-settings-field">
+                      <span className="admin-settings-label">
+                        Inscriptions
+                      </span>
+
+                      <span className="admin-settings-input-wrapper">
+                        <input
+                          type="checkbox"
+                          checked={registrationOpen}
+                          onChange={(event) =>
+                            setRegistrationOpen(
+                              event.target.checked,
+                            )
+                          }
+                          disabled={saving}
+                        />
+
+                        <span>
+                          Inscriptions ouvertes
+                        </span>
+                      </span>
+
+                      <small>
+                        Décochez pour fermer temporairement
+                        les inscriptions.
+                      </small>
+                    </label>
+
+                    {!registrationOpen && (
+                      <label className="admin-settings-field">
+                        <span className="admin-settings-label">
+                          Date de réouverture
+                        </span>
+
+                        <span className="admin-settings-input-wrapper">
+                          <input
+                            type="date"
+                            value={registrationReopenDate}
+                            onChange={(event) =>
+                              setRegistrationReopenDate(
+                                event.target.value,
+                              )
+                            }
+                            disabled={saving}
+                          />
+                        </span>
+
+                        <small>
+                          Facultatif. Sans date, le bouton
+                          affichera « FERMÉES ». Avec une date,
+                          les inscriptions seront automatiquement
+                          ouvertes à cette date.
+                        </small>
+                      </label>
+                    )}
                   </div>
                 </section>
 

@@ -9,6 +9,8 @@ export async function getClubSettings() {
       minor_annual_fee_cents,
       adult_annual_fee_cents,
       registration_season,
+      registration_open,
+      registration_reopen_date,
       federal_license_fee_cents
     `)
     .limit(1)

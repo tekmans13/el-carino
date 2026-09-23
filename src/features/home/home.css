@@ -1418,3 +1418,10 @@
   white-space: nowrap;
   border: 0;
 }
+@media (min-width: 721px) {
+  .home-v2-registration-link strong.is-registration-closed {
+    right: 10%;
+    font-size: 0.62rem;
+    white-space: nowrap;
+  }
+}
