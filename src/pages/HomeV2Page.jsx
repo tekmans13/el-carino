@@ -50,6 +50,8 @@ function ClockIcon() {
 }
 
 
+import { getClubDocumentPublicUrl } from '../features/admin/services/clubDocumentsService';
+
 function DocumentIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -219,7 +221,9 @@ export default function HomeV2Page() {
 
             <a
               className="home-v2-statutes"
-              href="/documents/statuts-el-carino.pdf"
+              href={getClubDocumentPublicUrl(
+                'statuts-el-carino.pdf',
+              )}
               target="_blank"
               rel="noreferrer"
             >
