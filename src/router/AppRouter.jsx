@@ -7,6 +7,7 @@ import {
 import ScrollToTop from '../components/ScrollToTop';
 import ProtectedRoute from '../components/ProtectedRoute';
 
+import HomeV2Page from '../pages/HomeV2Page';
 import ClubPage from '../pages/ClubPage';
 import InscriptionPage from '../pages/InscriptionPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
@@ -27,6 +28,11 @@ export default function AppRouter() {
         <Route
           path="/"
           element={<InscriptionPage />}
+        />
+
+        <Route
+          path="/accueil-v2"
+          element={<HomeV2Page />}
         />
 
         <Route
@@ -89,14 +95,15 @@ export default function AppRouter() {
           }
         />
 
-      <Route
-  path="/admin/statistiques"
-  element={
-    <ProtectedRoute>
-      <AdminStatisticsPage />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/admin/statistiques"
+          element={
+            <ProtectedRoute>
+              <AdminStatisticsPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="*"
           element={<NotFoundPage />}

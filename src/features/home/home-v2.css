@@ -1,0 +1,445 @@
+.home-v2 {
+  --home-black: #070707;
+  --home-panel: #0d0e0f;
+  --home-panel-light: #151719;
+  --home-red: #d71920;
+  --home-gold: #d7a43b;
+  --home-white: #f7f4ed;
+  --home-muted: #aaa8a2;
+
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      #252525 0,
+      #0b0b0b 34rem,
+      #050505 70rem
+    );
+  color: var(--home-white);
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+.home-v2 *,
+.home-v2 *::before,
+.home-v2 *::after {
+  box-sizing: border-box;
+}
+
+.home-v2-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.home-v2-hero > img {
+  display: block;
+  width: 100%;
+  max-height: 720px;
+  object-fit: cover;
+}
+
+.home-v2-registration-link {
+  position: absolute;
+  right: 5%;
+  bottom: 8%;
+  z-index: 2;
+  display: block;
+  width: 390px;
+  height: 115px;
+  cursor: pointer;
+}
+
+.home-v2-information {
+  display: grid;
+  grid-template-columns: 1.35fr 0.9fr 1fr;
+  gap: 12px;
+  width: min(1500px, calc(100% - 32px));
+  margin: 18px auto;
+}
+
+.home-v2-card {
+  overflow: hidden;
+  border: 1px solid rgb(215 164 59 / 72%);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      #111314,
+      #080909 65%
+    );
+  box-shadow: 0 14px 35px rgb(0 0 0 / 30%);
+}
+
+.home-v2-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgb(215 164 59 / 20%);
+}
+
+.home-v2-card-title h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.02rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.home-v2-card-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  color: var(--home-red);
+}
+
+.home-v2-card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.home-v2-facebook .home-v2-card-icon {
+  color: #1877f2;
+}
+
+.home-v2-card-body {
+  padding: 20px;
+}
+
+.home-v2-card-body p {
+  margin: 0 0 18px;
+  color: #eee;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.home-v2-facebook-placeholder {
+  display: flex;
+  min-height: 380px;
+  margin: 16px;
+  padding: 30px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background:
+    radial-gradient(
+      circle at center,
+      #24272b,
+      #101112 68%
+    );
+  text-align: center;
+}
+
+.home-v2-facebook-mark {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 18px;
+  place-items: center;
+  color: #1877f2;
+}
+
+.home-v2-facebook-mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.home-v2-facebook-placeholder strong {
+  font-size: 1.1rem;
+}
+
+.home-v2-facebook-placeholder p {
+  margin: 16px 0 7px;
+  color: #ddd;
+}
+
+.home-v2-facebook-placeholder span {
+  color: #8e9296;
+  font-size: 0.82rem;
+}
+
+.home-v2-values {
+  display: grid;
+  gap: 11px;
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-v2-values li {
+  position: relative;
+  padding-left: 25px;
+  color: #e8e8e8;
+  font-size: 0.88rem;
+}
+
+.home-v2-values li::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--home-red);
+  content: '◆';
+}
+
+.home-v2-statutes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  color: var(--home-gold);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.home-v2-statutes svg {
+  width: 26px;
+  height: 26px;
+  color: var(--home-red);
+}
+
+.home-v2-statutes b {
+  margin-left: auto;
+  font-size: 1.3rem;
+}
+
+.home-v2-session {
+  margin-bottom: 18px;
+}
+
+.home-v2-session h3 {
+  display: inline-block;
+  margin: 0 0 7px;
+  padding: 6px 13px;
+  background: var(--home-red);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  transform: skew(-5deg);
+}
+
+.home-v2-session > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 12px;
+  border-bottom: 1px solid #292b2d;
+  background: #17191a;
+  font-size: 0.82rem;
+}
+
+.home-v2-session span {
+  color: var(--home-gold);
+}
+
+.home-v2-session strong {
+  color: #eee;
+  font-weight: 500;
+}
+
+.home-v2-location {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+}
+
+.home-v2-location > svg {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  color: var(--home-red);
+}
+
+.home-v2-location div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.home-v2-location strong {
+  font-size: 0.83rem;
+}
+
+.home-v2-location span {
+  color: var(--home-muted);
+  font-size: 0.75rem;
+}
+
+.home-v2-equipment {
+  width: min(1500px, calc(100% - 32px));
+  margin: 14px auto 18px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: #f4f1eb;
+  color: #101010;
+}
+
+.home-v2-equipment header {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 16px 24px 6px;
+}
+
+.home-v2-equipment-symbol {
+  font-size: 2.5rem;
+}
+
+.home-v2-equipment h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 950;
+}
+
+.home-v2-equipment p {
+  margin: 3px 0 0;
+  font-size: 0.85rem;
+}
+
+.home-v2-equipment > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.home-v2-footer {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+.home-v2-footer > img {
+  display: block;
+  width: 100%;
+  min-height: 230px;
+  object-fit: cover;
+}
+
+.home-v2-footer-values {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+}
+
+.home-v2-footer-values b {
+  font-size: 1.2rem;
+}
+
+.home-v2-footer-values .is-blue {
+  color: #1268dc;
+}
+
+.home-v2-footer-values .is-red {
+  color: #d71920;
+}
+
+@media (max-width: 1050px) {
+  .home-v2-information {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .home-v2-facebook {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .home-v2-registration-link {
+    right: 10%;
+    bottom: 8%;
+    width: 60%;
+    height: 22%;
+  }
+
+  .home-v2-hero > img {
+    min-height: 420px;
+    object-fit: cover;
+  }
+
+
+  .home-v2-information {
+    grid-template-columns: 1fr;
+    width: calc(100% - 20px);
+    margin-top: 10px;
+  }
+
+  .home-v2-facebook {
+    grid-column: auto;
+  }
+
+  .home-v2-equipment {
+    width: calc(100% - 20px);
+  }
+
+  .home-v2-equipment header {
+    padding: 14px 16px 7px;
+  }
+
+  .home-v2-equipment h2 {
+    font-size: 1.15rem;
+  }
+
+  .home-v2-footer-values {
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 12px;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+  }
+}
+
+
+/* Carte du gymnase */
+
+.home-v2-location-block {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+}
+
+.home-v2-location-block .home-v2-location {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.home-v2-map {
+  height: 145px;
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid rgb(215 164 59 / 45%);
+  border-radius: 8px;
+  background: #111;
+}
+
+.home-v2-map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
