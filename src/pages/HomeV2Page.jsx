@@ -117,6 +117,10 @@ export default function HomeV2Page() {
 
   return (
     <main className="home-v2">
+      <h1 className="home-v2-seo-title">
+        El Cariño Muay Thaï – Club de boxe à l'Estaque Marseille 13016
+      </h1>
+
       <section className="home-v2-hero">
         <img
           src={topImage}
@@ -192,9 +196,11 @@ export default function HomeV2Page() {
 
           <div className="home-v2-card-body">
             <p>
-              El Carino est une association marseillaise
-              dédiée au Muay Thaï, ouverte à toutes et
-              tous, de l’initiation à la compétition.
+              El Cariño est un club de Muay Thaï à l’Estaque,
+              dans le 16e arrondissement de Marseille (13016).
+              L’association accueille enfants, adolescents et
+              adultes pour la pratique de la boxe thaïlandaise,
+              de l’initiation et du loisir jusqu’à la compétition.
             </p>
 
             <p>

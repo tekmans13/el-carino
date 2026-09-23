@@ -2,6 +2,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
 } from 'react-router-dom';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -32,7 +33,7 @@ export default function AppRouter() {
 
         <Route
           path="/accueil-v2"
-          element={<HomeV2Page />}
+          element={<Navigate to="/" replace />}
         />
 
         <Route
