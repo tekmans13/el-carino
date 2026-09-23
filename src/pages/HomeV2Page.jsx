@@ -275,15 +275,18 @@ export default function HomeV2Page() {
 
                 <div>
                   <strong>
-                    Gymnase du Collège de l’Estaque — Marseille
+                    Gymnase du Collège de l’Estaque
                   </strong>
+                  <span>
+                    348 Rue Rabelais — 13016 Marseille
+                  </span>
                 </div>
               </div>
 
               <div className="home-v2-map">
                 <iframe
                   title="Gymnase du Collège de l’Estaque"
-                  src="https://www.google.com/maps?q=Gymnase+du+Coll%C3%A8ge+de+l%27Estaque+Marseille&output=embed"
+                  src="https://www.google.com/maps?q=348+Rue+Rabelais+13016+Marseille&output=embed"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   allowFullScreen
