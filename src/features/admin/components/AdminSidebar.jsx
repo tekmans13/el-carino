@@ -19,7 +19,7 @@ const MENU_ITEMS = [
     label: 'Documents',
     path: '/admin/documents',
     icon: 'document',
-    enabled: false,
+    enabled: true,
   },
   {
     id: 'payments',

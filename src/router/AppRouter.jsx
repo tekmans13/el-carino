@@ -18,6 +18,7 @@ import AdminPaymentsPage from '../pages/AdminPaymentsPage';
 import AdminSettingsPage from '../pages/AdminSettingsPage';
 import AdminUsersPage from '../pages/AdminUsersPage';
 import AdminStatisticsPage from '../pages/AdminStatisticsPage';
+import AdminDocumentsPage from '../pages/AdminDocumentsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRouter() {
@@ -74,6 +75,15 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <AdminPaymentsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/documents"
+          element={
+            <ProtectedRoute>
+              <AdminDocumentsPage />
             </ProtectedRoute>
           }
         />
