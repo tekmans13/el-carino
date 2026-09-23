@@ -27,7 +27,7 @@ export default function AppRouter() {
       <Routes>
         <Route
           path="/"
-          element={<InscriptionPage />}
+          element={<HomeV2Page />}
         />
 
         <Route
