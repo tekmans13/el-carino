@@ -167,24 +167,21 @@ export default function HomeV2Page() {
             Nos dernières publications
           </SectionTitle>
 
-          <div className="home-v2-facebook-placeholder">
-            <div className="home-v2-facebook-mark">
-              <FacebookIcon />
-            </div>
-
-            <strong>
-              El Carino - Muay Thaï Marseille
-            </strong>
-
-            <p>
-              Le flux des publications Facebook sera
-              affiché ici.
-            </p>
-
-            <span>
-              Entraînements, événements, photos et
-              actualités du club.
-            </span>
+          <div className="home-v2-facebook-feed">
+            <iframe
+              title="Publications Facebook El Carino Muay Thaï"
+              src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fp%2FEl-Cari%25C3%25B1o-Muay-Tha%25C3%25AF-100094125736093%2F&tabs=timeline&width=425&height=650&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+              width="425"
+              height="650"
+              style={{
+                border: 'none',
+                overflow: 'hidden',
+              }}
+              scrolling="no"
+              frameBorder="0"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            />
           </div>
         </article>
 
