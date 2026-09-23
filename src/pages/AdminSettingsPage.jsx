@@ -36,6 +36,9 @@ export default function AdminSettingsPage() {
   const [federalLicenseFee, setFederalLicenseFee] =
     useState('');
 
+  const [registrationSeason, setRegistrationSeason] =
+    useState('');
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -85,6 +88,10 @@ export default function AdminSettingsPage() {
               data.federal_license_fee_cents,
             ),
           ),
+        );
+
+        setRegistrationSeason(
+          data.registration_season ?? '',
         );
       } catch (loadError) {
         if (active) {
@@ -167,6 +174,17 @@ export default function AdminSettingsPage() {
       return;
     }
 
+    if (
+      !/^\d{4}\/\d{4}$/.test(
+        registrationSeason.trim(),
+      )
+    ) {
+      setSaveError(
+        'La saison doit être au format 2026/2027.',
+      );
+      return;
+    }
+
     if (!settingsId) {
       setSaveError(
         'Les paramètres du club ne sont pas chargés.',
@@ -189,6 +207,8 @@ export default function AdminSettingsPage() {
               parsedAdultAnnualFee,
             federalLicenseFee:
               parsedFederalLicenseFee,
+            registrationSeason:
+              registrationSeason.trim(),
           },
         );
 
@@ -219,6 +239,10 @@ export default function AdminSettingsPage() {
               .federal_license_fee_cents,
           ),
         ),
+      );
+
+      setRegistrationSeason(
+        updatedSettings.registration_season,
       );
 
       setSaveSuccess(
@@ -335,6 +359,49 @@ export default function AdminSettingsPage() {
                         de moins de 18 ans sont considérés
                         comme mineurs et ceux de 18 ans et
                         plus comme adultes.
+                      </small>
+                    </label>
+                  </div>
+                </section>
+
+                <section className="admin-content-card">
+                  <header className="admin-content-card-header">
+                    <div className="admin-list-title">
+                      <h2>
+                        Saison des inscriptions
+                      </h2>
+
+                      <span>
+                        Saison affichée sur le site
+                      </span>
+                    </div>
+                  </header>
+
+                  <div className="admin-settings-section">
+                    <label className="admin-settings-field">
+                      <span className="admin-settings-label">
+                        Saison
+                      </span>
+
+                      <span className="admin-settings-input-wrapper">
+                        <input
+                          type="text"
+                          value={registrationSeason}
+                          onChange={(event) =>
+                            setRegistrationSeason(
+                              event.target.value,
+                            )
+                          }
+                          placeholder="2026/2027"
+                          pattern="[0-9]{4}/[0-9]{4}"
+                          disabled={saving}
+                          required
+                        />
+                      </span>
+
+                      <small>
+                        Cette saison sera utilisée sur le
+                        bouton d’inscription du site.
                       </small>
                     </label>
                   </div>

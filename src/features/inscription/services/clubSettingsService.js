@@ -8,6 +8,7 @@ export async function getClubSettings() {
       adult_age_threshold,
       minor_annual_fee_cents,
       adult_annual_fee_cents,
+      registration_season,
       federal_license_fee_cents
     `)
     .limit(1)

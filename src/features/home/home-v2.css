@@ -43,6 +43,10 @@
   object-fit: cover;
 }
 
+.home-v2-hero-mobile {
+  display: none;
+}
+
 .home-v2-registration-link {
   position: absolute;
   right: 5%;
@@ -51,7 +55,14 @@
   display: block;
   width: 390px;
   height: 115px;
+  overflow: hidden;
+  color: transparent;
   cursor: pointer;
+}
+
+.home-v2-registration-link span,
+.home-v2-registration-link strong {
+  display: none;
 }
 
 .home-v2-information {
@@ -367,18 +378,91 @@
 }
 
 @media (max-width: 720px) {
-  .home-v2-registration-link {
-    right: 10%;
-    bottom: 8%;
-    width: 60%;
-    height: 22%;
+  .home-v2-hero {
+    position: relative;
+    min-height: 560px;
+    background: #000;
   }
 
-  .home-v2-hero > img {
-    min-height: 420px;
+  .home-v2-hero-desktop {
+    display: none;
+  }
+
+  .home-v2-hero-mobile {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 560px;
+    overflow: hidden;
+  }
+
+  .home-v2-hero-mobile-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: center;
   }
 
+  .home-v2-hero-mobile-logo {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    z-index: 2;
+    width: min(78%, 330px);
+    height: auto;
+    transform: translateX(-50%);
+  }
+
+  .home-v2-registration-link {
+    right: auto;
+    bottom: 24px;
+    left: 50%;
+    z-index: 3;
+    display: flex;
+    width: min(82%, 340px);
+    height: auto;
+    min-height: 86px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    overflow: visible;
+    border: 2px solid #f1d477;
+    background:
+      linear-gradient(
+        180deg,
+        #d71920,
+        #9f0e13
+      );
+    box-shadow:
+      0 6px 0 #63080b,
+      0 10px 24px rgb(0 0 0 / 55%);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    transform: translateX(-50%);
+  }
+
+  .home-v2-registration-link span {
+    display: block;
+    color: #fff;
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.08em;
+  }
+
+  .home-v2-registration-link strong {
+    display: block;
+    margin-top: 7px;
+    color: #f5d56c;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.06em;
+  }
 
   .home-v2-information {
     grid-template-columns: 1fr;
@@ -442,4 +526,685 @@
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+
+/* HOME V2 - MOBILE HERO FINAL */
+@media (max-width: 720px) {
+  .home-v2-hero > img.home-v2-hero-desktop {
+    display: none !important;
+  }
+
+  .home-v2-hero {
+    min-height: 430px;
+    height: 430px;
+  }
+
+  .home-v2-hero-mobile {
+    display: block;
+    width: 100%;
+    height: 430px;
+  }
+
+  .home-v2-hero-mobile-background {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .home-v2-hero-mobile-logo {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    width: min(46%, 185px);
+    height: auto;
+    transform: none;
+  }
+
+  .home-v2-registration-link {
+    right: auto;
+    bottom: 20px;
+    left: 50%;
+    width: min(78%, 320px);
+    min-height: 78px;
+    transform: translateX(-50%);
+  }
+}
+
+
+/* HOME V2 - MOBILE HERO STYLE V2 */
+@media (max-width: 720px) {
+  .home-v2-hero-mobile-logo {
+    top: 14px;
+    left: 4px;
+    width: min(58%, 220px);
+    max-width: none;
+    transform: none;
+  }
+
+  .home-v2-registration-link {
+    right: auto;
+    bottom: 22px;
+    left: 50%;
+
+    display: flex;
+    width: min(72%, 300px);
+    min-height: 82px;
+    height: auto;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 11px 20px 10px;
+
+    overflow: visible;
+
+    border: 1px solid #e6bd52;
+    border-radius: 2px;
+
+    background:
+      linear-gradient(
+        180deg,
+        #d71920 0%,
+        #bd1117 55%,
+        #990b10 100%
+      );
+
+    box-shadow:
+      0 5px 0 #65080b,
+      0 9px 18px rgb(0 0 0 / 55%);
+
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+
+    transform: translateX(-50%);
+
+    clip-path: polygon(
+      7px 0,
+      100% 0,
+      100% calc(100% - 7px),
+      calc(100% - 7px) 100%,
+      0 100%,
+      0 7px
+    );
+  }
+
+  .home-v2-registration-link span {
+    display: block;
+
+    color: #fff;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.12em;
+
+    text-shadow:
+      0 2px 2px rgb(0 0 0 / 35%);
+  }
+
+  .home-v2-registration-link strong {
+    position: relative;
+
+    display: block;
+
+    margin-top: 9px;
+    padding-top: 7px;
+
+    color: #f4d46b;
+
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.08em;
+  }
+
+  .home-v2-registration-link strong::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 115px;
+    height: 1px;
+
+    background: rgb(244 212 107 / 65%);
+
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  .home-v2-registration-link:active {
+    bottom: 19px;
+
+    box-shadow:
+      0 2px 0 #65080b,
+      0 5px 12px rgb(0 0 0 / 50%);
+  }
+}
+
+
+/* HOME V2 - MOBILE HERO STYLE V3 */
+@media (max-width: 720px) {
+
+  /* Logo : gros et franchement collé à gauche */
+  .home-v2-hero-mobile-logo {
+    top: 12px;
+    left: -10px;
+    z-index: 2;
+
+    width: min(70%, 265px);
+    max-width: none;
+    height: auto;
+
+    transform: none;
+  }
+
+  /*
+   * Bouton inscription :
+   * cartouche proche du visuel desktop.
+   */
+  .home-v2-registration-link {
+    right: auto;
+    bottom: 22px;
+    left: 50%;
+    z-index: 3;
+
+    display: flex;
+
+    width: min(76%, 310px);
+    min-height: 72px;
+    height: auto;
+
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    padding:
+      11px
+      38px
+      10px
+      66px;
+
+    overflow: visible;
+
+    border: 0;
+    border-radius: 0;
+
+    background:
+      linear-gradient(
+        105deg,
+        #e01820 0%,
+        #c40f17 62%,
+        #a4080e 100%
+      );
+
+    box-shadow:
+      0 5px 0 rgb(72 0 0 / 75%),
+      0 10px 20px rgb(0 0 0 / 45%);
+
+    color: #fff;
+    text-align: left;
+    text-decoration: none;
+
+    transform: translateX(-50%);
+
+    clip-path: polygon(
+      0 0,
+      calc(100% - 15px) 0,
+      100% 50%,
+      calc(100% - 15px) 100%,
+      0 100%,
+      8px 50%
+    );
+  }
+
+  /*
+   * Petit bloc calendrier à gauche,
+   * comme sur le bouton desktop.
+   */
+  .home-v2-registration-link::before {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+
+    width: 31px;
+    height: 31px;
+
+    border: 2px solid #fff;
+    border-radius: 3px;
+
+    background:
+      linear-gradient(
+        to bottom,
+        #fff 0 7px,
+        transparent 7px
+      );
+
+    content: "";
+
+    transform: translateY(-50%);
+  }
+
+  .home-v2-registration-link::after {
+    position: absolute;
+    top: 50%;
+    left: 26px;
+
+    width: 19px;
+    height: 2px;
+
+    background: rgb(255 255 255 / 85%);
+
+    box-shadow:
+      0 6px 0 rgb(255 255 255 / 85%);
+
+    content: "";
+
+    transform: translateY(1px);
+  }
+
+  .home-v2-registration-link span {
+    display: block;
+
+    color: #fff;
+
+    font-size: 1.22rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.08em;
+
+    text-shadow:
+      0 2px 2px rgb(0 0 0 / 30%);
+  }
+
+  .home-v2-registration-link strong {
+    position: static;
+
+    display: block;
+
+    margin-top: 7px;
+    padding: 0;
+
+    color: #fff;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.08em;
+  }
+
+  .home-v2-registration-link strong::before {
+    display: none;
+  }
+
+  .home-v2-registration-link:active {
+    bottom: 19px;
+
+    box-shadow:
+      0 2px 0 rgb(72 0 0 / 75%),
+      0 6px 12px rgb(0 0 0 / 40%);
+  }
+}
+
+
+/* HOME V2 - MOBILE HERO FINAL V4 */
+@media (max-width: 720px) {
+
+  /* Logo plus gros et réellement collé au bord gauche */
+  .home-v2-hero-mobile-logo {
+    top: 8px;
+    left: -28px;
+    z-index: 2;
+
+    width: min(78%, 290px);
+    max-width: none;
+    height: auto;
+
+    transform: none;
+  }
+
+  /*
+   * Bouton compact inspiré du bouton du visuel desktop.
+   * Pas de flèche, pas de calendrier.
+   */
+  .home-v2-registration-link {
+    right: 12px;
+    bottom: 24px;
+    left: auto;
+    z-index: 3;
+
+    display: flex;
+
+    width: 225px;
+    min-height: 62px;
+    height: 62px;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 14px;
+
+    overflow: visible;
+
+    border: 1px solid #f0d06b;
+    border-radius: 0;
+
+    background:
+      linear-gradient(
+        180deg,
+        #df1820 0%,
+        #c70e15 100%
+      );
+
+    box-shadow:
+      4px 5px 0 rgb(75 0 0 / 65%),
+      0 8px 18px rgb(0 0 0 / 35%);
+
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+
+    transform: rotate(-2deg);
+    clip-path: none;
+  }
+
+  .home-v2-registration-link::before,
+  .home-v2-registration-link::after {
+    display: none;
+    content: none;
+  }
+
+  .home-v2-registration-link span {
+    display: block;
+
+    color: #fff;
+
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.09em;
+
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 35%);
+  }
+
+  .home-v2-registration-link strong {
+    position: static;
+
+    display: block;
+
+    margin-top: 6px;
+    padding: 0;
+
+    color: #f4d46b;
+
+    font-size: 0.66rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.07em;
+  }
+
+  .home-v2-registration-link strong::before {
+    display: none;
+  }
+
+  .home-v2-registration-link:active {
+    right: 10px;
+    bottom: 22px;
+
+    box-shadow:
+      2px 3px 0 rgb(75 0 0 / 65%);
+  }
+}
+
+
+/* HOME V2 - MOBILE REGISTRATION IMAGE */
+@media (max-width: 720px) {
+
+  .home-v2-registration-link {
+    position: absolute;
+
+    right: 8px;
+    bottom: 18px;
+    left: auto;
+    z-index: 3;
+
+    display: block;
+
+    width: min(76%, 300px);
+    min-height: 0;
+    height: auto;
+
+    padding: 0;
+
+    overflow: visible;
+
+    border: 0;
+    border-radius: 0;
+
+    background: transparent;
+
+    box-shadow: none;
+
+    color: #fff;
+    text-decoration: none;
+
+    transform: none;
+    clip-path: none;
+  }
+
+  .home-v2-registration-link::before,
+  .home-v2-registration-link::after {
+    display: none;
+    content: none;
+  }
+
+  .home-v2-registration-image {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    border: 0;
+  }
+
+  .home-v2-registration-link span {
+    display: none;
+  }
+
+  .home-v2-registration-link strong {
+    position: absolute;
+
+    right: 13%;
+    bottom: 17%;
+
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    color: #fff;
+
+    font-size: clamp(
+      0.52rem,
+      2.2vw,
+      0.68rem
+    );
+
+    font-weight: 800;
+    line-height: 1;
+
+    letter-spacing: 0.07em;
+
+    text-align: center;
+
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 45%);
+  }
+
+  .home-v2-registration-link strong::before {
+    display: none;
+  }
+
+  .home-v2-registration-link:active {
+    right: 8px;
+    bottom: 18px;
+
+    box-shadow: none;
+
+    transform: translateY(2px);
+  }
+}
+
+
+/* HOME V2 - MOBILE SEASON POSITION */
+@media (max-width: 720px) {
+  .home-v2-registration-link strong {
+    position: absolute;
+
+    right: 14%;
+    bottom: 22%;
+
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    color: #fff;
+
+    font-size: clamp(
+      0.5rem,
+      2vw,
+      0.64rem
+    );
+
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.06em;
+
+    white-space: nowrap;
+
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 55%);
+
+    transform: rotate(-3deg);
+    transform-origin: center;
+  }
+}
+
+
+/* HOME V2 - MOBILE SEASON POSITION V2 */
+@media (max-width: 720px) {
+  .home-v2-registration-link strong {
+    position: absolute;
+
+    right: 17%;
+    bottom: 29%;
+
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    color: #fff;
+
+    font-size: clamp(
+      0.48rem,
+      1.9vw,
+      0.61rem
+    );
+
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.055em;
+
+    white-space: nowrap;
+
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 55%);
+
+    transform: rotate(-4deg);
+    transform-origin: center;
+  }
+}
+
+
+/* HOME V2 - MOBILE SEASON POSITION V3 */
+@media (max-width: 720px) {
+  .home-v2-registration-link strong {
+    right: 22%;
+    bottom: 36%;
+
+    font-size: clamp(
+      0.48rem,
+      1.9vw,
+      0.61rem
+    );
+
+    transform: rotate(-4deg);
+  }
+}
+
+
+/* HOME V2 - MOBILE SEASON POSITION V4 */
+@media (max-width: 720px) {
+  .home-v2-registration-link strong {
+    right: 20%;
+    bottom: 30%;
+
+    font-size: clamp(
+      0.42rem,
+      1.65vw,
+      0.54rem
+    );
+
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.075em;
+
+    white-space: nowrap;
+
+    transform: rotate(-4deg);
+    transform-origin: center;
+  }
+}
+
+
+/* HOME V2 - MOBILE SEASON POSITION V5 */
+@media (max-width: 720px) {
+  .home-v2-registration-link strong {
+    right: 21%;
+    bottom: 33%;
+
+    font-size: clamp(
+      0.45rem,
+      1.78vw,
+      0.58rem
+    );
+
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.065em;
+
+    white-space: nowrap;
+
+    transform: rotate(-4deg);
+    transform-origin: center;
+  }
+}
+
+
+/* HOME V2 - MOBILE SEASON ANGLE FINAL */
+@media (max-width: 720px) {
+  .home-v2-registration-link strong {
+    transform: rotate(-6deg);
+  }
 }

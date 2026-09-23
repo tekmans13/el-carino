@@ -9,6 +9,7 @@ export async function getClubSettings() {
       minor_annual_fee_cents,
       adult_annual_fee_cents,
       federal_license_fee_cents,
+      registration_season,
       created_at,
       updated_at
     `)
@@ -36,6 +37,7 @@ export async function updateClubSettings(settingsId, values) {
     federal_license_fee_cents: Math.round(
       Number(values.federalLicenseFee) * 100,
     ),
+    registration_season: values.registrationSeason,
     updated_at: new Date().toISOString(),
   };
 

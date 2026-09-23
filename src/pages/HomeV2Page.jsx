@@ -1,6 +1,16 @@
+import {
+  useEffect,
+  useState,
+} from 'react';
+
 import { Link } from 'react-router-dom';
 
+import { getClubSettings } from '../features/inscription/services/clubSettingsService';
+
 import topImage from '../assets/home/top.webp';
+import topMobileImage from '../assets/home/top-mobile.webp';
+import logoMobileImage from '../assets/home/logo-el-carino-txt.webp';
+import registrationButtonImage from '../assets/home/registration-button.webp';
 import bottomImage from '../assets/home/bottom.webp';
 import equipmentImage from '../assets/home/equipment/equipment.webp';
 
@@ -75,19 +85,80 @@ function SectionTitle({ icon, children }) {
 }
 
 export default function HomeV2Page() {
+  const [registrationSeason, setRegistrationSeason] =
+    useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadRegistrationSeason() {
+      try {
+        const settings = await getClubSettings();
+
+        if (active) {
+          setRegistrationSeason(
+            settings.registration_season ?? '',
+          );
+        }
+      } catch (error) {
+        console.error(
+          'Impossible de charger la saison des inscriptions :',
+          error,
+        );
+      }
+    }
+
+    loadRegistrationSeason();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <main className="home-v2">
       <section className="home-v2-hero">
         <img
           src={topImage}
           alt="El Carino Muay Thaï Marseille"
+          className="home-v2-hero-desktop"
         />
+
+        <div className="home-v2-hero-mobile">
+          <img
+            src={topMobileImage}
+            alt=""
+            className="home-v2-hero-mobile-background"
+          />
+
+          <img
+            src={logoMobileImage}
+            alt="El Carino Muay Thaï"
+            className="home-v2-hero-mobile-logo"
+          />
+        </div>
 
         <Link
           to="/inscription"
           className="home-v2-registration-link"
-          aria-label="S'inscrire pour la saison 2026 / 2027"
-        />
+          aria-label={
+            registrationSeason
+              ? `S'inscrire pour la saison ${registrationSeason}`
+              : "S'inscrire"
+          }
+        >
+          <img
+            src={registrationButtonImage}
+            alt=""
+            className="home-v2-registration-image"
+          />
+
+          {registrationSeason && (
+            <strong>
+              SAISON {registrationSeason}
+            </strong>
+          )}
+        </Link>
       </section>
 
       <section className="home-v2-information">
